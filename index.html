@@ -178,7 +178,7 @@ function peakShape(p,x,z){
 }
 const PADS=[
   {x:-4,z:9,r:4.5,t:7.7,s:0.6},{x:-14.6,z:79.4,r:5.6,t:2.75,s:1},{x:-45,z:-7.6,r:1.6,t:15.15,s:1},{x:-40,z:28,r:8,t:0.85,s:1},
-  {x:60,z:-58.5,r:5,t:0.9,s:1},{x:-45,z:-56,r:4.5,t:2.8,s:0.8},{x:-61.5,z:-67.2,r:4.2,t:1.2,s:1},
+  {x:60,z:-58.5,r:5,t:0.9,s:1},{x:-45,z:-56,r:4.5,t:2.8,s:0.8},{x:-61.5,z:-67.2,r:4.2,t:1.2,s:1},{x:29,z:-1,r:11,t:14.0,s:1},
 ];
 var RAIL_PROF=null;
 const coastZ=x=>-66+2.5*Math.sin(x*0.09)+1.5*Math.sin(x*0.23+1)-5*Math.exp(-(((x+62)/5)**2));
@@ -558,10 +558,11 @@ ribbon(RAIL_MAIN,0.5,'#9d917f','#c2b6a2',0.18);ribbon(RAIL_SPUR,0.45,'#9d917f','
 
 const dummy=new THREE.Object3D();
 const OCCLUDERS=[];
+var TREE_IMS=[],TREE_RB=0;
 function instanced(geo,mat,list,place){
   const im=new THREE.InstancedMesh(geo,mat,list.length);im.castShadow=true;im.receiveShadow=true;
   list.forEach((t,i)=>{dummy.position.set(0,0,0);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);place(t,dummy);{const q=dummy.position;if(q.x<X0+0.2||q.x>X0+W-0.2||q.z<Z0+0.2||q.z>Z0+D-0.2)dummy.scale.set(0,0,0);}dummy.updateMatrix();im.setMatrixAt(i,dummy.matrix);if(t.c)im.setColorAt(i,new THREE.Color(t.c));});
-  scene.add(im);if(!geo.boundingSphere)geo.computeBoundingSphere();if(geo.boundingSphere.radius>0.6&&list.length)OCCLUDERS.push(im);return im;
+  if(TREE_RB){im.userData.rb=TREE_RB;TREE_IMS.push(im);}scene.add(im);if(!geo.boundingSphere)geo.computeBoundingSphere();if(geo.boundingSphere.radius>0.6&&list.length)OCCLUDERS.push(im);return im;
 }
 function railSleepers(way){
   const tr=trace(way,0.6),pts=[];for(let i=0;i<tr.length-1;i++){const [x,z]=tr[i],[x2,z2]=tr[i+1];pts.push({x,z,a:Math.atan2(x2-x,z2-z)});}
@@ -569,10 +570,6 @@ function railSleepers(way){
   for(const off of[-0.22,0.22])ribbon(way.map(([x,z],i)=>{const a=way[Math.min(i+1,way.length-1)],b=way[Math.max(i-1,0)];const dx=a[0]-b[0],dz=a[1]-b[1],l=Math.hypot(dx,dz)||1;return[x-dz/l*off,z+dx/l*off];}),0.035,'#5d5866','#7d7886',0.3);
 }
 railSleepers(RAIL_MAIN);railSleepers(RAIL_SPUR);
-{ // 金包里大路的石階
-  const tr=trace(TRAIL,0.9),st=[];for(let i=0;i<tr.length-1;i++){const [x,z]=tr[i],[x2,z2]=tr[i+1];st.push({x,z,a:Math.atan2(x2-x,z2-z)});}
-  instanced(new THREE.BoxGeometry(0.5,0.08,0.22),toon(0xa89a7c),st,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+0.18,p.z);o.rotation.y=p.a;});
-}
 { // 電信柱
   const tr=trace(RAIL_MAIN,4.5),pts=[];for(let i=1;i<tr.length-1;i++){const [x,z]=tr[i],[x2,z2]=tr[i+1];const dx=x2-x,dz=z2-z,l=Math.hypot(dx,dz)||1;pts.push({x:x-dz/l*1.3,z:z+dx/l*1.3,a:Math.atan2(dx,dz)});}
   instanced(new THREE.CylinderGeometry(0.05,0.06,2.2,5),toon(0x6b4a34),pts,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+1.1,p.z);});
@@ -759,7 +756,7 @@ place(house({w:2.4,d:1.3,h:0.9,wall:'wood',roof:'kawara2',rh:0.75,over:0.2}),31.
 {const N=22,R=6.4,posts=[];for(let i=0;i<N;i++){const a=i/N*Math.PI*2;posts.push({x:29+Math.cos(a)*R,z:-1+Math.sin(a)*R});}
   instanced(new THREE.CylinderGeometry(0.07,0.07,0.75,6),toon(0x9a7350),posts,(p,o)=>{o.position.set(p.x,H(p.x,p.z)+0.3,p.z);});
   posts.forEach((p,i)=>{const q=posts[(i+1)%N];if(i===5)return;const len=Math.hypot(q.x-p.x,q.z-p.z);
-    scene.add(mesh(new THREE.BoxGeometry(len,0.06,0.06),0xb48a62,{x:(p.x+q.x)/2,y:(H(p.x,p.z)+H(q.x,q.z))/2+0.5,z:(p.z+q.z)/2,ry:-Math.atan2(q.z-p.z,q.x-p.x)}));});}
+    const a=new THREE.Vector3(p.x,H(p.x,p.z)+0.5,p.z),b=new THREE.Vector3(q.x,H(q.x,q.z)+0.5,q.z);const r=mesh(new THREE.BoxGeometry(0.06,0.06,a.distanceTo(b)),0xb48a62);r.position.copy(a).add(b).multiplyScalar(0.5);r.lookAt(b);scene.add(r);});}
 signboard(['大嶺牧場','昭和九年'],33.5,-6.4,0.3);
 place(mesh(new THREE.CylinderGeometry(0.9,1,0.18,20),0xbde9f0),17.3,-0.6,0,0.05);
 place(house({w:1.2,d:0.9,h:0.6,wall:'jp',roof:'kawara2',rh:0.45}),15.8,0.6,0.4);
@@ -807,11 +804,11 @@ for(let i=0;i<2800;i++){const x=X0+2+rng()*(W-4),z=Z0+2+rng()*(D-4),h=H(x,z),m=h
 for(let i=0;i<4000;i++){const [cx,cz,r]=TEA_PATCHES[i%3],x=cx+(rng()-0.5)*r*2.6,z=cz+(rng()-0.5)*r*2.6,h=H(x,z),m=h/VS;if(isTea(x,z,m)&&Math.sin(h*62.83)>0.4&&!nearLines(x,z,0.5)&&free(x,z,0.2))tea.push({x,z,h,s:0.8+rng()*0.3});}
 const lumpy=mergeGeometries([new THREE.IcosahedronGeometry(0.62,1).translate(0,0.1,0),new THREE.IcosahedronGeometry(0.46,1).translate(0.42,-0.08,0.12),new THREE.IcosahedronGeometry(0.44,1).translate(-0.36,-0.06,-0.2),new THREE.IcosahedronGeometry(0.4,1).translate(0.05,0.42,-0.1)]);
 lumpy.computeVertexNormals();
-instanced(lumpy,toon(0xffffff),blobs,(t,o)=>{o.position.set(t.x,t.h+1.0*t.s,t.z);o.scale.set(t.s,t.s*0.95,t.s);o.rotation.y=t.r;});
+TREE_RB=0.95;instanced(lumpy,toon(0xffffff),blobs,(t,o)=>{o.position.set(t.x,t.h+1.0*t.s,t.z);o.scale.set(t.s,t.s*0.95,t.s);o.rotation.y=t.r;});
 instanced(new THREE.CylinderGeometry(0.11,0.17,0.75,6),toon(0x8f6342),blobs,(t,o)=>{o.position.set(t.x,t.h+0.34*t.s,t.z);o.scale.setScalar(t.s);});
 const pineGeo=mergeGeometries([new THREE.ConeGeometry(0.75,0.6,9).translate(0,1.1,0),new THREE.ConeGeometry(0.6,0.55,9).translate(0,1.5,0),new THREE.ConeGeometry(0.42,0.5,9).translate(0,1.88,0),new THREE.CylinderGeometry(0.09,0.12,0.9,6).translate(0,0.45,0)]);
-instanced(pineGeo,toon(0x3d7a58),pines,(t,o)=>{o.position.set(t.x,t.h,t.z);o.scale.setScalar(t.s);});
-instanced(new THREE.ConeGeometry(0.55,1.9,8),toon(0x3f7d5c),cones,(t,o)=>{o.position.set(t.x,t.h+0.95*t.s,t.z);o.scale.setScalar(t.s);});
+TREE_RB=0.75;instanced(pineGeo,toon(0x3d7a58),pines,(t,o)=>{o.position.set(t.x,t.h,t.z);o.scale.setScalar(t.s);});
+TREE_RB=0.55;instanced(new THREE.ConeGeometry(0.55,1.9,8),toon(0x3f7d5c),cones,(t,o)=>{o.position.set(t.x,t.h+0.95*t.s,t.z);o.scale.setScalar(t.s);});
 function tint(geo,hex){geo=geo.index?geo.toNonIndexed():geo;const c=new THREE.Color(hex),n=geo.attributes.position.count,a=new Float32Array(n*3);for(let i=0;i<n;i++){a[i*3]=c.r;a[i*3+1]=c.g;a[i*3+2]=c.b;}geo.setAttribute('color',new THREE.BufferAttribute(a,3));return geo;}
 function bambooStalk(seed){
   const HGT=1.55+seed*0.12,parts=[];
@@ -824,8 +821,8 @@ function bambooStalk(seed){
   return mergeGeometries(parts);
 }
 const bambooMat=new THREE.MeshToonMaterial({vertexColors:true,gradientMap:grad});
-[0,1,2].forEach(v=>instanced(bambooStalk(v+1),bambooMat,bamboo.filter(b=>b.v===v),(t,o)=>{o.position.set(t.x,t.h,t.z);o.scale.setScalar(t.s);o.rotation.set(t.tx,t.ry,t.tz,'YXZ');}));
-instanced(new THREE.ConeGeometry(0.2,0.55,5),toon(0xe4d38c),susuki,(t,o)=>{o.position.set(t.x,t.h+0.25*t.s,t.z);o.scale.setScalar(t.s);});
+TREE_RB=0.45;[0,1,2].forEach(v=>instanced(bambooStalk(v+1),bambooMat,bamboo.filter(b=>b.v===v),(t,o)=>{o.position.set(t.x,t.h,t.z);o.scale.setScalar(t.s);o.rotation.set(t.tx,t.ry,t.tz,'YXZ');}));
+TREE_RB=0;instanced(new THREE.ConeGeometry(0.2,0.55,5),toon(0xe4d38c),susuki,(t,o)=>{o.position.set(t.x,t.h+0.25*t.s,t.z);o.scale.setScalar(t.s);});
 instanced(new THREE.SphereGeometry(0.32,8,6),toon(0x4f8f4c),tea,(t,o)=>{o.position.set(t.x,t.h+0.14,t.z);o.scale.set(t.s,0.6*t.s,t.s);});
 { // 河岸蘆葦
   const reeds=[];RIVERS.forEach(r=>{trace(r.pts,1.6).forEach(([x,z],i)=>{if(rng()<0.5)return;const s=i%2?1:-1;const xx=x+(r.w+0.5)*s*(rng()*0.5+0.75),zz=z+(rng()-0.5);if(!inTown(xx,zz)&&H(xx,zz)>SEA)reeds.push({x:xx,z:zz});});});
@@ -1330,7 +1327,7 @@ const NPCS=[
  {at:'QT',st:'tech',o:{hat:'straw',hatC:0xead9a0},bag:0x6b4a34,walk:2.0,sp:0.3,nm:'藤井 正',age:42,job:'牧場獸醫',bio:'臺北州派來巡視牧牛的獸醫，檢查牛隻有沒有生病、蹄子有沒有受傷。'},
  {at:'QT',st:'farmer',o:{top:0x6f8fb3},walk:1.6,sp:0.3,nm:'郭阿川',age:55,job:'寄養牛的主人',bio:'從士林上山來看自家寄養的水牛，順便帶一把番薯葉給牠加菜。'},
  {at:'MT',st:'farmer',o:{top:0x8a7a5a},back:0x8a6a4a,walk:1.5,sp:0.3,nm:'簡阿樹',age:47,job:'樵夫',bio:'上山砍柴的樵夫，背簍裝滿柴枝，下山前會在山泉邊洗把臉。'},
- {at:'MT',st:'miner',o:{top:0x4a4652},hold:'stick',anim:'pick',nm:'翁阿炭',age:52,job:'炭工',bio:'在山裡燒木炭的炭工，相思樹燒成的木炭賣到臺北城，給人家生火煮飯。'},
+ {at:'MT',st:'miner',o:{top:0x4a4652},hold:'stick',anim:'pick',clear:3.2,nm:'翁阿炭',age:52,job:'炭工',bio:'在山裡燒木炭的炭工，相思樹燒成的木炭賣到臺北城，給人家生火煮飯。'},
  {at:'TP',st:'sailor',walk:1.6,sp:0.35,nm:'林秀琴',age:15,job:'高等女學校學生',bio:'放學後和同學一起走回家，邊走邊討論下週的運動會。'},
  {at:'TP',st:'sailor',walk:1.6,sp:0.35,nm:'佐藤 文子',age:15,job:'高等女學校學生',bio:'林秀琴的同班同學，家裡在城內開文具店。'},
  {at:'TP',st:'suit',o:{hat:'boater',hatC:0xf0e2b6},bag:0x2f2a33,walk:1.8,sp:0.45,nm:'黃仲明',age:31,job:'銀行員',bio:'在臺北本町銀行上班的行員，西裝筆挺，午休時間趕去郵便局寄信。'},
@@ -1350,7 +1347,7 @@ NPCS.forEach(n=>{const sp=spotNear(n.at);if(!sp)return;const pp=person(n.st,n.o|
   const info=I(n.nm,n.age,n.job,n.bio);
   if(n.walk)addMover(pp,loopPts(sp[0],sp[1],n.walk),{speed:n.sp||0.35,loop:true,start:rng(),walkers:[[pp,n.anim||'walk']]},info);
   else addActor(pp,sp[0],sp[1],rng()*6.28,n.anim||'idle',info);
-  if(n.prop)n.prop(sp[0],sp[1]);});
+  if(n.clear)pp.userData.clearR=n.clear;if(n.prop)n.prop(sp[0],sp[1]);});
 { // 關渡渡船、撒網漁夫、割蘆葦
   const b=boatM(0xe9d7b0);const f=person('fisher',{top:0x6f8fb3});f.position.set(0,0.2,-0.7);b.add(f);const ps=person('twF',{top:0xd9a0a8});ps.scale.setScalar(0.85);ps.position.set(0,0.2,0.4);b.add(ps);
   addMover(b,[[-86.2,46.4],[-82.4,45.9]],{speed:0.35,water:true,pause:3,walkers:[[f,'stand'],[ps,'ride']]},I('陳渡伯',57,'關渡渡船伕','在關渡撐渡船載人過淡水河，一趟收幾錢，颱風天就收工。'));
@@ -1514,14 +1511,14 @@ const CAMEOS=[
 CAMEOS.push(
   {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'board',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8]],act:'write',actT:10,speed:0.5,
    info:{chip:'名人',kind:'person',title:'井手薰',tag:'建築家・總督府營繕課長（1879–1944）',body:'長年主持臺灣總督府營繕課，參與總督府廳舍等官廳建築，晚年力倡適合臺灣氣候的建築風格。他領導的營繕課設計的臺北公會堂正在興建中，預定明年（1936）落成。他拿著圖板，正在城北的街上勘查。'}},
-  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[-11,-10],[-9,-4],[-7,3],[-4,10],[-1.5,7.2]],act:'write',actT:12,speed:0.55,
-   info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他從竹子湖沿著山路散步到草山，在本子上記下腦中浮現的旋律。'}},
+  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4]],act:'write',actT:12,speed:0.9,
+   info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他從臺北城東南邊沿著基隆河南岸往西走，過明治橋（戰後改名中山橋）再一路往北，經士林、草山走到冷水坑，在溫泉邊的本子上記下腦中浮現的旋律。'}},
   {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.8,
    info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她從淡水方向沿著河岸路走到北投，撐著陽傘逛溫泉街，和認出她的歌迷揮手。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.55,
    info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從臺北過明治橋，往士林街去拜訪朋友。'}},
-  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11,-10],[-9,-4],[-7,3],[-4,10],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.65,
-   info:{chip:'名人',kind:'person',title:'陳天來',tag:'茶商（1872–1939）',body:'大稻埕錦記茶行的老闆，經營烏龍茶、包種茶外銷，是臺北首屈一指的茶商，還出資興建了戲院「第一劇場」。他親自上山看看今年的茶園。'}},
+  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.8,
+   info:{chip:'名人',kind:'person',title:'陳天來',tag:'茶商（1872–1939）',body:'大稻埕錦記茶行的老闆，經營烏龍茶、包種茶外銷，是臺北首屈一指的茶商，還出資興建了戲院「第一劇場」。他從臺北出發，經士林沿著草山道路上山，親自看看今年的茶園。'}},
   {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-42,32]],act:'chat',actT:8,speed:0.75,
    info:{chip:'名人',kind:'person',title:'辜顯榮',tag:'商人・貴族院議員（1866–1937）',body:'鹿港出身的商人，經營製糖、鹽業與土地開發，是日本時代臺灣最有影響力的商人之一，昭和 9 年（1934）成為第一位獲敕選為貴族院議員的臺灣人。他帶著隨從到北投泡湯。'}},
   {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.55,
@@ -1530,8 +1527,8 @@ CAMEOS.push(
    info:{chip:'名人',kind:'person',title:'楊逵',tag:'作家（1906–1985）',body:'臺南新化出身的作家，昭和 9 年（1934）以〈送報伕〉入選東京《文學評論》徵文，是第一位登上日本中央文壇的臺灣作家。他走在鄉間小路上，邊走邊構思描寫農民的新小說。'}},
   {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x4a4458},hold:'brush',easel:true,path:[[-36,100],[-35,96],[-35.5,92]],act:'paint',actT:12,speed:0.45,
    info:{chip:'名人',kind:'person',title:'郭雪湖',tag:'膠彩畫家（1908–2012）',body:'大稻埕長大的畫家，和陳進、林玉山同在第一回臺展入選，被稱為「臺展三少年」。昭和 5 年（1930）以描繪大稻埕霞海城隍廟前熱鬧街景的〈南街殷賑〉入選臺展。他在淡水河邊支起畫架寫生。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11,-10],[-12.6,-7.6],[-15.5,-5.3],[-17,-7.2]],act:'photo',actT:10,speed:0.4,
-   info:{chip:'名人',kind:'person',title:'鄧南光',tag:'攝影家（1907–1971）',body:'新竹北埔出身，在日本法政大學求學時迷上攝影，昭和 10 年（1935）回臺在臺北開設「南光寫真機店」，用萊卡相機記錄臺灣的街頭與庶民生活。他扛著三腳架上山拍竹子湖。'}},
+  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4],[17.6,-1.6]],act:'photo',actT:10,speed:0.9,
+   info:{chip:'名人',kind:'person',title:'鄧南光',tag:'攝影家（1907–1971）',body:'新竹北埔出身，在日本法政大學求學時迷上攝影，昭和 10 年（1935）回臺在臺北開設「南光寫真機店」，用萊卡相機記錄臺灣的街頭與庶民生活。他從臺北出發，扛著三腳架經士林、草山一路往北走到冷水坑，拍攝山間的溫泉與芒草原。'}},
   {style:'student',opts:{hat:'none',top:0xfbfbf6,bottom:0xfbfbf6},path:offsetPath(MAIN_PATH,0.45),act:null,actT:0,speed:2.2,run:true,
    info:{chip:'名人',kind:'person',title:'張星賢',tag:'田徑選手（1910–1989）',body:'臺中出身的田徑選手，早稻田大學在學期間入選日本代表隊，參加昭和 7 年（1932）洛杉磯奧運的四百公尺跨欄等項目，是第一位參加奧運的臺灣人。他正從臺北出發，沿著淡水線的鐵道旁一路往淡水方向練跑。'}},
 );
@@ -1592,9 +1589,25 @@ CAMEOS.forEach(c=>{const np=detour(c.path);if(np.length>1){c.P=makePathPts(np);c
 function railLift(x,z){return(Math.abs(x+40)<55&&(polyDist(x,z,RAIL_MAIN)<0.7||polyDist(x,z,RAIL_SPUR)<0.7))?0.13:0;}
 /* 道路、古道的色帶比地面高一點，走在上面的人和動物要踩在路面上 */
 var ROAD_BB=null;
-function roadLift(x,z){if(!ROAD_BB)ROAD_BB=[...ROADS.map(r=>[r,0.42,0.17]),[TRAIL,0.36,0.24]].map(([r,w,l])=>{const xs=r.map(p=>p[0]),zs=r.map(p=>p[1]);return{r,w,l,x0:Math.min(...xs)-1,x1:Math.max(...xs)+1,z0:Math.min(...zs)-1,z1:Math.max(...zs)+1};});
+function roadLift(x,z){if(!ROAD_BB)ROAD_BB=[...ROADS.map(r=>[r,0.42,0.17]),[TRAIL,0.32,0.17]].map(([r,w,l])=>{const xs=r.map(p=>p[0]),zs=r.map(p=>p[1]);return{r,w,l,x0:Math.min(...xs)-1,x1:Math.max(...xs)+1,z0:Math.min(...zs)-1,z1:Math.max(...zs)+1};});
   let best=0;for(const b of ROAD_BB){if(x<b.x0||x>b.x1||z<b.z0||z>b.z1)continue;const d=polyDist(x,z,b.r);if(d<b.w+0.12)best=Math.max(best,b.l*sstep(b.w+0.12,b.w-0.05,d));}return best;}
 function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=deckY(x,z);return d===null?g:Math.max(g,d);}
+
+/* 人物不被房子、樹木擋住：站著的人移出建築，人物站位與走動路線旁的樹砍掉 */
+{const prot=new Map(),PC=2,addP=(x,z,r)=>{const k=Math.floor(x/PC)+','+Math.floor(z/PC);if(!prot.has(k))prot.set(k,[]);prot.get(k).push([x,z,r]);};
+  const wp=new THREE.Vector3();
+  actors.forEach(a=>{const o=a.obj;if(o.parent!==folk||!o.userData.arms&&!o.userData.animal)return;
+    let x=o.position.x,z=o.position.z;const g0=groundY(x,z);for(let k=0;k<3;k++){if(!obAt(x,z,0.3))break;[x,z]=pushOut(x,z,0.38);}
+    if(x!==o.position.x||z!==o.position.z){o.position.x=x;o.position.z=z;o.position.y+=groundY(x,z)-g0;}
+    addP(x,z,o.userData.clearR||(o.userData.arms?1.5:0.6));});
+  movers.forEach(mv=>{if(mv.water)return;const w=mv.walkers&&mv.walkers.some(([p])=>p.userData&&p.userData.arms);if(!w)return;
+    for(let s=0;s<=mv.P.L;s+=0.7){const [x,z]=pathAt(mv.P,s);addP(x,z,0.75);}});
+  CAMEOS.forEach(c=>{for(let s=0;s<=c.P.L;s+=0.7){const [x,z]=pathAt(c.P,s);addP(x,z,0.75);}});
+  const m4=new THREE.Matrix4(),pos=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),zero=new THREE.Matrix4().makeScale(0,0,0);
+  TREE_IMS.forEach(im=>{let ch=false;for(let i=0;i<im.count;i++){im.getMatrixAt(i,m4);m4.decompose(pos,q,sc);if(sc.x===0)continue;const R=im.userData.rb*sc.x;
+    const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
+    for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
+    if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
 
 /* -------------------- 大冠鷲 -------------------- */
 const EWING=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.15);sh.quadraticCurveTo(0.55,0.22,1.05,0.08);sh.lineTo(1.12,-0.02);sh.lineTo(1.0,-0.06);sh.lineTo(1.06,-0.12);sh.quadraticCurveTo(0.5,-0.22,0,-0.14);sh.closePath();
