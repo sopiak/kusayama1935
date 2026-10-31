@@ -1062,7 +1062,7 @@ function pose(p,a,t,ph,moving=true){
 /* 演員：靜態工作者與沿路移動者 */
 const actors=[],movers=[];
 function register(p,info){if(!info)return;p.userData.info=info;CLICKABLE.push(p.userData.hit);p.userData.hit.userData.person=p;}
-function addActor(p,x,z,ry,anim,info,dy=0){p.position.set(x,G(x,z)+dy,z);p.rotation.y=ry;folk.add(p);actors.push({obj:p,anim,ph:rng()*10});register(p,info);return p;}
+function addActor(p,x,z,ry,anim,info,dy=0){p.position.set(x,groundY(x,z)+dy,z);p.rotation.y=ry;folk.add(p);actors.push({obj:p,anim,ph:rng()*10});register(p,info);return p;}
 function addMover(obj,pts,{speed=0.6,start=0,loop=false,water=false,walkers=null,pause=1.5,backward=false,lift=0,followers=null,stops=null}={},info=null){
   const P=makePathPts(pts);folk.add(obj);
   const m={obj,P,pts,s:start*P.L,dir:1,speed,loop,water,walkers:walkers||[[obj,'walk']],pause,wait:0,ph:rng()*10,backward,lift,followers,stops:stops||[],nextStop:0};
@@ -1572,8 +1572,12 @@ function detour(pts,m=0.28){let cur=pts;
   return cur;}
 movers.forEach(mv=>{if(mv.water||!mv.pts||mv.pts.length<2)return;const np=detour(mv.pts);if(np!==mv.pts&&np.length>1){const f=mv.s/mv.P.L;mv.P=makePathPts(np);mv.s=f*mv.P.L;}});
 CAMEOS.forEach(c=>{const np=detour(c.path);if(np.length>1){c.P=makePathPts(np);c.path=np;}});
-const railLift=(x,z)=>(Math.abs(x+40)<55&&(polyDist(x,z,RAIL_MAIN)<0.7||polyDist(x,z,RAIL_SPUR)<0.7))?0.13:0;
-const groundY=(x,z)=>{const g=G(x,z)+railLift(x,z),d=deckY(x,z);return d===null?g:Math.max(g,d);};
+function railLift(x,z){return(Math.abs(x+40)<55&&(polyDist(x,z,RAIL_MAIN)<0.7||polyDist(x,z,RAIL_SPUR)<0.7))?0.13:0;}
+/* 道路、古道的色帶比地面高一點，走在上面的人和動物要踩在路面上 */
+var ROAD_BB=null;
+function roadLift(x,z){if(!ROAD_BB)ROAD_BB=[...ROADS.map(r=>[r,0.42,0.17]),[TRAIL,0.36,0.24]].map(([r,w,l])=>{const xs=r.map(p=>p[0]),zs=r.map(p=>p[1]);return{r,w,l,x0:Math.min(...xs)-1,x1:Math.max(...xs)+1,z0:Math.min(...zs)-1,z1:Math.max(...zs)+1};});
+  let best=0;for(const b of ROAD_BB){if(x<b.x0||x>b.x1||z<b.z0||z>b.z1)continue;const d=polyDist(x,z,b.r);if(d<b.w+0.12)best=Math.max(best,b.l*sstep(b.w+0.12,b.w-0.05,d));}return best;}
+function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=deckY(x,z);return d===null?g:Math.max(g,d);}
 
 /* -------------------- 大冠鷲 -------------------- */
 const EWING=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.15);sh.quadraticCurveTo(0.55,0.22,1.05,0.08);sh.lineTo(1.12,-0.02);sh.lineTo(1.0,-0.06);sh.lineTo(1.06,-0.12);sh.quadraticCurveTo(0.5,-0.22,0,-0.14);sh.closePath();
@@ -1801,7 +1805,7 @@ function tick(){
     const moving=mv.wait<=0;
     mv.walkers.forEach(([w,a])=>{if(a==='animal')animalPose(w,t,mv.ph,moving,a);else pose(w,a,t,mv.ph,moving);});
     if(mv.followers)mv.followers.forEach((f,j)=>{let s=mv.s-f.lag;if(mv.loop)s=((s%mv.P.L)+mv.P.L)%mv.P.L;else s=Math.max(0,s);const [fx,fz,fdx,fdz]=pathAt(mv.P,s);const l=Math.hypot(fdx,fdz)||1;
-      f.obj.position.set(fx-fdz/l*f.side+Math.sin(t*2+j)*0.1,G(fx,fz)+0.02,fz+fdx/l*f.side);f.obj.rotation.y=Math.atan2(fdx,fdz)+0.3*Math.sin(t*3+j);});
+      f.obj.position.set(fx-fdz/l*f.side+Math.sin(t*2+j)*0.1,groundY(fx,fz)+0.02,fz+fdx/l*f.side);f.obj.rotation.y=Math.atan2(fdx,fdz)+0.3*Math.sin(t*3+j);});
     const kd=mv.obj.userData.kite;if(kd){const kx=x-Math.sin(ry)*5,kz=z-Math.cos(ry)*5;kd.kite.position.set(kx+Math.sin(t*0.9)*0.6,G(x,z)+5.5+Math.sin(t*1.3)*0.5,kz);kd.kite.rotation.y=ry;
       const hand=new THREE.Vector3();mv.obj.userData.arms[1].getWorldPosition(hand);kd.line.geometry.setFromPoints([hand,kd.kite.position]);}
   }
