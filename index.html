@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#bfe3ee">
-<title>草山1935</title>
+<title>1935 草山見聞帖</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,12 +37,26 @@ body{
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;
 }
 #stage{position:fixed;inset:0;touch-action:none}
+#night-sky{position:fixed;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(1.5px 1.5px at 12% 18%,#fff 60%,transparent),radial-gradient(1px 1px at 22% 8%,#fff 60%,transparent),radial-gradient(1.5px 1.5px at 37% 22%,#fffbe8 60%,transparent),
+  radial-gradient(1px 1px at 48% 12%,#fff 60%,transparent),radial-gradient(2px 2px at 58% 6%,#fff 60%,transparent),radial-gradient(1px 1px at 66% 19%,#fff 60%,transparent),
+  radial-gradient(1.5px 1.5px at 74% 10%,#fffbe8 60%,transparent),radial-gradient(1px 1px at 83% 24%,#fff 60%,transparent),radial-gradient(1.5px 1.5px at 91% 14%,#fff 60%,transparent),
+  radial-gradient(1px 1px at 5% 30%,#fff 60%,transparent),radial-gradient(1px 1px at 30% 33%,#fff 60%,transparent),radial-gradient(1px 1px at 52% 28%,#fff 60%,transparent),
+  radial-gradient(1px 1px at 70% 31%,#fff 60%,transparent),radial-gradient(1px 1px at 95% 34%,#fff 60%,transparent),radial-gradient(1px 1px at 16% 40%,#fff 60%,transparent),radial-gradient(1px 1px at 87% 41%,#fff 60%,transparent)}
+#night-sky .moon{position:absolute;right:18%;top:11%;width:34px;height:34px;border-radius:50%;background:#fff6d6;box-shadow:0 0 22px 6px rgba(255,240,200,.35)}
 #stage canvas{display:block;width:100%;height:100%;outline:none}
 .card{position:fixed;background:var(--paper);border:2.5px solid var(--line);border-radius:18px;box-shadow:4px 5px 0 rgba(61,52,70,.18)}
 .title-card{
   top:calc(14px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));
-  display:flex;gap:14px;align-items:center;padding:12px 18px 12px 12px;max-width:min(430px,calc(100vw - 32px));
+  display:inline-flex;gap:9px;align-items:center;padding:6px 10px 6px 7px;border-radius:999px;cursor:pointer;
+  font:inherit;color:var(--ink);box-shadow:2px 3px 0 rgba(61,52,70,.18);transition:transform .12s;
 }
+.title-card:hover{transform:translateY(-1px)}
+.title-card:focus-visible{outline:3px solid var(--stamp);outline-offset:2px}
+.title-card .yr{font:900 12px/1 var(--font-display);letter-spacing:.04em;background:var(--stamp);color:var(--paper);padding:5px 7px;border-radius:999px;border:1.5px solid var(--line);transform:rotate(-4deg)}
+.title-card b{font-family:var(--font-display);font-size:18px;letter-spacing:.1em;line-height:1}
+.title-card .n{font:700 11px/1 var(--font-body);color:var(--ink-soft);border-left:1.5px solid rgba(61,52,70,.25);padding-left:9px}
+.title-card[aria-pressed="true"]{background:#f3ead6}
 .stamp{
   flex:none;width:58px;height:58px;border-radius:12px;background:var(--stamp);color:var(--paper);
   font-family:var(--font-display);font-size:15px;line-height:1.15;display:grid;place-items:center;text-align:center;
@@ -90,11 +104,12 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 .compass .needle span{position:absolute;left:50%;top:21px;transform:translateX(-50%);font:900 11px/1 var(--font-body)}
 .err{position:fixed;inset:0;display:grid;place-items:center;font-size:16px;padding:24px;text-align:center}
 @media (max-width:720px){
-  .title-card{padding:10px 14px 10px 10px;gap:12px;right:max(16px,env(safe-area-inset-right,0px));max-width:none}
+  .title-card{padding:7px 12px 7px 8px}
+  .title-card b{font-size:18px}
   .stamp{width:52px;height:52px;font-size:14px}
   h1{font-size:26px}
   .lede{font-size:13px;line-height:1.45;margin-top:2px}
-  .toolbar{top:calc(128px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));flex-wrap:wrap}
+  .toolbar{top:calc(62px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));flex-wrap:wrap}
   .toolbar button{padding:10px 15px;font-size:15px}
   .info{max-height:44vh;padding:14px 16px;width:auto;right:max(16px,env(safe-area-inset-right,0px))}
   .info .chip{font-size:13px;padding:5px 9px}
@@ -102,25 +117,61 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
   .info .tag{font-size:15px}
   .info p.body{font-size:16px;line-height:1.7}
 }
-@media (prefers-reduced-motion:reduce){.toolbar button{transition:none}}
+
+.zukan{right:max(16px,env(safe-area-inset-right,0px));top:calc(62px + env(safe-area-inset-top,0px));width:min(380px,calc(100vw - 32px));
+  max-height:calc(100vh - 100px);display:flex;flex-direction:column;padding:14px 16px 12px;
+  background:var(--paper) repeating-linear-gradient(180deg,transparent 0 27px,rgba(61,52,70,.06) 27px 28px)}
+.zukan[hidden]{display:none}
+.zk-head{display:flex;align-items:center;gap:10px}
+.zk-head h2{margin:0;font-family:var(--font-display);font-size:22px;letter-spacing:.08em;flex:1}
+.zk-close{font:900 16px/1 var(--font-body);width:32px;height:32px;border-radius:50%;border:2px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink)}
+.zk-intro{margin:6px 0 8px;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+.zk-sum{margin:4px 0 10px;font-size:12px;color:var(--ink-soft)}
+.zk-bar{height:8px;border-radius:999px;border:1.5px solid var(--line);background:#efe6d2;overflow:hidden;margin-top:4px}
+.zk-bar i{display:block;height:100%;background:var(--moss);width:0;transition:width .4s}
+.zk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.zk-tabs button{font:700 12px/1 var(--font-body);padding:7px 10px;border-radius:999px;border:2px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.zk-tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.zk-list{overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 2px 4px;min-height:0}
+.zk-item{text-align:left;font:inherit;color:var(--ink);background:#fffdf7;border:2px solid var(--line);border-radius:10px;padding:8px 9px;cursor:pointer;min-height:52px}
+.zk-item b{display:block;font-family:var(--font-display);font-size:14px;line-height:1.3}
+.zk-item span{display:block;font-size:11px;color:var(--ink-soft);margin-top:2px;line-height:1.35}
+.zk-item.new{box-shadow:0 0 0 3px var(--sulfur)}
+.zk-item.unk{background:transparent;border-style:dashed;border-color:#b9b1c2;cursor:default;color:#a59db0}
+.zk-item.unk b{letter-spacing:.2em}
+.zk-item:not(.unk):hover{transform:translateY(-1px)}
+.toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translate(-50%,-10px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--paper);font:700 13px/1 var(--font-body);padding:10px 16px;border-radius:999px;transition:opacity .3s,transform .3s;z-index:5;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:720px){
+  .zukan{left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-height:62vh}
+  .zk-item b{font-size:15px}.zk-item span{font-size:12px}.zk-tabs button{font-size:14px;padding:8px 12px}
+  .toast{top:auto;bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){.toolbar button,.toast,.zk-bar i{transition:none}}
 </style>
 </head>
 <body>
+<div id="night-sky" aria-hidden="true"><div class="moon"></div></div>
 <div id="stage" aria-label="昭和時期草山、北投、士林一帶的手繪風3D地景模型"></div>
 
-<header class="card title-card">
-  <div class="stamp" aria-hidden="true">昭和<br>十年</div>
-  <div>
-    <h1>七星郡・淡水郡</h1>
-    <p class="lede">1935 年的大屯火山群與臺北北郊。點地名牌或任何一個小人物，看看他們的故事。</p>
-  </div>
-</header>
+<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">1935 草山見聞帖</h1>
+<button class="card title-card" id="btn-zukan" aria-pressed="false" aria-controls="zukan" title="打開見聞帖"><span class="yr">1935</span><b>草山見聞帖</b><span class="n" id="zk-count">0</span></button>
 
 <nav class="toolbar" aria-label="視角">
   <button id="tg-labels" aria-pressed="true">地名</button>
   <button id="tg-rotate" aria-pressed="true">自動旋轉</button>
   <button id="btn-reset" aria-pressed="false">重設視角</button>
 </nav>
+
+<aside class="card zukan" id="zukan" aria-label="見聞帖" hidden>
+  <div class="zk-head"><h2>草山見聞帖</h2><button class="zk-close" id="zk-close" aria-label="關閉">×</button></div>
+  <p class="zk-intro">昭和十年（1935）的大屯火山群與臺北近郊。點地名牌或任何一個小人物，看看他們的故事。</p>
+  <p class="zk-sum" id="zk-sum"></p>
+  <div class="zk-tabs" role="tablist" id="zk-tabs"></div>
+  <div class="zk-list" id="zk-list"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
 
 <aside class="card info" id="info" aria-live="polite" hidden>
   <span class="chip" id="info-chip" data-kind="place">地景</span>
@@ -379,6 +430,13 @@ function toon(hex,o){
   if(!o){if(!matCache.has(hex))matCache.set(hex,new THREE.MeshToonMaterial({color:hex,gradientMap:grad}));return matCache.get(hex);}
   return new THREE.MeshToonMaterial({color:hex,gradientMap:grad,...o});
 }
+/* 夜景用材質：燈籠、路燈、窗光與光暈 */
+const NIGHT={k:0,anchors:[],halos:[],beams:[]};
+const LANTERN_MAT=new THREE.MeshToonMaterial({color:0xd9483b,emissive:0xff5a2a,emissiveIntensity:0,gradientMap:grad});
+const LAMP_MAT=new THREE.MeshToonMaterial({color:0xfff1c6,emissive:0xffd890,emissiveIntensity:0.15,gradientMap:grad});
+const WIN_MAT=new THREE.MeshBasicMaterial({color:0xffc86e,transparent:true,opacity:0,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2});WIN_MAT.visible=false;
+const WIN_GEO=new THREE.PlaneGeometry(1,1);
+function glowAnchor(parent,x,y,z,size,warm){NIGHT.anchors.push([parent,x,y,z,size,warm]);}
 function mesh(geo,mat,{x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1,shadow=true}={}){
   const m=new THREE.Mesh(geo,typeof mat==='number'?toon(mat):mat);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.scale.set(sx,sy,sz);m.castShadow=shadow;return m;
 }
@@ -598,7 +656,7 @@ function bridge(x,z,ang,len,color=0xe9e1d0,arch=false){
     for(const e of[-1,1]){const lz=e*(len/2-0.12),lx=s*(wd/2-0.05);
       g.add(mesh(new THREE.BoxGeometry(0.2,0.3,0.2),stone,{x:lx,y:dk+0.15,z:lz}));g.add(mesh(new THREE.CylinderGeometry(0.035,0.05,0.75,8),bronze,{x:lx,y:dk+0.65,z:lz}));
       g.add(mesh(new THREE.BoxGeometry(0.3,0.03,0.03),bronze,{x:lx,y:dk+0.98,z:lz}));
-      for(const o of[-0.13,0,0.13])g.add(mesh(new THREE.SphereGeometry(0.06,8,6),toon(0xfff1c6,{emissive:0x6b5a2a}),{x:lx+(o?o:0),y:dk+(o?1.03:1.1),z:lz}));}}
+      for(const o of[-0.13,0,0.13])g.add(mesh(new THREE.SphereGeometry(0.06,8,6),LAMP_MAT,{x:lx+(o?o:0),y:dk+(o?1.03:1.1),z:lz}));glowAnchor(g,lx,dk+1.06,lz,0.8,false);}}
   g.position.set(x,SEA,z);g.rotation.y=ang;scene.add(g);DECKS.push({x,z,ang,len,wd,top:top+0.06});}
 bridge(-23.26,87.84,2.793,4,0x6d6875);
 bridge(-52.21,38.45,-2.05,2,0x6d6875);
@@ -619,7 +677,7 @@ function roofGeo(w,h,d,over){const s=new THREE.Shape();s.moveTo(-w/2-over,0);s.l
 const plainTop=toon(0x8a7a6a);
 function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.15,eaves=false,base=0.8,noren=null,lantern=false}={}){
   const g=new THREE.Group();const wm=texMat('wall',wall);
-  const body=new THREE.Mesh(new THREE.BoxGeometry(w,h+base,d),[wm,wm,plainTop,plainTop,wm,wm]);body.position.y=(h-base)/2;body.castShadow=true;body.receiveShadow=true;g.add(body);
+  const body=new THREE.Mesh(new THREE.BoxGeometry(w,h+base,d),[wm,wm,plainTop,plainTop,wm,wm]);body.position.y=(h-base)/2;body.castShadow=true;body.receiveShadow=true;body.userData.block={h,base};g.add(body);
   let r;
   if(hip){r=new THREE.Mesh(new THREE.ConeGeometry(1,rh,4,1),texMat('roof',roof,[4,1.5]));r.rotation.y=Math.PI/4;r.scale.set((w/2+over)*1.414,1,(d/2+over)*1.414);r.position.y=h+rh/2;}
   else{r=new THREE.Mesh(roofGeo(w,rh,d,over),texMat('roof',roof));r.position.y=h;
@@ -627,7 +685,9 @@ function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.
   r.castShadow=true;g.add(r);
   if(eaves&&!hip)for(const s of[-1,1])g.add(mesh(new THREE.BoxGeometry(0.13,0.08,0.22),0x3f3a44,{y:h+rh+0.06,z:(d/2+over+0.06)*s,rx:-s*0.45}));
   if(noren)g.add(mesh(new THREE.BoxGeometry(w*0.5,0.2,0.02),noren,{y:h*0.62,z:d/2+0.02}));
-  if(lantern)for(const s of[-1,1])g.add(mesh(new THREE.SphereGeometry(0.09,10,8),0xd9483b,{x:w*0.32*s,y:h*0.8,z:d/2+0.1,sy:1.3}));
+  if(lantern)for(const s of[-1,1]){g.add(mesh(new THREE.SphereGeometry(0.09,10,8),LANTERN_MAT,{x:w*0.32*s,y:h*0.8,z:d/2+0.1,sy:1.3}));glowAnchor(g,w*0.32*s,h*0.8,d/2+0.16,0.9,true);}
+  {const wn=new THREE.Mesh(WIN_GEO,WIN_MAT);wn.scale.set(w*0.42,Math.max(0.16,h*0.3),1);wn.position.set(-w*0.12,h*0.42,d/2+0.012);g.add(wn);
+   if(w>1.3){const w2=wn.clone();w2.position.x=w*0.25;g.add(w2);}const wb=wn.clone();wb.rotation.y=Math.PI;wb.position.set(w*0.1,h*0.42,-d/2-0.012);g.add(wb);}
   return g;
 }
 function place(obj,x,z,ry=0,dy=0){obj.position.set(x,G(x,z)+dy,z);obj.rotation.y=ry;scene.add(obj);OCCLUDERS.push(obj);return obj;}
@@ -647,7 +707,7 @@ function sanheyuan(scale=1,wall='tw',roof='tw'){
   const g=new THREE.Group();
   g.add(house({w:1.8,d:0.8,h:0.62,wall,roof,rh:0.45,eaves:wall==='tw'}));
   for(const s of[-1,1]){const b=house({w:1.1,d:0.7,h:0.52,wall,roof,rh:0.4});b.position.set(0.75*s,0,0.95);b.rotation.y=Math.PI/2;g.add(b);}
-  const yard=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),toon(0xe8d9b0));yard.rotation.x=-Math.PI/2;yard.position.set(0,0.03,1);g.add(yard);
+  const yard=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),toon(0xe8d9b0));yard.rotation.x=-Math.PI/2;yard.position.set(0,0.03,1);yard.userData.yard=true;g.add(yard);
   g.scale.setScalar(scale);return g;
 }
 function townHouse(r){
@@ -679,7 +739,7 @@ function fillTown(cx,cz,r,n){
 /* 北投 */
 {
   const bath=new THREE.Group();
-  const low=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.8,2.1),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;bath.add(low);
+  const low=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.8,2.1),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;low.userData.block={h:1.0,base:0.8};bath.add(low);
   const up=house({w:3.0,d:1.94,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.3,base:0.02});up.position.y=1.0;bath.add(up);
   place(bath,-37,24.6,0.3);claim(-37,24.6,2.2);
   [[-42,23.5,0.2],[-44.5,26,0.6],[-38.5,21.3,-0.2],[-34,23,0.4],[-41.5,20.8,0],[-46,23,0.1],[-36,31.5,-0.2]].forEach(([x,z,r],i)=>{
@@ -720,7 +780,7 @@ place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);cl
   for(const s of[-1,1])sh.add(mesh(new THREE.BoxGeometry(0.16,0.55,0.16),0xd6d0c2,{x:0.75*s,y:0.28,z:1.4}));
   place(sh,-14.6,79.4,0);claim(-14.6,79.4,3.4);
   {const tr=torii(1.6);tr.userData.pass=1;place(tr,-14.6,83.3,0);}
-  for(const s of[-1,1])place(mesh(new THREE.BoxGeometry(0.2,0.8,0.2),0xd6d0c2,{y:0.4}),-14.6+s*1.4,84.2);}
+  for(const s of[-1,1]){const sl=place(mesh(new THREE.BoxGeometry(0.2,0.8,0.2),0xd6d0c2,{y:0.4}),-14.6+s*1.4,84.2);sl.add(mesh(new THREE.BoxGeometry(0.16,0.14,0.16),LAMP_MAT,{y:0.5}));glowAnchor(sl,0,0.5,0,0.9,true);}}
 /* 臺北市 */
 for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,1.0)||!free(x,z,0.85))continue;claim(x,z,0.85);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
 /* 軍艦岩 */
@@ -734,7 +794,9 @@ for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inT
 fillTown(60,-58.5,3.8,10);fillTown(-45,-56,3.2,6);
 {const g=new THREE.Group();
   for(let i=0;i<6;i++)g.add(mesh(new THREE.CylinderGeometry(0.42-i*0.02,0.44-i*0.02,0.45,8),i%2?0x2f2a33:0xfbf8f0,{y:0.225+i*0.45}));
-  g.add(mesh(new THREE.CylinderGeometry(0.3,0.3,0.4,8),0xfff3b0,{y:2.9}));g.add(mesh(new THREE.ConeGeometry(0.4,0.4,8),0xc94a3a,{y:3.3}));
+  g.add(mesh(new THREE.CylinderGeometry(0.3,0.3,0.4,8),LAMP_MAT,{y:2.9}));glowAnchor(g,0,2.9,0,2.2,false);
+  {const bm=new THREE.Group();bm.position.y=2.9;const bmat=new THREE.MeshBasicMaterial({color:0xfff2c0,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+   for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.ConeGeometry(1.2,14,16,1,true),bmat);c.rotation.z=s*Math.PI/2;c.position.x=-s*7.2;bm.add(c);}g.add(bm);NIGHT.beams.push({g:bm,m:bmat});}g.add(mesh(new THREE.ConeGeometry(0.4,0.4,8),0xc94a3a,{y:3.3}));
   const hh=house({w:1.4,d:1,h:0.6,wall:'jp',roof:'kawara2',rh:0.4});hh.position.x=1.4;g.add(hh);place(g,-62,-67.5,0.3);claim(-62,-67.5,1.5);}
 /* 草山 */
 place(house({w:2.8,d:1.4,h:0.85,wall:'jp',roof:'kawara2',rh:0.7,over:0.22,noren:0x3f63a6}),-5,9.6,0.25);claim(-5,9.6,1.8);
@@ -1259,14 +1321,14 @@ function bankAt(pts,w,px,pz,off,side=1){let best=null;
 }
 /* ---------- 船、金山、三芝、燈塔 ---------- */
 function boatM(sail=0xfdf6e6){const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(0.75,0.4,2),0xb0744e));g.add(mesh(new THREE.ConeGeometry(0.37,0.7,4),0xb0744e,{z:1.3,rx:Math.PI/2,ry:Math.PI/4}));
-  g.add(mesh(new THREE.CylinderGeometry(0.04,0.04,1.7,6),0x6b4a34,{y:1}));const s=mesh(new THREE.PlaneGeometry(1.1,1.2),toon(sail,{side:THREE.DoubleSide}),{y:1.1,z:-0.35,ry:Math.PI/2});g.add(s);
-  for(let i=0;i<4;i++)s.add(mesh(new THREE.BoxGeometry(1.12,0.02,0.02),0x8a6a4a,{y:-0.45+i*0.3}));return g;}
+  g.add(mesh(new THREE.CylinderGeometry(0.04,0.04,1.7,6),0x6b4a34,{y:1,z:-0.2}));const s=mesh(new THREE.PlaneGeometry(0.85,1.2),toon(sail,{side:THREE.DoubleSide}),{y:1.1,z:-0.64,ry:Math.PI/2});g.add(s);
+  for(let i=0;i<4;i++)s.add(mesh(new THREE.BoxGeometry(0.87,0.02,0.02),0x8a6a4a,{y:-0.45+i*0.3}));return g;}
 const bobbers=[];
 [[56,-70],[64,-71],[46,-72]].forEach(([x,z],i)=>{const b=boatM();b.position.set(x,SEA+0.15,z);b.rotation.y=i;folk.add(b);bobbers.push(b);
-  const p=person('fisher',{top:[0x5c7392,0x8aa0a8,0x6f8fb3][i]});p.position.set(0,0.2,-0.6);b.add(p);actors.push({obj:p,anim:i===1?'net':'fish',ph:rng()*10});
+  const p=person('fisher',{top:[0x5c7392,0x8aa0a8,0x6f8fb3][i]});p.position.set(0,0.2,0.5);b.add(p);actors.push({obj:p,anim:i===1?'net':'fish',ph:rng()*10});
   register(p,[I('林阿成',43,'漁夫','金山庄的漁夫，天沒亮就出海。今天撒網的收穫不錯，回港後魚會交給挑夫翻過山送去臺北。'),I('陳阿海',31,'漁夫','正把漁網撒出去，網子落水的時候像一朵花打開。'),I('周阿六',55,'漁夫','在船上放手釣，等的是一種叫「白帶魚」的長魚，可以賣好價錢。')][i]);});
 {const p=person('twOld',{top:0x5a4a3a});addActor(p,61.5,-62.5,2.4,'mend',I('林阿罔',60,'補網婦','林阿成的母親，坐在海邊的石頭上補漁網，手上的梭子一刻也沒停過。'));}
-{const g=boatM(0xe9d7b0);const p=person('coolie');p.position.set(0,0.2,-0.7);g.add(p);
+{const g=boatM(0xe9d7b0);const p=person('coolie');p.position.set(0,0.2,0.55);g.add(p);
   addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],0.4),{speed:0.45,water:true,start:0.2,walkers:[[p,'stand']]},I('張進財',50,'帆船船夫','駕著載米的帆船在淡水河上往來，從大稻埕順流而下到淡水，再載回鹽和雜貨。'));}
 {const g=boatM(0xf2e6c8);addMover(g,offsetPath([[76,91.4],...KEE_PTS],-0.3),{speed:0.35,water:true,start:0.5,walkers:[]});}
 for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;if(!isTerrace(x,z,m)||!free(x,z,0.6))continue;
@@ -1355,7 +1417,7 @@ NPCS.forEach(n=>{const sp=spotNear(n.at);if(!sp)return;const pp=person(n.st,n.o|
   else addActor(pp,sp[0],sp[1],rng()*6.28,n.anim||'idle',info);
   if(n.clear)pp.userData.clearR=n.clear;if(n.prop)n.prop(sp[0],sp[1]);});
 { // 關渡渡船、撒網漁夫、割蘆葦
-  const b=boatM(0xe9d7b0);const f=person('fisher',{top:0x6f8fb3});f.position.set(0,0.2,-0.7);b.add(f);const ps=person('twF',{top:0xd9a0a8});ps.scale.setScalar(0.85);ps.position.set(0,0.2,0.4);b.add(ps);
+  const b=boatM(0xe9d7b0);const f=person('fisher',{top:0x6f8fb3});f.position.set(0,0.2,0.75);b.add(f);const ps=person('twF',{top:0xd9a0a8});ps.scale.setScalar(0.85);ps.position.set(0,0.2,0.15);b.add(ps);
   addMover(b,[[-86.2,46.4],[-82.4,45.9]],{speed:0.35,water:true,pause:3,walkers:[[f,'stand'],[ps,'ride']]},I('陳渡伯',57,'關渡渡船伕','在關渡撐渡船載人過淡水河，一趟收幾錢，颱風天就收工。'));
   register(ps,I('林阿惜',33,'渡船乘客','提著一籃雞蛋，要過河到對岸的市集賣。'));
   const nf=person('fisher',{top:0x5c7392});const nb=bankAt(TAM_PTS,1.9,-72,61,0.5,1);addActor(nf,nb.x,nb.z,nb.ry,'net',I('廖阿網',39,'撒網漁夫','站在淡水河岸邊撒網捕魚，漲潮時網裡常有烏魚和蝦子。'));
@@ -1410,10 +1472,12 @@ function trainParts(cars){
   loco.add(mesh(new THREE.CylinderGeometry(0.32,0.32,1.2,14),0x3e3a48,{y:0.55,z:0.35,rx:Math.PI/2}));loco.add(mesh(new THREE.BoxGeometry(0.75,0.75,0.6),0x3e3a48,{y:0.65,z:-0.45}));
   loco.add(mesh(new THREE.CylinderGeometry(0.1,0.14,0.4,8),0x3e3a48,{y:1,z:0.75}));loco.add(mesh(new THREE.BoxGeometry(0.8,0.06,0.65),0xd2513d,{y:1.05,z:-0.45}));
   for(const z of[0.55,0.05,-0.45])for(const x of[-0.3,0.3])loco.add(mesh(new THREE.CylinderGeometry(0.17,0.17,0.08,12),0xd2513d,{x,y:0.18,z,rz:Math.PI/2}));
+  loco.add(mesh(new THREE.SphereGeometry(0.09,8,6),LAMP_MAT,{y:0.62,z:0.98}));glowAnchor(loco,0,0.62,1.05,1.2,false);
   parts.push(loco);
   for(let i=0;i<cars;i++){const car=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(0.78,0.7,1.5),texMat('wall','wood'));b.position.y=0.6;b.castShadow=true;car.add(b);
     car.add(mesh(new THREE.BoxGeometry(0.86,0.08,1.6),0xf2e6c8,{y:0.99}));for(const z of[-0.5,0.5])for(const x of[-0.3,0.3])car.add(mesh(new THREE.CylinderGeometry(0.14,0.14,0.07,10),0x3e3a48,{x,y:0.16,z,rz:Math.PI/2}));parts.push(car);}
-  parts.forEach(p=>{const mats=[];p.traverse(o=>{if(!o.isMesh)return;const cl=m=>{const c=m.clone();c.transparent=true;mats.push(c);return c;};o.material=Array.isArray(o.material)?o.material.map(cl):cl(o.material);});p.userData.mats=mats;scene.add(p);});
+  parts.forEach(p=>{const mats=[];p.traverse(o=>{if(!o.isMesh||o.material===LAMP_MAT)return;const cl=m=>{const c=m.clone();c.transparent=true;mats.push(c);return c;};o.material=Array.isArray(o.material)?o.material.map(cl):cl(o.material);});p.userData.mats=mats;scene.add(p);});
+  parts.slice(1).forEach(c=>{for(const sx of[-1,1]){const wn=new THREE.Mesh(WIN_GEO,WIN_MAT);wn.scale.set(1.2,0.22,1);wn.rotation.y=sx*Math.PI/2;wn.position.set(sx*0.4,0.72,0);c.add(wn);}});
   return parts;
 }
 const sOn=(P,x,z)=>{let best=0,bd=1e9;for(let s=0;s<=P.L;s+=0.25){const [px,pz]=pathAt(P,s);const d=Math.hypot(px-x,pz-z);if(d<bd){bd=d;best=s;}}return best;};
@@ -1463,7 +1527,7 @@ const WX={
 };
 const WX_STATES=['clear','cloudy','rain'],WX_HOLD=32,WX_BLEND=8;
 const wxPick=cur=>{const o=WX_STATES.filter(s=>s!==cur);return o[Math.floor(Math.random()*o.length)];};
-let wxT=0,wxSky='',wxA='clear',wxB=wxPick('clear');
+let WSKY=['#bfe3ee','#dcefee','#fbf2dc'];let wxT=0,wxSky='',wxA='clear',wxB=wxPick('clear');
 const wcA=new THREE.Color(),wcB=new THREE.Color(),wcC=new THREE.Color();
 const stormMat=toon(0xffffff,{transparent:true,opacity:0});
 const stormGroup=new THREE.Group();scene.add(stormGroup);
@@ -1499,7 +1563,56 @@ function updateWeather(dt,t){
       rainPos[j]=x;rainPos[j+1]=yy;rainPos[j+2]=z;rainPos[j+3]=x+0.22;rainPos[j+4]=yy+1.0;rainPos[j+5]=z+0.08;}
     rainGeo.attributes.position.needsUpdate=true;}
   const sky=[col('top').getHexString(),col('mid').getHexString(),col('bot').getHexString()].join();
-  if(sky!==wxSky){wxSky=sky;const [a,b,c2]=sky.split(',');const rs=document.documentElement.style;rs.setProperty('--sky-top','#'+a);rs.setProperty('--sky-mid','#'+b);rs.setProperty('--sky-bottom','#'+c2);}
+  WSKY=sky.split(',').map(v=>'#'+v);
+}
+
+/* -------------------- 日夜循環：晨、午、黃昏、夜 -------------------- */
+const DAY={t:0.3,len:320,on:false}; // 日夜循環暫時關閉（保留程式，之後若要做日夜不同的事件再打開）
+function applySky(){const key=WSKY.join();if(key===dnSky)return;dnSky=key;const rs=document.documentElement.style;rs.setProperty('--sky-top',WSKY[0]);rs.setProperty('--sky-mid',WSKY[1]);rs.setProperty('--sky-bottom',WSKY[2]);}
+const TOD=[ // t, 天空(上/中/下), 霧, 太陽倍率, 天光倍率, 陽光色, 天光(天/地), 夜燈
+  [0.00,'#141a33','#1f2a4d','#34395c','#27304e',0.22,0.42,'#9fb4ff','#7d8fc8','#2c3450',1],
+  [0.06,'#3d4f80','#c9a0b4','#f6c89a','#cdb6b4',0.55,0.72,'#ffc59a','#ffd9c0','#6a7a7a',0.5],
+  [0.12,'#a9d4ea','#e4ecea','#fbecd4','#e6ece6',0.9,0.96,'#ffe6c4','#fff2e0','#86a98e',0],
+  [0.20,null],[0.55,null],
+  [0.62,'#a3c3dc','#f2d9b6','#f7c896','#efdcc6',0.88,0.92,'#ffcb8c','#ffe6c8','#86a08a',0],
+  [0.68,'#4a5a90','#d98a7a','#f2a36a','#b89c9a',0.5,0.66,'#ff9a62','#ffb48e','#5a5a6a',0.6],
+  [0.74,'#1f2a55','#4a4f80','#8a6f88','#3c4262',0.28,0.5,'#b0a8e0','#8a90c8','#353a58',0.95],
+  [0.80,'#141a33','#1f2a4d','#34395c','#27304e',0.22,0.42,'#9fb4ff','#7d8fc8','#2c3450',1],
+  [1.00,'#141a33','#1f2a4d','#34395c','#27304e',0.22,0.42,'#9fb4ff','#7d8fc8','#2c3450',1]];
+const dnA=new THREE.Color(),dnB=new THREE.Color(),HEMI_SKY=new THREE.Color(0xfff6e2),HEMI_GND=new THREE.Color(0x86a98e),SUN0=sun.position.clone();
+let haloTex=null,dnSky='';
+function makeHalos(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(0.25,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);haloTex=new THREE.CanvasTexture(c);
+  const mk=col=>new THREE.SpriteMaterial({map:haloTex,color:col,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
+  NIGHT.haloW=mk(0xff9a4a);NIGHT.haloL=mk(0xffe2a0);
+  NIGHT.anchors.forEach(([p,x,y,z,sz,warm])=>{const sp=new THREE.Sprite(warm?NIGHT.haloW:NIGHT.haloL);sp.position.set(x,y,z);sp.scale.setScalar(sz);sp.renderOrder=6;p.add(sp);NIGHT.halos.push(sp);});}
+function updateDayNight(dt,t){
+  if(!haloTex)makeHalos();
+  if(DAY.on)DAY.t=(DAY.t+dt/DAY.len)%1;else{const d=0.35-DAY.t;DAY.t+=Math.sign(d)*Math.min(Math.abs(d),dt*0.08);}
+  const tt=DAY.t;let i=0;while(i<TOD.length-2&&TOD[i+1][0]<=tt)i++;const A=TOD[i],B=TOD[i+1];const k=sstep(0,1,(tt-A[0])/Math.max(1e-6,B[0]-A[0]));
+  const rs=document.documentElement.style;const wsky=WSKY;
+  const val=(row,idx,def)=>row[1]===null?def:row[idx];
+  const C=(idx,def)=>dnA.set(val(A,idx,def)).lerp(dnB.set(val(B,idx,def)),k).getStyle();
+  const N=(idx,def)=>lerp(A[1]===null?def:A[idx],B[1]===null?def:B[idx],k);
+  const night=N(10,0),sunK=N(5,1),hemiK=N(6,1);
+  sun.intensity*=sunK;hemi.intensity*=hemiK;
+  const sunC=C(7,'#'+sun.color.getHexString());sun.color.set(sunC);
+  hemi.color.copy(dnA.set(C(8,'#fff6e2')));hemi.groundColor.copy(dnB.set(C(9,'#86a98e')));
+  scene.fog.color.lerp(dnA.set(C(4,'#'+scene.fog.color.getHexString())),1);
+  // 太陽：早上從東邊升起，經南方，黃昏落在西邊；夜裡換成月光
+  const dayP=clamp01((tt-0.03)/(0.73-0.03)),ang=dayP*Math.PI,moon=sstep(0.7,0.8,tt)+(1-sstep(0.0,0.06,tt))*(tt<0.1?1:0);
+  const sx=lerp(Math.cos(ang)*95,-45,clamp01(moon)),sy=lerp(22+80*Math.sin(ang),95,clamp01(moon)),sz=lerp(70,60,clamp01(moon));
+  sun.position.set(sx,sy,sz);
+  // CSS 天空
+  const top=C(1,wsky[0]),mid=C(2,wsky[1]),bot=C(3,wsky[2]);
+  {const key=top+mid+bot;if(key!==dnSky){dnSky=key;rs.setProperty('--sky-top',top);rs.setProperty('--sky-mid',mid);rs.setProperty('--sky-bottom',bot);}}
+  const cl=stormMat.opacity;$('night-sky').style.opacity=(night*(1-0.85*Math.min(1,cl))).toFixed(3);
+  if(night>0.01){const cc=dnA.set(0x4a5172);cloudMat.color.lerp(cc,night*0.75);stormMat.color.lerp(cc,night*0.7);}
+  NIGHT.k=night;postMat.uniforms.uHatch.value=(MOBILE?0:1)*(1-0.85*night);
+  LANTERN_MAT.emissiveIntensity=night*1.6;LAMP_MAT.emissiveIntensity=0.15+night*0.85;
+  WIN_MAT.opacity=night*0.92;WIN_MAT.visible=night>0.02;
+  if(NIGHT.haloW){NIGHT.haloW.opacity=night*0.5;NIGHT.haloL.opacity=night*0.3;NIGHT.halos.forEach(h=>h.visible=night>0.02);}
+  NIGHT.beams.forEach(b=>{b.m.opacity=night*0.16;b.g.visible=night>0.02;b.g.rotation.y=t*0.6;});
 }
 
 /* -------------------- 名人入場 -------------------- */
@@ -1565,6 +1678,22 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
   if(c.propObj){const show=c.phase==='act';c.propObj.visible=show;if(show){const d=c.propD||0.7;c.propObj.position.set(x+Math.sin(c.p.rotation.y)*d,G(x,z),z+Math.cos(c.p.rotation.y)*d);c.propObj.rotation.y=c.p.rotation.y+Math.PI;}}
   if(c.phase==='gone'&&a<=0){c.p.visible=false;c.aideP.forEach(ap=>ap.visible=false);if(selectedPerson===c.p)deselect();c.phase='wait';c.wait=20+Math.random()*25;}
 });}
+
+/* -------------------- 建築貼地：不陷進土裡，下坡那側把牆基往下延伸，三合院禾埕貼著地面 -------------------- */
+{const v=new THREE.Vector3(),wp=new THREE.Vector3(),ws=new THREE.Vector3();
+  OCCLUDERS.forEach(obj=>{if(obj.isInstancedMesh)return;obj.updateMatrixWorld(true);const blocks=[],yards=[];
+    obj.traverse(o=>{if(o.isMesh&&o.userData.block&&o.geometry.parameters)blocks.push(o);if(o.isMesh&&o.userData.yard)yards.push(o);});
+    if(!blocks.length&&!yards.length)return;
+    const info=blocks.map(m=>{const P=m.geometry.parameters,Hh=P.height,fl=m.position.y-Hh/2+m.userData.block.base;let gmin=1e9,gmax=-1e9;
+      for(const u of[-0.5,0,0.5])for(const w of[-0.5,0,0.5]){v.set(m.position.x+u*P.width,fl,m.position.z+w*P.depth);m.parent.localToWorld(v);const g=G(v.x,v.z);gmin=Math.min(gmin,g);gmax=Math.max(gmax,g);}
+      v.set(m.position.x,fl,m.position.z);m.parent.localToWorld(v);return{m,P,Hh,fl,gmin,gmax,fy:v.y};});
+    let lift=0;info.forEach(b=>{if(b.fy-b.gmax<0.5)lift=Math.max(lift,b.gmax-b.fy+0.02);});
+    if(lift>0){obj.position.y+=lift;obj.updateMatrixWorld(true);}
+    info.forEach(b=>{const fy=b.fy+lift;if(fy-b.gmax>=0.5)return;b.m.parent.getWorldScale(ws);const need=(fy-b.gmin+0.15)/ws.y;if(need<=b.m.userData.block.base)return;
+      const top=b.m.position.y+b.Hh/2,bot=b.fl-need;b.m.geometry=new THREE.BoxGeometry(b.P.width,top-bot,b.P.depth);b.m.position.y=(top+bot)/2;});
+    yards.forEach(y=>{y.updateMatrixWorld(true);const geo=new THREE.PlaneGeometry(1.2,1.2,8,8),pa=geo.attributes.position;
+      for(let i=0;i<pa.count;i++){wp.set(pa.getX(i),pa.getY(i),0).applyMatrix4(y.matrixWorld);pa.setXYZ(i,wp.x,G(wp.x,wp.z)+0.035,wp.z);}
+      geo.computeVertexNormals();const nm=new THREE.Mesh(geo,y.material);nm.receiveShadow=true;scene.add(nm);y.parent.remove(y);});});}
 
 /* -------------------- 行人避開建築與鐵軌 -------------------- */
 const OBST=[],OB_GRID=new Map(),OBC=3;
@@ -1640,6 +1769,19 @@ function eagleUpdate(e,dt,t){e.timer-=dt;if(e.timer<=0){e.mode=1-e.mode;e.timer=
   if(Math.hypot(dx,dz)>1e-5)b.rotation.y=Math.atan2(dx,dz);
   b.rotation.order='YXZ';b.rotation.z=lerp(0.32,0.18*Math.sin(t*1.3+e.ph),m);b.rotation.x=-Math.max(-0.5,Math.min(0.5,dy/(Math.hypot(dx,dz)+1e-4)))*0.6;
   const flap=m*Math.max(0,Math.sin(t*0.9+e.ph))*Math.sin(t*8)*0.55,dih=lerp(0.12,0.05,m);b.userData.wl.rotation.z=dih+flap;b.userData.wr.rotation.z=-dih-flap;}
+
+/* 夜裡會亮的溫泉街燈籠、臺北街燈 */
+{const nightProps=new THREE.Group();scene.add(nightProps);
+  const along=(way,s0,s1,step,off,fn)=>{const P=makePathPts(way);for(let s=s0;s<=Math.min(s1,P.L);s+=step){const [x,z,dx,dz]=pathAt(P,s);const l=Math.hypot(dx,dz)||1,sd=(Math.round(s/step)%2?1:-1);fn(x-dz/l*off*sd,z+dx/l*off*sd);}};
+  const chochin=(x,z)=>{if(obAt(x,z,0.1))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.022,0.026,0.95,5),0x5a4638,{y:0.47}));g.add(mesh(new THREE.BoxGeometry(0.22,0.03,0.03),0x5a4638,{y:0.95,x:0.08}));
+    g.add(mesh(new THREE.SphereGeometry(0.085,10,8),LANTERN_MAT,{x:0.17,y:0.82,sy:1.35}));g.position.set(x,G(x,z),z);g.rotation.y=rng()*6.28;nightProps.add(g);glowAnchor(g,0.17,0.82,0,0.85,true);};
+  const lamp=(x,z)=>{if(obAt(x,z,0.1))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.025,0.035,1.3,6),0x3f4a46,{y:0.65}));g.add(mesh(new THREE.SphereGeometry(0.08,10,8),LAMP_MAT,{y:1.34}));
+    g.position.set(x,G(x,z),z);nightProps.add(g);glowAnchor(g,0,1.34,0,0.7,false);};
+  along(ROADS[0],0.5,15.5,1.9,0.62,chochin);              // 北投溫泉街
+  along(ROADS[0],48,62,2.0,0.62,chochin);                 // 草山溫泉
+  along(ROADS[3],0,6,2.0,0.62,chochin);                   // 士林街
+  along(ROADS[8],2,60,3.6,0.6,lamp);                      // 臺北城北的街燈
+  along(ROADS[5],1,9,3.0,0.6,lamp);}
 
 /* -------------------- 地名牌 -------------------- */
 const PLACES=[
@@ -1740,6 +1882,13 @@ function makeLabel(p){
   sp.position.set(p.x,G(p.x,p.z)+p.dy,p.z);sp.renderOrder=20;labelGroup.add(sp);sprites.push(sp);
 }
 
+/* 被山擋住的地名牌淡出 */
+let lblT=0;
+function updateLabelVis(dt){lblT-=dt;const cp=camera.position;
+  if(lblT<=0){lblT=0.2;sprites.forEach(sp=>{const a=sp.position;const dx=cp.x-a.x,dy=cp.y-a.y,dz=cp.z-a.z,L=Math.hypot(dx,dy,dz);let ok=true;
+    const n=Math.min(160,Math.ceil(L/0.7));for(let i=2;i<n;i++){const f=i/n;if(f*L>140)break;const x=a.x+dx*f,y=a.y+0.4+dy*f,z=a.z+dz*f;if(y<G(x,z)){ok=false;break;}}sp.userData.vis=ok?1:0;});}
+  sprites.forEach(sp=>{const tgt=sp.userData.vis??1,m=sp.material;m.opacity+=(tgt-m.opacity)*Math.min(1,dt*5);sp.visible=m.opacity>0.03;});}
+
 /* -------------------- 說明卡 -------------------- */
 const $=id=>document.getElementById(id);
 let selectedPerson=null;
@@ -1747,12 +1896,12 @@ const ring=new THREE.Mesh(new THREE.TorusGeometry(0.5,0.05,6,24),new THREE.MeshB
 function showPhoto(key){const ph=PHOTOS[key];const fig=$('info-photo');if(!ph){fig.hidden=true;return;}$('info-img').src=ph.src;$('info-img').alt=ph.alt||'';$('info-cap').textContent=ph.caption||'';fig.hidden=false;}
 function deselect(){selectedPerson=null;ring.visible=false;$('info').hidden=true;sprites.forEach(s=>s.userData.k=1);}
 function selectPlace(key){
-  const p=PLACES.find(q=>q.key===key);if(!p)return;$('info').hidden=false;selectedPerson=null;ring.visible=false;
+  const p=PLACES.find(q=>q.key===key);if(!p)return;zkRecord('pl:'+key);$('info').hidden=false;selectedPerson=null;ring.visible=false;
   $('info-chip').textContent=p.chip;$('info-chip').dataset.kind=p.kind;$('info-title').textContent=p.title;$('info-tag').textContent=p.tag;$('info-body').textContent=p.body;showPhoto(key);
   sprites.forEach(s=>{s.userData.k=s.userData.p===p?1.18:1;});
 }
 function selectPerson(p){
-  const d=p.userData.info;selectedPerson=p;ring.visible=!d.noRing;$('info').hidden=false;$('info-photo').hidden=true;
+  const d=p.userData.info;zkRecord(zkKey(d));selectedPerson=p;ring.visible=!d.noRing;$('info').hidden=false;$('info-photo').hidden=true;
   if(d.title){$('info-chip').textContent=d.chip;$('info-chip').dataset.kind=d.kind;$('info-title').textContent=d.title;$('info-tag').textContent=d.tag;$('info-body').textContent=d.body;}
   else{$('info-chip').textContent='人物';$('info-chip').dataset.kind='person';$('info-title').textContent=d.name;$('info-tag').textContent=`${d.job}・${d.age} 歲`;$('info-body').textContent=d.bio;}
   sprites.forEach(s=>s.userData.k=1);noFollow=false;
@@ -1764,13 +1913,55 @@ const toggle=(b,on)=>b.setAttribute('aria-pressed',on?'true':'false');
 $('tg-labels').onclick=e=>{labelGroup.visible=!labelGroup.visible;toggle(e.currentTarget,labelGroup.visible);if(!labelGroup.visible&&!selectedPerson)deselect();};
 {const fit=()=>{const tb=document.querySelector('.toolbar'),tc=document.querySelector('.title-card');if(!tb||!tc)return;if(innerWidth<=720)tb.style.top=(tc.getBoundingClientRect().bottom+10)+'px';else tb.style.top='';};addEventListener('resize',fit);fit();setTimeout(fit,600);if(document.fonts)document.fonts.ready.then(fit);}
 $('tg-rotate').onclick=e=>{controls.autoRotate=!controls.autoRotate;toggle(e.currentTarget,controls.autoRotate);};toggle($('tg-rotate'),controls.autoRotate);
+/* -------------------- 見聞帖（圖鑑）：點過的人物、動物、名人、名所都會記下來 -------------------- */
+const ZK_CATS=[['famous','名人'],['people','人物'],['animal','動物'],['place','名所']];
+const ZK={list:null,byKey:new Map(),found:new Set(),fresh:new Set(),tab:'famous'};
+try{JSON.parse(localStorage.getItem('kusayama-zukan-v1')||'[]').forEach(k=>ZK.found.add(k));}catch(e){}
+function zkKey(info){if(!info)return null;if(info.name)return 'p:'+info.name+'|'+info.job;return(info.chip==='名人'?'c:':'t:')+info.title+'|'+(info.tag||'');}
+function zkCat(info){return info.chip==='名人'?'famous':info.name?'people':info.kind==='animal'?'animal':'place';}
+function zkBuild(){if(ZK.list)return;ZK.list=[];
+  const add=e=>{if(ZK.byKey.has(e.key))return;ZK.byKey.set(e.key,e);ZK.list.push(e);};
+  CAMEOS.forEach(c=>add({key:zkKey(c.info),cat:'famous',name:c.info.title,sub:c.info.tag.replace(/（.*$/,''),hint:c.info.tag.replace(/（.*$/,''),obj:c.p,info:c.info}));
+  CLICKABLE.forEach(h=>{const o=h.userData.person,info=o&&o.userData.info;if(!info)return;const key=zkKey(info);if(ZK.byKey.has(key))return;const cat=zkCat(info);
+    add({key,cat,name:info.name||info.title,sub:info.name?`${info.job}・${info.age} 歲`:(info.tag||''),hint:info.name?info.job:'',obj:o,info});});
+  PLACES.forEach(p=>add({key:'pl:'+p.key,cat:'place',name:p.name,sub:p.tag,hint:'',place:p}));}
+function zkCounts(){const c={};ZK_CATS.forEach(([k])=>c[k]=[0,0]);ZK.list.forEach(e=>{c[e.cat][1]++;if(ZK.found.has(e.key))c[e.cat][0]++;});return c;}
+function zkSave(){try{localStorage.setItem('kusayama-zukan-v1',JSON.stringify([...ZK.found]));}catch(e){}}
+let toastT=null;
+function toast(msg,ms=2200){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms);}
+function zkRecord(key){zkBuild();const e=ZK.byKey.get(key);if(!e||ZK.found.has(key))return;ZK.found.add(key);ZK.fresh.add(key);zkSave();
+  const c=zkCounts()[e.cat];const label=ZK_CATS.find(q=>q[0]===e.cat)[1];toast(`✦ 新發現　${label} ${c[0]} / ${c[1]}`);zkRender();}
+function zkRender(){zkBuild();const cnt=zkCounts();const tot=ZK.list.length,got=ZK.list.filter(e=>ZK.found.has(e.key)).length;
+  $('zk-count').textContent=`${got} / ${tot}`;
+  if($('zukan').hidden)return;
+  $('zk-sum').innerHTML=`已記下 ${got} / ${tot}<div class="zk-bar"><i style="width:${tot?got/tot*100:0}%"></i></div>`;
+  $('zk-tabs').innerHTML=ZK_CATS.map(([k,l])=>`<button role="tab" data-k="${k}" aria-selected="${ZK.tab===k}">${l} ${cnt[k][0]}/${cnt[k][1]}</button>`).join('');
+  const items=ZK.list.filter(e=>e.cat===ZK.tab);
+  $('zk-list').innerHTML=items.map((e,i)=>ZK.found.has(e.key)
+    ?`<button class="zk-item${ZK.fresh.has(e.key)?' new':''}" data-i="${ZK.list.indexOf(e)}"><b>${e.name}</b><span>${e.sub}</span></button>`
+    :`<div class="zk-item unk" aria-label="尚未發現"><b>？？？</b><span>${e.hint||'尚未發現'}</span></div>`).join('');}
+function zkOpen(on){$('zukan').hidden=!on;toggle($('btn-zukan'),on);if(on){zkRender();ZK.fresh.clear();}}
+$('btn-zukan').onclick=()=>zkOpen($('zukan').hidden);$('zk-close').onclick=()=>zkOpen(false);
+$('zk-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;ZK.tab=b.dataset.k;zkRender();};
+$('zk-list').onclick=e=>{const b=e.target.closest('button.zk-item');if(!b)return;const it=ZK.list[+b.dataset.i];if(!it)return;
+  if(MOBILE)zkOpen(false);if(controls.autoRotate){controls.autoRotate=false;toggle($('tg-rotate'),false);}
+  if(it.place){selectPlace(it.place.key);flyTo(it.place.x,it.place.z);return;}
+  let o=it.obj;if(o&&!(o.visible&&shownAll(o))){const alt=CLICKABLE.map(h=>h.userData.person).find(q=>q&&q.userData.info&&zkKey(q.userData.info)===it.key&&q.visible&&shownAll(q));if(alt)o=alt;}
+  if(o&&o.visible&&shownAll(o)){selectPerson(o);focusOn(o,true);}
+  else{selectedPerson=null;ring.visible=false;const d=it.info;$('info').hidden=false;$('info-photo').hidden=true;
+    if(d.title){$('info-chip').textContent=d.chip;$('info-chip').dataset.kind=d.kind;$('info-title').textContent=d.title;$('info-tag').textContent=d.tag;$('info-body').textContent=d.body+(it.cat==='famous'?'（目前不在場上，過一陣子會再出現。）':'');}
+    else{$('info-chip').textContent='人物';$('info-chip').dataset.kind='person';$('info-title').textContent=d.name;$('info-tag').textContent=`${d.job}・${d.age} 歲`;$('info-body').textContent=d.bio;}}};
+function shownAll(o){for(let q=o;q;q=q.parent)if(!q.visible)return false;return true;}
+setTimeout(zkRender,0);
+setTimeout(()=>{if(!ZK.found.size)toast('點地名牌或小人物，看看他們的故事',4500);},1500);
+
 $('btn-reset').onclick=()=>{fly={t:0,fromT:controls.target.clone(),toT:HOME.target.clone(),fromP:camera.position.clone(),toP:HOME.pos.clone()};};
 let userBusy=0,noFollow=false,panFrom=null;controls.addEventListener('end',()=>{userBusy=3;if(panFrom&&controls.target.distanceTo(panFrom)>0.8)noFollow=true;panFrom=null;});
 controls.addEventListener('start',()=>{fly=null;userBusy=1e9;panFrom=controls.target.clone();if(controls.autoRotate){controls.autoRotate=false;toggle($('tg-rotate'),false);}});
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();let downAt=null;
 function pick(ev){
   const r=renderer.domElement.getBoundingClientRect();ndc.set(((ev.clientX-r.left)/r.width)*2-1,-((ev.clientY-r.top)/r.height)*2+1);ray.setFromCamera(ndc,camera);
-  const hs=labelGroup.visible?ray.intersectObjects(sprites,false)[0]:null,hp=ray.intersectObjects(CLICKABLE,false).find(h=>{let o=h.object.userData.person;while(o){if(!o.visible)return false;o=o.parent;}return true;});
+  const hs=labelGroup.visible?ray.intersectObjects(sprites.filter(q=>q.visible),false)[0]:null,hp=ray.intersectObjects(CLICKABLE,false).find(h=>{let o=h.object.userData.person;while(o){if(!o.visible)return false;o=o.parent;}return true;});
   if(hp&&(!hs||hp.distance<hs.distance+4))return{person:hp.object.userData.person};if(hs)return{place:hs.object.userData.p};return null;
 }
 renderer.domElement.addEventListener('pointerdown',e=>{downAt=[e.clientX,e.clientY];});
@@ -1779,14 +1970,14 @@ renderer.domElement.addEventListener('pointerup',e=>{if(!downAt)return;const mv=
   if(h.place){selectPlace(h.place.key);flyTo(h.place.x,h.place.z);}
   else{selectPerson(h.person);focusOn(h.person,true);}});
 /* 點選物件：拉近並找一個不被地形、房子、樹擋住的角度 */
-const occRay=new THREE.Raycaster();
+const occRay=new THREE.Raycaster();occRay.camera=camera;
 function focusTarget(o){o.getWorldPosition(tv);const d=o.userData.info||{};return new THREE.Vector3(tv.x,d.noRing?tv.y:G(tv.x,tv.z)+0.6,tv.z);}
 function viewDist(o){const d=o.userData.info||{};return d.kind==='train'?14:(d.noRing?13:9);}
 function clearView(target,pos){
   const dir=pos.clone().sub(target),d=dir.length();dir.normalize();
   for(let s=0.8;s<d;s+=0.5){const x=target.x+dir.x*s,y=target.y+dir.y*s,z=target.z+dir.z*s;if(y<G(x,z)+0.15)return false;}
   occRay.set(target.clone().addScaledVector(dir,0.9),dir);occRay.far=d;
-  return !occRay.intersectObjects(OCCLUDERS,true).some(h=>h.object.material&&h.object.material.visible!==false&&h.object.visible);
+  return !occRay.intersectObjects(OCCLUDERS,true).some(h=>!h.object.isSprite&&h.object.material!==WIN_MAT&&h.object.material&&h.object.material.visible!==false&&h.object.visible);
 }
 function bestView(target,dist){
   const cur=camera.position.clone().sub(controls.target);const az0=Math.atan2(cur.x,cur.z);
@@ -1891,7 +2082,7 @@ function tick(){
     controls.target.x+=ddx;controls.target.y+=ddy;controls.target.z+=ddz;camera.position.x+=ddx;camera.position.y+=ddy;camera.position.z+=ddz;}
   if(fly){fly.t=Math.min(1,fly.t+dt/1.1);const e=ease(fly.t);controls.target.lerpVectors(fly.fromT,fly.toT,e);camera.position.lerpVectors(fly.fromP,fly.toP,e);if(fly.t>=1)fly=null;}
   controls.update();
-  updateWeather(dt,t);
+  updateWeather(dt,t);if(DAY.on)updateDayNight(dt,t);else applySky();updateLabelVis(dt);
   renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCam);
   requestAnimationFrame(tick);
 }
