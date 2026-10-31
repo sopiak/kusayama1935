@@ -710,7 +710,7 @@ place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);cl
   const honden=house({w:2.0,d:1.6,h:0.95,wall:'shrine',roof:'copper',rh:0.85,over:0.3});honden.position.z=-1.5;sh.add(honden);
   for(const s of[-1,1]){sh.add(mesh(new THREE.BoxGeometry(0.06,0.5,0.06),0x456c5e,{x:0.32*s,y:1.95,z:-0.6,rz:0.5*s}));sh.add(mesh(new THREE.BoxGeometry(0.06,0.5,0.06),0x456c5e,{x:0.32*s,y:1.95,z:-2.4,rz:0.5*s}));}
   const haiden=house({w:2.6,d:1.2,h:0.8,wall:'shrine',roof:'copper',rh:0.7,over:0.3});haiden.rotation.y=Math.PI/2;haiden.position.z=0.55;sh.add(haiden);
-  const ped=texMat('wall','base');const plat=new THREE.Mesh(new THREE.BoxGeometry(4.6,0.18,5.4),toon(0xe9e2cf));plat.position.set(0,0.05,-0.3);plat.receiveShadow=true;sh.add(plat);
+  const plat=new THREE.Mesh(new THREE.BoxGeometry(4.6,0.18,5.4),toon(0xe9e2cf));plat.position.set(0,0.05,-0.3);plat.receiveShadow=true;sh.add(plat);
   // 神門：兩側翼廊＋中央門洞，上覆銅瓦屋頂
   const gate=new THREE.Group();gate.position.z=2.3;sh.add(gate);
   for(const s of[-1,1]){gate.add(mesh(new THREE.BoxGeometry(0.55,0.95,0.6),0xf7f2e6,{x:0.62*s,y:0.47}));gate.add(mesh(new THREE.BoxGeometry(0.1,1.0,0.1),0xd9483b,{x:0.36*s,y:0.5,z:0.31}));gate.add(mesh(new THREE.BoxGeometry(0.1,1.0,0.1),0xd9483b,{x:0.88*s,y:0.5,z:0.31}));}
@@ -727,7 +727,7 @@ place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);cl
 /* 臺北市 */
 for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,1.0)||!free(x,z,0.85))continue;claim(x,z,0.85);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
 /* 軍艦岩 */
-{const rk=new THREE.Group();const rm=texMat('wall','base');
+{const rk=new THREE.Group();const rm=toon(0xbcb29c);
   [[0,0.35,0,1.9,0.55,0.7],[0.7,0.75,0.05,0.9,0.35,0.5],[-0.9,0.25,0.15,0.8,0.3,0.55]].forEach(([x,y,z,sx,sy,sz])=>{const m=new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),rm);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;rk.add(m);});
   place(rk,-26.8,38.2,0.5);claim(-26.8,38.2,1.8);}
 /* 關渡宮 */
