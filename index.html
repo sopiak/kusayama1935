@@ -242,7 +242,7 @@ const ROADS=[
   [[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.2]],
   [[-19.4,74.8],[-18.6,78],[-17,83.8],[-15.1,85]],
   [[-45.6,41.2],[-46.6,37],[-44.8,34.6]],
-  [[26,94.3],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2]],
+  [[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2]],
 ];
 const TRAIL=[[29,-1],[33,-10],[37,-18],[41,-28],[43,-38],[48,-46],[54,-52],[58,-56]];
 function segDist(px,pz,ax,az,bx,bz){const vx=bx-ax,vz=bz-az,l2=vx*vx+vz*vz;const t=clamp01(l2?((px-ax)*vx+(pz-az)*vz)/l2:0);return Math.hypot(px-ax-vx*t,pz-az-vz*t);}
@@ -628,7 +628,7 @@ function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.
   else{r=new THREE.Mesh(roofGeo(w,rh,d,over),texMat('roof',roof));r.position.y=h;
     g.add(mesh(new THREE.BoxGeometry(0.13,0.1,d+over*2+0.06),0x3f3a44,{y:h+rh}));}
   r.castShadow=true;g.add(r);
-  if(eaves)for(const s of[-1,1])g.add(mesh(new THREE.ConeGeometry(0.07,0.42,5),0x3f3a44,{x:(w/2+over+0.05)*s,y:h+rh*0.15+0.15,z:0,rz:-s*0.9}));
+  if(eaves&&!hip)for(const s of[-1,1])g.add(mesh(new THREE.BoxGeometry(0.13,0.08,0.22),0x3f3a44,{y:h+rh+0.06,z:(d/2+over+0.06)*s,rx:-s*0.45}));
   if(noren)g.add(mesh(new THREE.BoxGeometry(w*0.5,0.2,0.02),noren,{y:h*0.62,z:d/2+0.02}));
   if(lantern)for(const s of[-1,1])g.add(mesh(new THREE.SphereGeometry(0.09,10,8),0xd9483b,{x:w*0.32*s,y:h*0.8,z:d/2+0.1,sy:1.3}));
   return g;
@@ -656,7 +656,7 @@ function sanheyuan(scale=1,wall='tw',roof='tw'){
 function townHouse(r){
   if(r<0.4)return house({w:1.2,d:1.4,h:1.25,wall:'brick',roof:'brown',rh:0.45,noren:[0xd9483b,0x3f63a6,0xf2ead8][Math.floor(r*30)%3]});
   if(r<0.75)return house({w:1.5,d:1.1,h:0.75,wall:'jp',roof:r<0.6?'kawara':'kawara2',rh:0.55});
-  return house({w:1.6,d:0.9,h:0.62,wall:'tw',roof:'tw',rh:0.45,eaves:true});
+  return house({w:1.6,d:0.9,h:0.62,wall:'tw',roof:'tw',rh:0.45});
 }
 function torii(scale=1,color=0xd9483b){
   const g=new THREE.Group();
@@ -683,7 +683,7 @@ function fillTown(cx,cz,r,n){
 {
   const bath=new THREE.Group();
   const low=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.8,2.1),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;bath.add(low);
-  const up=house({w:3.2,d:2.1,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.25});up.position.y=1.0;bath.add(up);
+  const up=house({w:3.0,d:1.94,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.3,base:0.02});up.position.y=1.0;bath.add(up);
   place(bath,-37,24.6,0.3);claim(-37,24.6,2.2);
   [[-42,23.5,0.2],[-44.5,26,0.6],[-38.5,21.3,-0.2],[-34,23,0.4],[-41.5,20.8,0],[-46,23,0.1],[-36,31.5,-0.2]].forEach(([x,z,r],i)=>{
     place(house({w:1.7,d:1.1,h:0.8,wall:'jp',roof:i%2?'kawara':'kawara2',rh:0.55,lantern:true}),x,z,r);claim(x,z,1);});
@@ -855,6 +855,9 @@ const INFO={
   duck:{chip:'動物',kind:'animal',title:'鴨子',tag:'田裡的除草隊',body:'農家常把鴨群趕進收割後或插秧後的水田，讓牠們吃掉雜草、害蟲和落穗，鴨糞又能肥田。鴨蛋可以做成鹹蛋、皮蛋，是重要的副業收入。'},
   chicken:{chip:'動物',kind:'animal',title:'雞',tag:'三合院前的放養雞',body:'幾乎每戶農家都在禾埕上放養幾隻雞，啄食穀粒和小蟲。雞蛋給家人補身體，逢年過節或拜拜時才會殺雞。'},
   eagle:{chip:'動物',kind:'animal',title:'大冠鷲',tag:'山區最常見的猛禽',body:'臺灣山區最常見的大型猛禽，展翅超過一公尺，翅膀下有一道明顯的白色橫帶。天氣晴朗、上升氣流旺盛時，常在山谷上空張開雙翅盤旋，一邊發出「忽悠—忽悠—」的響亮叫聲；牠們最愛吃蛇，所以又叫「蛇鷹」。',noRing:true},
+  muntjac:{chip:'野生動物',kind:'animal',title:'山羌',tag:'臺灣最小的鹿',body:'體型像中型狗的小型鹿，紅褐色，公的頭上有一對短短的角。個性害羞，多在清晨和黃昏到森林邊緣吃嫩葉、果實；受到驚嚇時會發出像狗吠的「咔、咔」叫聲，所以又叫「吠鹿」。大屯山、竹子山一帶的闊葉林裡都有牠們的蹤影。'},
+  boar:{chip:'野生動物',kind:'animal',title:'山豬',tag:'臺灣野豬・山裡的大傢伙',body:'全身覆蓋粗硬的黑褐色鬃毛，公豬嘴邊有向上彎的獠牙。用長鼻子翻土找竹筍、根莖和蚯蚓，常常把山腳的番薯田、竹林翻得亂七八糟，是山村農家又怕又恨的對象，也是獵人眼中的大獵物。'},
+  piglet:{chip:'野生動物',kind:'animal',title:'山豬仔',tag:'身上有西瓜紋的小山豬',body:'剛出生幾個月的小野豬，身上有淺色的縱向條紋，像西瓜皮一樣，可以在草叢和落葉間保護色躲藏。長到半歲左右，條紋就會慢慢消失。牠們會緊跟在母豬身邊一起覓食。'},
   mainTrain:{chip:'交通',kind:'train',title:'淡水線列車',tag:'臺北—淡水・蒸汽機關車牽引',body:'由黑色蒸汽機關車牽引幾節木造客車，在臺北與淡水之間往返，沿途停靠圓山、士林、石牌、北投、關渡等驛。假日常坐滿要去北投泡湯、去淡水看海的乘客，煙囪冒出的白煙老遠就看得見。'},
   spurTrain:{chip:'交通',kind:'train',title:'新北投支線列車',tag:'北投驛—新北投驛',body:'只掛一節客車的短程列車，在北投驛和新北投驛之間來回，專門接送泡湯客。車程只有幾分鐘，一下車就是溫泉鄉。'},
 };
@@ -942,6 +945,7 @@ const STYLES={
   nakai:{top:0x9a7fc0,robe:0x9a7fc0,obi:0xd9483b,hair:'bun',sleeves:true,detail:'apron'},
   miner:{top:0xb8a874,bottom:0x6b5a46,legSkin:true,hat:'headband'},
   fisher:{top:0x5c7392,bottom:0x3d3446,legSkin:true,hat:'headband'},
+  qipao:{top:0xe8b0c0,robe:0xe8b0c0,robeLong:true,hair:'bun',detail:'tw',detailC:0xfbf6e8},
   sailor:{top:0x2a2d3a,robe:0x2a2d3a,detail:'kimono',hair:'bun'},
   nurse:{top:0xfbfbf6,robe:0xfbfbf6,hat:'towel',hair:'bun'},
   monk:{top:0x8a8478,robe:0x8a8478,sleeves:true,hair:'none',detail:'kimono'},
@@ -1264,9 +1268,9 @@ const bobbers=[];
   addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],0.4),{speed:0.45,water:true,start:0.2,walkers:[[p,'stand']]},I('張進財',50,'帆船船夫','駕著載米的帆船在淡水河上往來，從大稻埕順流而下到淡水，再載回鹽和雜貨。'));}
 {const g=boatM(0xf2e6c8);addMover(g,offsetPath([[76,91.4],...KEE_PTS],-0.3),{speed:0.35,water:true,start:0.5,walkers:[]});}
 for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;if(!isTerrace(x,z,m)||!free(x,z,0.6))continue;
-  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I([...NAMES_M,...NAMES_F][c+3],30+c*7,'梯田農家','三芝庄的山坡上開了一層層梯田，田小、水靠山泉，一年只收得到一季，收成全靠老天。'));c++;}
+  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I((c%2?NAMES_F:NAMES_M)[c+3],30+c*7,'梯田農家','三芝庄的山坡上開了一層層梯田，田小、水靠山泉，一年只收得到一季，收成全靠老天。'));c++;}
 {const p=person('rail',{top:0x3d4a6b,bottom:0x3d4a6b});addActor(p,-60.6,-67,0.4,'stand',I('森田 勇',44,'燈台守','在富貴角燈塔值勤的燈台守，每天傍晚爬上塔頂點燈、擦拭透鏡，夜裡每隔幾小時就要檢查一次。'));}
-{const p=person('farmer',{top:0x7aa6c9});addActor(p,-77.6,44.4,-1.0,'bow',I('洪阿珍',52,'香客','從關渡附近來拜媽祖的婦人，祈求出海捕魚的丈夫平安。'));}
+{const p=person('twF',{top:0x7aa6c9});addActor(p,-77.6,44.4,-1.0,'bow',I('洪阿珍',52,'香客','從關渡附近來拜媽祖的婦人，祈求出海捕魚的丈夫平安。'));}
 
 /* 狗 */
 const dogs=[];
@@ -1289,6 +1293,10 @@ movers.forEach(m=>m.walkers.forEach(([p,a],k)=>{
   u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,[0xc9873f,0x2f2a33,0x9a4a3a,0x3f63a6][umbrellas.length%4],{y:0.76}));
   u.visible=false;p.userData.arms[0].add(u);p.userData.umb=u;umbrellas.push(u);}));
 
+{const a=person('suit',{hat:'boater',hatC:0xf0e2b6,top:0x6b6a7a,bottom:0x6b6a7a});satchel(a,0x6b4a34);
+  addMover(a,offsetPath(ROADS[8],-0.2),{speed:0.45,start:0.15},I('王進財',34,'行商','從臺北城內往北走，到圓山、士林一帶的商店收帳。'));
+  const b=person('twF',{top:0xd9a0a8});hold(b,'basket');addMover(b,offsetPath(ROADS[8],0.22),{speed:0.38,start:0.7},I('林阿蘭',29,'上街買菜的婦人','提著竹籃從家裡走去市場，回程順路帶一包餅給孩子。'));
+  const c=person('twM',{top:0x5c7392});shoulderPole(c,0xd9b56a);addMover(c,offsetPath(ROADS[8],0.05),{speed:0.4,start:0.42,walkers:[[c,'carry']]},I('陳阿發',46,'挑貨郎','挑著雜貨沿街叫賣，從城內一路走到明治橋頭。'));}
 /* ---------- 各行各業（追加） ---------- */
 const SPOTS={SL:[-19.5,70,4.5],BT:[-50,42.5,3.5],ON:[-39,25,3.2],KS:[-4,9,3],TP:[-2,93.4,3.2],ZZ:[-9.5,-10,3],QT:[29,-1,5],KJ:[60,-58.5,3],SC:[-45,-56,2.5],KD:[-79,41,2.5],YB:[-27,41,2.5],MT:[24,6,4],SH:[-30,50,3]};
 function spotNear(key){const [cx,cz,r]=SPOTS[key];for(let k=0;k<80;k++){const a=rng()*6.283,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
@@ -1375,6 +1383,11 @@ function inBoardXZ(x,z){return Math.min(x-X0,X0+W-x,z-Z0,Z0+D-z);}
  [60,-58.5,3,'cat','小花','金山庄漁港等魚吃的貓'],[-9.5,-10,3,'dog','阿土','竹子湖農家的狗'],[-45,-56,2.5,'dog','黑仔','三芝庄的看門狗']].forEach(([x,z,r,k,n,where])=>{
   const o=k==='dog'?dog():cat([0xe0a050,0x2f2a33,0xf2efe6,0x9a8a7a][Math.floor(rng()*4)]);if(k==='cat')o.userData.isCat=true;
   addWander(o,x,z,r,k==='dog'?0.9:0.55,petInfo(k,n,where));});
+
+/* 山裡的野生動物：山羌、山豬（多半在林緣出沒） */
+[[-30,-20,3.5],[18,-41,3.5],[-6,-30,3],[-38,-30,3],[30,-31,3.5],[8,-52,3],[-16,-25,3],[41,-44,3],[-46,-19,3]].forEach(([x,z,r])=>addWander(muntjac(),x,z,r,0.6,INFO.muntjac));
+[[50,-24,3.5],[62,28,3.5],[45,8,3.5],[56,-40,3.5],[30,42,3],[66,2,3.5]].forEach(([x,z,r],i)=>{addWander(boar(1.15),x,z,r,0.45,INFO.boar);
+  if(i%2===0)for(let k=0;k<3;k++)addWander(boar(0.55,true),x+(k-1)*0.6,z+0.5,1.6,0.5,INFO.piglet);});
 
 /* 飛鳥 */
 const WING_G=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.1);sh.quadraticCurveTo(0.32,0.12,0.6,-0.02);sh.quadraticCurveTo(0.3,-0.08,0,-0.1);sh.closePath();
@@ -1502,11 +1515,11 @@ const CAMEOS=[
    info:{chip:'名人',kind:'person',title:'廖添丁',tag:'傳說中的義賊（1883–1909）',body:'流傳在臺北一帶的傳奇人物，民間故事說他劫富濟貧、屢次戲弄日本警察。他在 1909 年死於八里，這裡是傳說彩蛋：他飛快地從淡水河西岸一路跑過田野。'}},
 ];
 CAMEOS.push(
-  {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'board',path:[[26,94.3],[18,94.3],[12,93.2],[4,92.8]],act:'write',actT:10,speed:0.5,
+  {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'board',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8]],act:'write',actT:10,speed:0.5,
    info:{chip:'名人',kind:'person',title:'井手薰',tag:'建築家・總督府營繕課長（1879–1944）',body:'長年主持臺灣總督府營繕課，參與總督府廳舍等官廳建築，晚年力倡適合臺灣氣候的建築風格。他領導的營繕課設計的臺北公會堂正在興建中，預定明年（1936）落成。他拿著圖板，正在城北的街上勘查。'}},
   {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[8,4],[4,5],[1,5.5],[-2,7]],act:'write',actT:12,speed:0.4,
    info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他到草山散步，在本子上記下腦中浮現的旋律。'}},
-  {style:'kimono',opts:{top:0xe8b0c0,robe:0xe8b0c0,obi:0xfbf6e8},hold:'parasol',holdC:0xf2d27a,path:[[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.4,
+  {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.4,
    info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她撐著陽傘到北投溫泉街，和認出她的歌迷揮手。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.45,
    info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從明治橋往士林街去拜訪朋友。'}},
@@ -1669,8 +1682,6 @@ const PLACES=[
    body:'五指山系向西南伸出的山頭，和西側的大崙尾山同在一條稜線上。北麓是內雙溪的溪谷，山腳散布著茶園和小聚落。'},
   {key:'danfeng',name:'丹鳳山',elev:186,glyph:'山',kind:'peak',x:-23.8,z:34.2,dy:1.4,chip:'山峰',title:'丹鳳山',tag:'北投與石牌之間的小山',
    body:'北投平原東側的低矮山丘，稜線上有形似軍艦的砂岩「軍艦岩」。山腳是唭哩岸、石牌一帶的聚落與水田，淡水線就沿著山腳經過。'},
-  {key:'jiantan',name:'劍潭山',elev:153,glyph:'山',kind:'peak',x:-10.8,z:77.2,dy:1.4,chip:'山峰',title:'劍潭山',tag:'基隆河北岸・臺灣神社所在',
-   body:'基隆河北岸的小山丘，西端建有臺灣神社，山下的基隆河在此轉彎，對岸就是臺北市的圓山一帶。'},
   {key:'qixing',name:'七星山',elev:1120,glyph:'山',kind:'peak',x:8.5,z:-5.7,dy:1.4,chip:'山峰',title:'七星山',tag:'標高 1,120 m・大屯火山群最高峰',
    body:'主峰與東峰並立的錐狀火山，也是臺北盆地周邊的最高點。山頂一片芒草原，西北麓有小油坑噴氣孔，東側接冷水坑與大嶺。'},
   {key:'zhuzishan',name:'竹子山',elev:1103,glyph:'山',kind:'peak',x:18.4,z:-49.1,dy:1.4,chip:'山峰',title:'竹子山',tag:'標高約 1,103 m・南北延伸的長稜',
@@ -1784,6 +1795,24 @@ addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 const ease=t=>t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const tv=new THREE.Vector3();
+function muntjac(){const g=new THREE.Group(),c=0xa5653c,d=0x5a3a28;g.add(mesh(new THREE.CapsuleGeometry(0.09,0.24,4,8),c,{y:0.32,rx:Math.PI/2}));
+  const head=new THREE.Group();head.position.set(0,0.47,0.2);g.add(head);head.add(mesh(new THREE.SphereGeometry(0.07,8,6),c,{sz:1.3}));head.add(mesh(new THREE.BoxGeometry(0.05,0.05,0.08),d,{y:-0.02,z:0.08}));
+  head.add(mesh(new THREE.CapsuleGeometry(0.04,0.12,3,6),c,{y:-0.1,z:-0.05,rx:0.5}));
+  for(const sx of[-1,1]){head.add(mesh(new THREE.ConeGeometry(0.03,0.07,4),c,{x:0.06*sx,y:0.06,z:-0.03,rz:-0.5*sx}));head.add(mesh(new THREE.CylinderGeometry(0.008,0.012,0.08,4),0x4a3a2e,{x:0.025*sx,y:0.09,z:0,rx:-0.3}));head.add(mesh(new THREE.BoxGeometry(0.01,0.06,0.01),d,{x:0.03*sx,y:0.03,z:0.06,rx:0.3}));}
+  const legs=[];const LG=new THREE.CylinderGeometry(0.016,0.014,0.26,4).translate(0,-0.13,0);for(const z of[-0.12,0.12])for(const x of[-0.05,0.05])legs.push(legPivot(g,x,0.27,z,LG,d));
+  const tail=new THREE.Group();tail.position.set(0,0.36,-0.2);tail.add(mesh(new THREE.ConeGeometry(0.025,0.08,5).translate(0,0.04,0),0xf2ead8,{rx:-2.3}));g.add(tail);
+  g.userData={legs,tail,head,animal:true};return g;}
+function boar(scale=1,striped=false){const g=new THREE.Group(),c=striped?0x9a7350:0x3d3430,d=0x2a2422;
+  g.add(mesh(new THREE.CapsuleGeometry(0.15,0.3,4,8),c,{y:0.27,rx:Math.PI/2,sx:0.9,sy:1}));
+  if(striped)for(const x of[-0.13,-0.06,0.06,0.13])g.add(mesh(new THREE.BoxGeometry(0.02,0.012,0.44),0xe2cc9a,{x,y:0.27+Math.sqrt(Math.max(0,0.15*0.15-x*x))*0.95,z:0}));
+  else g.add(mesh(new THREE.BoxGeometry(0.06,0.05,0.4),d,{y:0.43,z:0.02}));
+  const head=new THREE.Group();head.position.set(0,0.27,0.27);g.add(head);head.add(mesh(new THREE.ConeGeometry(0.12,0.24,8),c,{z:0.06,rx:Math.PI/2}));
+  head.add(mesh(new THREE.CylinderGeometry(0.045,0.045,0.03,8),0x6b5a55,{z:0.18,rx:Math.PI/2}));
+  for(const sx of[-1,1]){head.add(mesh(new THREE.SphereGeometry(0.024,10,8),0x1e1a22,{x:0.058*sx,y:0.048,z:0.035}));head.add(mesh(new THREE.SphereGeometry(0.009,6,5),0xffffff,{x:0.062*sx,y:0.058,z:0.055,shadow:false}));
+    head.add(mesh(new THREE.ConeGeometry(0.03,0.06,4),c,{x:0.07*sx,y:0.09,z:-0.04}));if(!striped)head.add(mesh(new THREE.ConeGeometry(0.012,0.06,4),0xf6f1e4,{x:0.045*sx,y:0.02,z:0.13,rx:-0.4}));}
+  const legs=[];const LG=new THREE.CylinderGeometry(0.03,0.025,0.14,4).translate(0,-0.07,0);for(const z of[-0.14,0.14])for(const x of[-0.08,0.08])legs.push(legPivot(g,x,0.15,z,LG,d));
+  const tail=new THREE.Group();tail.position.set(0,0.32,-0.29);tail.add(mesh(new THREE.CylinderGeometry(0.008,0.012,0.1,4).translate(0,-0.05,0),d,{rx:0.4}));g.add(tail);
+  g.scale.setScalar(scale);g.userData={legs,tail,head,animal:true};return g;}
 function animalPose(o,t,ph,moving,anim){const u=o.userData;
   if(u.legs){u.legs.forEach((l,i)=>{l.rotation.x=moving?Math.sin(t*6+ph+(i%2?Math.PI:0)+(i>1?Math.PI/2:0))*0.4:0;});}
   if(u.tail)u.tail.rotation.x=anim==='dogrest'?0:0.3*Math.sin(t*(u.legs&&u.legs.length===4&&!moving?2:5)+ph);
