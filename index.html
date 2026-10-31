@@ -584,7 +584,7 @@ function bridge(x,z,ang,len,color=0xe9e1d0,arch=false){
   const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(1.4,0.18,len),color,{y:0.2}));
   for(const s of[-1,1])g.add(mesh(new THREE.BoxGeometry(0.08,0.2,len),0x8a6a4a,{x:0.66*s,y:0.38}));
   if(arch)for(const s of[-1,1])g.add(mesh(new THREE.TorusGeometry(len/2,0.09,6,20,Math.PI),0xc9c2b4,{x:0.62*s,y:0.1,ry:Math.PI/2,sy:0.45}));
-  g.position.set(x,H(x,z),z);g.rotation.y=ang;scene.add(g);return g;
+  g.position.set(x,H(x,z),z);g.rotation.y=ang;scene.add(g);DECKS.push({x,z,ang,len,wd:1.4,top:H(x,z)+0.3});return g;
 }
 { // 明治橋（昭和 8 年改建）：鋼筋混凝土開腹式三連拱橋，花崗石欄杆，兩端各一對青銅燈柱
   const x=-15.04,z=88.73,ang=-2.993,len=5.0,wd=1.7,g=new THREE.Group();
@@ -1092,7 +1092,6 @@ const I=(name,age,job,bio)=>({name,age,job,bio});
   addActor(p2,-10.6,-8.6,0.4,'sickle',I('曹阿梅',38,'農婦','高阿水的鄰居。割稻時她最仔細，原種田的稻子要一株一株檢查，混進一株不一樣的就得拔掉。'));
   const tub=new THREE.Group();tub.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tub.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tub,-11.4,-10.4,0);
   const t1=person('farmer',{top:0x5c7392});hold(t1,'sheaf');addActor(t1,-11.4,-9.6,Math.PI,'thresh',I('曹阿財',19,'農家子弟','曹阿梅的兒子。打穀的時候抓起一把稻穗往木桶邊緣用力摔，穀粒就掉進桶裡。他的力氣大，一個下午能打完好幾分田的稻子。'));
-  const t2=person('farmer',{top:0x8aa0a8});hold(t2,'sheaf');addActor(t2,-11.4,-11.2,0,'thresh',I('簡天送',27,'幫工','農忙時從山下北投來幫工的年輕人，換工吃飯、領一點工錢。他最期待收工後去北投泡溫泉。'));
   const carrier=person('coolie');shoulderPole(carrier,0xe2c771);
   addMover(carrier,[[-10,-9.8],[-12.2,-8.4],[-13.4,-6.2]],{speed:0.25,walkers:[[carrier,'carry']]},I('簡老伯',63,'挑米人','把竹子湖收成的稻穀挑到溪邊的水車寮碾米，走的就是人稱「米路」的小徑。挑了一輩子，路上哪塊石頭會滑他都知道。'));
   for(let i=0;i<3;i++){const e=egret();addActor(e,-9.5+i*1.5,-8.2+i*0.4,rng()*6,'egret');}
@@ -1328,8 +1327,6 @@ const NPCS=[
  {at:'KS',st:'kimono',o:{top:0x6b4a7a,robe:0x6b4a7a,obi:0xd9c38c},anim:'idle',nm:'岡田 ふく',age:50,job:'旅館女將',bio:'草山溫泉旅館的女將（老闆娘），親自在門口迎送客人，泡湯的毛巾都要她過目才行。'},
  {at:'KS',st:'suit',o:{hat:'boater',hatC:0xf0e2b6},bag:0x6b4a34,walk:1.4,nm:'許文雄',age:28,job:'登山客',bio:'週末上草山健行的臺北上班族，打算從草山走到竹子湖，再繞去看大屯山的雪景候補地。'},
  {at:'KS',st:'sailor',hold:'brush',anim:'paint',nm:'陳月娥',age:16,job:'高等女學校學生',bio:'跟著美術老師上草山寫生的女學生，最喜歡畫櫻花和遠處的七星山。'},
- {at:'ZZ',st:'farmerW',o:{top:0x9bb2bf},back:0x8fbf5a,walk:1.0,sp:0.25,nm:'曹阿綢',age:34,job:'原種田秧苗工',bio:'背著一簍秧苗在田埂上來回，把原種田的秧苗分送到每一塊田。'},
- {at:'ZZ',st:'farmerW',o:{top:0xd9a0a8},hold:'broom',anim:'sweep',nm:'高阿玉',age:41,job:'曬穀婦人',bio:'在曬穀場上用木耙翻動稻穀，讓穀子曬得均勻，看到烏雲就趕緊收穀。'},
  {at:'QT',st:'tech',o:{hat:'straw',hatC:0xead9a0},bag:0x6b4a34,walk:2.0,sp:0.3,nm:'藤井 正',age:42,job:'牧場獸醫',bio:'臺北州派來巡視牧牛的獸醫，檢查牛隻有沒有生病、蹄子有沒有受傷。'},
  {at:'QT',st:'farmer',o:{top:0x6f8fb3},walk:1.6,sp:0.3,nm:'郭阿川',age:55,job:'寄養牛的主人',bio:'從士林上山來看自家寄養的水牛，順便帶一把番薯葉給牠加菜。'},
  {at:'MT',st:'farmer',o:{top:0x8a7a5a},back:0x8a6a4a,walk:1.5,sp:0.3,nm:'簡阿樹',age:47,job:'樵夫',bio:'上山砍柴的樵夫，背簍裝滿柴枝，下山前會在山泉邊洗把臉。'},
@@ -1503,40 +1500,40 @@ function updateWeather(dt,t){
 const CAMEOS=[
   {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.6]],act:'bow',actT:7,speed:0.5,
    info:{chip:'名人',kind:'person',title:'中川健藏',tag:'第 16 任臺灣總督（任期 1932–1936）',body:'內務官僚出身的文官總督，昭和 7 年就任。任內推動地方自治制度改革，昭和 10 年（1935）舉辦「始政四十周年記念臺灣博覽會」，並實施臺灣第一次州、市、街庄協議會員選舉。這天他帶著隨員，從臺北經明治橋前往臺灣神社參拜。'}},
-  {style:'tech',opts:{hat:'helmet',hatC:0xe8dcb4},hold:'board',path:[[-6.3,5.2],[-7,3],[-9,-4],[-10.6,-8.6],[-9.2,-10.6]],act:'write',actT:16,speed:0.45,
+  {style:'tech',opts:{hat:'helmet',hatC:0xe8dcb4},hold:'board',path:[[-11,-10],[-10.4,-8.4],[-9,-6.6],[-7.8,-8.2]],act:'write',actT:16,speed:0.45,
    info:{chip:'名人',kind:'person',title:'磯永吉',tag:'農學家・蓬萊米之父（1886–1972）',body:'臺北帝國大學教授，與末永仁一起投入稻種改良，育成適合臺灣種植、又符合日本人口味的蓬萊米，被稱為「蓬萊米之父」。他正上山巡視竹子湖原種田的稻子。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a4f45,bottom:0x5a4f45},hold:'brush',easel:true,path:[[-95,30],[-86,32.6],[-80.5,34.2]],act:'paint',actT:12,speed:0.5,
    info:{chip:'名人',kind:'person',title:'陳澄波',tag:'油畫家（1895–1947）',body:'嘉義出身的油畫家，東京美術學校畢業，昭和元年以〈嘉義街外〉入選帝展，是第一位入選帝展的臺灣畫家。1930 年代他常到淡水寫生，這天在關渡的河岸支起畫架。'}},
-  {style:'yukataM',opts:{top:0x2f3346,robe:0x2f3346,obi:0xd9c38c},hold:'board',path:[[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.4,27.2]],act:'write',actT:10,speed:0.4,
+  {style:'yukataM',opts:{top:0x2f3346,robe:0x2f3346,obi:0xd9c38c},hold:'board',path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.4,27.2]],act:'write',actT:10,speed:0.8,
    info:{chip:'名人',kind:'person',title:'西川滿',tag:'作家（1908–1999）',body:'在臺北長大的日本作家，主編《媽祖》等文藝刊物，作品充滿臺灣民俗與異國浪漫的色彩。他穿著浴衣在北投溫泉街找一處安靜的角落寫稿。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f2f3a,bottom:0x2f2f3a},path:[[-3,100],[-2,95.5],[0,92.6],[-8,92.6]],act:'chat',actT:8,speed:0.6,
    info:{chip:'名人',kind:'person',title:'蔣渭水',tag:'醫師・社會運動者（1890–1931）',body:'在大稻埕開設大安醫院的醫師，創立臺灣文化協會、臺灣民眾黨，被稱為「臺灣的孫中山」。他在 1931 年已經過世，這裡是穿越時空的彩蛋客串。'}},
-  {style:'coolie',opts:{top:0x2f2a33,bottom:0x2f2a33},path:[[-95,62],[-84,66],[-72,72],[-62,78],[-52,84],[-44,88]],act:null,actT:0,speed:2.6,run:true,
+  {style:'coolie',opts:{top:0x2f2a33,bottom:0x2f2a33},path:[[-95,62],[-84,66],[-72,72],[-62,78],[-52,84],[-44,88],[-45,93],[-45.5,101]],act:null,actT:0,speed:2.6,run:true,
    info:{chip:'名人',kind:'person',title:'廖添丁',tag:'傳說中的義賊（1883–1909）',body:'流傳在臺北一帶的傳奇人物，民間故事說他劫富濟貧、屢次戲弄日本警察。他在 1909 年死於八里，這裡是傳說彩蛋：他飛快地從淡水河西岸一路跑過田野。'}},
 ];
 CAMEOS.push(
   {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'board',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8]],act:'write',actT:10,speed:0.5,
    info:{chip:'名人',kind:'person',title:'井手薰',tag:'建築家・總督府營繕課長（1879–1944）',body:'長年主持臺灣總督府營繕課，參與總督府廳舍等官廳建築，晚年力倡適合臺灣氣候的建築風格。他領導的營繕課設計的臺北公會堂正在興建中，預定明年（1936）落成。他拿著圖板，正在城北的街上勘查。'}},
-  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[8,4],[4,5],[1,5.5],[-2,7]],act:'write',actT:12,speed:0.4,
-   info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他到草山散步，在本子上記下腦中浮現的旋律。'}},
-  {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.4,
-   info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她撐著陽傘到北投溫泉街，和認出她的歌迷揮手。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.45,
-   info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從明治橋往士林街去拜訪朋友。'}},
-  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[1,5],[4,10],[5,16],[5,18.5]],act:'chat',actT:10,speed:0.4,
+  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[-11,-10],[-9,-4],[-7,3],[-4,10],[-1.5,7.2]],act:'write',actT:12,speed:0.55,
+   info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他從竹子湖沿著山路散步到草山，在本子上記下腦中浮現的旋律。'}},
+  {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.8,
+   info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她從淡水方向沿著河岸路走到北投，撐著陽傘逛溫泉街，和認出她的歌迷揮手。'}},
+  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.55,
+   info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從臺北過明治橋，往士林街去拜訪朋友。'}},
+  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11,-10],[-9,-4],[-7,3],[-4,10],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.65,
    info:{chip:'名人',kind:'person',title:'陳天來',tag:'茶商（1872–1939）',body:'大稻埕錦記茶行的老闆，經營烏龍茶、包種茶外銷，是臺北首屈一指的茶商，還出資興建了戲院「第一劇場」。他親自上山看看今年的茶園。'}},
-  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-50.5,37.2],[-46,38],[-44.8,34.6],[-42,32]],act:'chat',actT:8,speed:0.4,
+  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-42,32]],act:'chat',actT:8,speed:0.75,
    info:{chip:'名人',kind:'person',title:'辜顯榮',tag:'商人・貴族院議員（1866–1937）',body:'鹿港出身的商人，經營製糖、鹽業與土地開發，是日本時代臺灣最有影響力的商人之一，昭和 9 年（1934）成為第一位獲敕選為貴族院議員的臺灣人。他帶著隨從到北投泡湯。'}},
-  {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-21.5,69],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.35,
+  {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.55,
    info:{chip:'名人',kind:'person',title:'林獻堂',tag:'霧峰林家・社會運動領袖（1881–1956）',body:'臺中霧峰林家的領袖，長年領導「臺灣議會設置請願運動」，也是臺灣文化協會的重要支持者，被稱為臺灣議會之父。他到士林拜訪老友，在街上和人聊了起來。'}},
-  {style:'twM',opts:{top:0x6b5a46,bottom:0x3d3446},hold:'board',path:[[-26,62],[-31,56],[-35,51],[-38,47.5]],act:'write',actT:10,speed:0.45,
+  {style:'twM',opts:{top:0x6b5a46,bottom:0x3d3446},hold:'board',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-21.5,69],[-26,61],[-31,53],[-35,50]],act:'write',actT:10,speed:0.6,
    info:{chip:'名人',kind:'person',title:'楊逵',tag:'作家（1906–1985）',body:'臺南新化出身的作家，昭和 9 年（1934）以〈送報伕〉入選東京《文學評論》徵文，是第一位登上日本中央文壇的臺灣作家。他走在鄉間小路上，邊走邊構思描寫農民的新小說。'}},
   {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x4a4458},hold:'brush',easel:true,path:[[-36,100],[-35,96],[-35.5,92]],act:'paint',actT:12,speed:0.45,
    info:{chip:'名人',kind:'person',title:'郭雪湖',tag:'膠彩畫家（1908–2012）',body:'大稻埕長大的畫家，和陳進、林玉山同在第一回臺展入選，被稱為「臺展三少年」。昭和 5 年（1930）以描繪大稻埕霞海城隍廟前熱鬧街景的〈南街殷賑〉入選臺展。他在淡水河邊支起畫架寫生。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-12.5,-1.5],[-15.5,-5],[-17.5,-7.5]],act:'photo',actT:10,speed:0.4,
+  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11,-10],[-12.6,-7.6],[-15.5,-5.3],[-17,-7.2]],act:'photo',actT:10,speed:0.4,
    info:{chip:'名人',kind:'person',title:'鄧南光',tag:'攝影家（1907–1971）',body:'新竹北埔出身，在日本法政大學求學時迷上攝影，昭和 10 年（1935）回臺在臺北開設「南光寫真機店」，用萊卡相機記錄臺灣的街頭與庶民生活。他扛著三腳架上山拍竹子湖。'}},
-  {style:'student',opts:{hat:'none',top:0xfbfbf6,bottom:0xfbfbf6},path:[[-19,70],[-16,63],[-12,55],[-9,45]],act:null,actT:0,speed:2.2,run:true,
-   info:{chip:'名人',kind:'person',title:'張星賢',tag:'田徑選手（1910–1989）',body:'臺中出身的田徑選手，早稻田大學在學期間入選日本代表隊，參加昭和 7 年（1932）洛杉磯奧運的四百公尺跨欄等項目，是第一位參加奧運的臺灣人。他正沿著士林往草山的路練跑。'}},
+  {style:'student',opts:{hat:'none',top:0xfbfbf6,bottom:0xfbfbf6},path:offsetPath(MAIN_PATH,0.45),act:null,actT:0,speed:2.2,run:true,
+   info:{chip:'名人',kind:'person',title:'張星賢',tag:'田徑選手（1910–1989）',body:'臺中出身的田徑選手，早稻田大學在學期間入選日本代表隊，參加昭和 7 年（1932）洛杉磯奧運的四百公尺跨欄等項目，是第一位參加奧運的臺灣人。他正從臺北出發，沿著淡水線的鐵道旁一路往淡水方向練跑。'}},
 );
 CAMEOS.forEach(c=>{c.p=person(c.style,c.opts);if(c.hold)hold(c.p,c.hold,c.holdC);c.p.userData.info=c.info;CLICKABLE.push(c.p.userData.hit);c.p.userData.hit.userData.person=c.p;
   c.p.visible=false;folk.add(c.p);c.P=makePathPts(c.path);c.aideP=[];c.phase='wait';c.wait=4+Math.random()*41;
