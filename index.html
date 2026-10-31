@@ -901,6 +901,7 @@ const CCOAT={orangeTabby:[0xe0a050,{stripe:0xb0652a},'橘虎斑'],calico:[0xf2ef
 function dog(o={}){const g=new THREE.Group();const c=o.c||0xc9a066;coatMarks(g,0.1,0.25,0.26,o);g.add(mesh(new THREE.CapsuleGeometry(0.1,0.25,4,8),c,{y:0.25,rx:Math.PI/2}));
   const head=new THREE.Group();head.position.set(0,0.36,0.2);g.add(head);head.add(mesh(new THREE.SphereGeometry(0.09,8,6),c));head.add(mesh(new THREE.BoxGeometry(0.07,0.06,0.09),0xe3c896,{y:-0.02,z:0.08}));
   for(const s of[-1,1])head.add(mesh(new THREE.ConeGeometry(0.03,0.07,4),o.spots&&s>0?o.spots[0]:c,{x:0.05*s,y:0.09}));
+  {const dark=c===0x2f2a33;for(const s of[-1,1]){if(dark)head.add(mesh(new THREE.SphereGeometry(0.016,8,6),0xd9a85a,{x:0.036*s,y:0.055,z:0.07,sy:0.6,shadow:false}));head.add(mesh(new THREE.SphereGeometry(0.019,10,8),dark?0x14110f:0x1e1a22,{x:0.038*s,y:0.025,z:0.078}));head.add(mesh(new THREE.SphereGeometry(0.007,6,5),0xffffff,{x:0.042*s,y:0.033,z:0.094,shadow:false}));}}
   const legs=[];const LG=new THREE.CylinderGeometry(0.025,0.025,0.16,4).translate(0,-0.08,0);for(const z of[-0.12,0.12])for(const x of[-0.06,0.06])legs.push(legPivot(g,x,0.17,z,LG,c));
   const tail=new THREE.Group();tail.position.set(0,0.3,-0.2);tail.add(mesh(new THREE.CylinderGeometry(0.015,0.02,0.16,4).translate(0,0.08,0),c,{rx:-0.6}));g.add(tail);
   g.userData={legs,tail,head,animal:true};return g;}
@@ -1374,8 +1375,11 @@ movers.forEach(m=>m.walkers.forEach(([p,a])=>{if(!p.userData||!p.userData.arms||
 /* 在聚落裡四處走動的貓狗 */
 const wanderers=[];
 function addWander(obj,cx,cz,r,speed,info){folk.add(obj);addHit(obj,info,obj.userData.isCat?0.25:0.35,0.2);const w={obj,cx,cz,r,speed,tx:cx,tz:cz,wait:rng()*3,ph:rng()*10};wanderers.push(w);obj.position.set(cx,G(cx,cz),cz);return w;}
-function wanderTarget(w){for(let k=0;k<12;k++){const a=rng()*Math.PI*2,d=Math.sqrt(rng())*w.r,x=w.cx+Math.cos(a)*d,z=w.cz+Math.sin(a)*d;
-  if(H(x,z)>SEA+0.15&&inBoardXZ(x,z)>1&&!RIVERS.some(r=>polyDist(x,z,r.pts)<r.w+0.3)&&free(x,z,0)){w.tx=x;w.tz=z;return;}}w.tx=w.cx;w.tz=w.cz;}
+function segClear(x0,z0,x1,z1,m){const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.ceil(L/0.2));for(let i=1;i<=n;i++){const t=i/n;if(obAt(x0+(x1-x0)*t,z0+(z1-z0)*t,m))return false;}return true;}
+function wanderTarget(w){const ox=w.obj.position.x,oz=w.obj.position.z;
+  for(let k=0;k<30;k++){const a=rng()*Math.PI*2,d=Math.sqrt(rng())*w.r,x=w.cx+Math.cos(a)*d,z=w.cz+Math.sin(a)*d;
+  if(H(x,z)>SEA+0.15&&inBoardXZ(x,z)>1&&!RIVERS.some(r=>polyDist(x,z,r.pts)<r.w+0.3)&&segClear(ox,oz,x,z,0.22)){w.tx=x;w.tz=z;return;}}
+  w.tx=ox;w.tz=oz;}
 function inBoardXZ(x,z){return Math.min(x-X0,X0+W-x,z-Z0,Z0+D-z);}
 [[-19.5,70,4,'dog','ポチ','士林街日本人家養的狗','whitebrown'],[-18,68,3.5,'cat','タマ','士林市場附近的店家貓','white'],[-50,43,3,'dog','阿虎','北投庄裡的看門狗','brindle'],[-38,24,3,'cat','ミケ','溫泉旅館養的三花貓','calico'],
  [-40,26,3,'cat','咪咪','在地獄谷旁曬太陽','gray'],[-4,9,3,'dog','旺旺','草山眾樂園前的常客','tan'],[2,93.5,3,'cat','阿虎','臺北街屋的屋頂貓','orangeTabby'],[-12,93,3,'dog','小黃','明治橋邊的流浪狗','yellow'],
@@ -1879,7 +1883,7 @@ function tick(){
     if(w.wait>0){w.wait-=dt;animalPose(o,t,w.ph,false,'pet');if(w.wait<=0)wanderTarget(w);}
     else{const dx=w.tx-o.position.x,dz=w.tz-o.position.z,d=Math.hypot(dx,dz);
       if(d<0.08){w.wait=1+Math.random()*4;}else{const st=Math.min(d,w.speed*dt*mot);o.position.x+=dx/d*st;o.position.z+=dz/d*st;o.rotation.y=Math.atan2(dx,dz);animalPose(o,t*1.4,w.ph,true,'pet');}}
-    {const [px,pz]=pushOut(o.position.x,o.position.z,0.15);o.position.x=px;o.position.z=pz;}o.position.y=groundY(o.position.x,o.position.z);}
+    {const [px,pz]=pushOut(o.position.x,o.position.z,0.15);if(Math.abs(px-o.position.x)+Math.abs(pz-o.position.z)>1e-4&&w.wait<=0){w.wait=0.4+Math.random()*1.5;w.tx=px;w.tz=pz;}o.position.x=px;o.position.z=pz;}o.position.y=groundY(o.position.x,o.position.z);}
   if(userBusy>0&&userBusy<1e8)userBusy-=dt;
   if(selectedPerson&&!fly&&selectedPerson.visible&&userBusy<=0&&!noFollow){viewCheck-=dt;if(viewCheck<=0){viewCheck=1.5;if(!clearView(focusTarget(selectedPerson),camera.position))focusOn(selectedPerson,false);}}
   if(selectedPerson&&!fly&&selectedPerson.visible&&!noFollow&&userBusy<1e8){selectedPerson.getWorldPosition(tv);const ty=selectedPerson.userData.info&&selectedPerson.userData.info.noRing?tv.y:G(tv.x,tv.z)+0.6;
