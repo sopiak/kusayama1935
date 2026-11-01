@@ -1458,7 +1458,7 @@ function bankAt(pts,w,px,pz,off,side=1){let best=null;
     const p=person(st);const mq=addMover(p,offsetPath(sando,i%2?0.25:-0.25),{speed:0.4,start:0.3+i*0.25,pause:8},I(n,a,j,b));mq.shrine=true;});
   const bw=person('kimono',{top:0x7aa6c9,robe:0x7aa6c9,obi:0xf2d27a});const mvT=addMover(bw,offsetPath([...ROADS[8].slice(0,-1),[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.1]],0.12),{speed:0.4,start:0.05,pause:8,walkers:[[bw,'walk']]},I('高橋 ふさ',58,'參拜客','每個月一號一定從城裡走來神社參拜，祈求在內地的兒子平安，拜完再沿著原路走回家。'));mvT.shrine=true;
   const ph=person('suit',{hat:'fedora',hatC:0x2f2a33});addActor(ph,-12.5,91.1,-2.4,'photo',I('葉清泉',41,'寫真師','在臺北市開寫真館的攝影師，假日在明治橋邊替遊客拍紀念照，三腳架上的箱型相機要蓋上黑布才能對焦。'));
-  const cam=new THREE.Group();for(let s=0;s<3;s++)cam.add(mesh(PG.stick,0x6b4a34,{y:0.4,sy:0.8,rx:0.25*Math.cos(s*2.1),rz:0.25*Math.sin(s*2.1)}));cam.add(mesh(new THREE.BoxGeometry(0.28,0.25,0.3),0x2f2a33,{y:0.85}));cam.add(mesh(new THREE.CylinderGeometry(0.06,0.06,0.12,8),0x5a5a66,{y:0.85,z:-0.2,rx:Math.PI/2}));
+  const cam=new THREE.Group();for(let s=0;s<3;s++)cam.add(mesh(PG.stick,0x6b4a34,{y:0.4,sy:0.8,rx:0.25*Math.cos(s*2.1),rz:0.25*Math.sin(s*2.1)}));cam.add(mesh(new THREE.BoxGeometry(0.28,0.25,0.3),0x2f2a33,{y:0.85}));cam.add(mesh(new THREE.CylinderGeometry(0.06,0.06,0.12,8),0x5a5a66,{y:0.85,z:0.2,rx:Math.PI/2}));
   place(cam,-13.0,90.6,-2.4);
   // 腳踏車
   const bike=new THREE.Group();for(const z of[-0.45,0.45]){const wh=mesh(new THREE.TorusGeometry(0.28,0.03,6,16),0x2f2a33,{y:0.3,z,ry:Math.PI/2});bike.add(wh);}
