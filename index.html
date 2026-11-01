@@ -142,13 +142,13 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 .zk-item.unk{background:transparent;border-style:dashed;border-color:#b9b1c2;cursor:default;color:#a59db0}
 .zk-item.unk b{letter-spacing:.2em}
 .zk-item:not(.unk):hover{transform:translateY(-1px)}
-.toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translate(-50%,-10px);opacity:0;pointer-events:none;
+.toast{position:fixed;left:max(16px,env(safe-area-inset-left,0px));top:calc(64px + env(safe-area-inset-top,0px));transform:translateY(-8px);opacity:0;pointer-events:none;
   background:var(--ink);color:var(--paper);font:700 13px/1 var(--font-body);padding:10px 16px;border-radius:999px;transition:opacity .3s,transform .3s;z-index:5;white-space:nowrap}
-.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.show{opacity:1;transform:translateY(0)}
 @media (max-width:720px){
   .zukan{left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-height:62vh}
   .zk-item b{font-size:15px}.zk-item span{font-size:12px}.zk-tabs button{font-size:14px;padding:8px 12px}
-  .toast{top:auto;bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  .toast{top:calc(60px + env(safe-area-inset-top,0px))}
 }
 @media (max-width:440px){.title-card .n{display:none}}
 @media (prefers-reduced-motion:reduce){.toolbar button,.toast,.zk-bar i{transition:none}}
@@ -216,7 +216,7 @@ const DEM_NX=321,DEM_NZ=337;
 function demM(x,z){const fi=Math.min(Math.max((x+90)*2,0),DEM_NX-1.001),fj=Math.min(Math.max((z+72)*2,0),DEM_NZ-1.001);const i=Math.floor(fi),j=Math.floor(fj),tx=fi-i,ty=fj-j,r=j*DEM_NX+i;
   return((DEM[r]*(1-tx)+DEM[r+1]*tx)*(1-ty)+(DEM[r+DEM_NX]*(1-tx)+DEM[r+DEM_NX+1]*tx)*ty)/10;}
 /* 基隆河以南、淡水河以東的臺北市區維持平地，其餘一律依 DEM */
-const KEE_PTS=[[70.0,92.0],[68.4,93.8],[65.5,93.7],[62.5,92.7],[59.5,92.0],[56.5,92.0],[53.5,92.3],[50.5,93.3],[47.5,94.9],[44.5,95.6],[41.5,95.7],[38.5,95.7],[35.5,95.7],[32.5,95.6],[29.5,95.5],[27.4,94.4],[26.2,91.5],[24.0,90.0],[21.0,90.7],[18.0,92.0],[15.0,91.8],[12.0,90.5],[9.0,89.6],[6.0,89.1],[3.0,88.9],[0.0,88.6],[-3.0,88.5],[-6.0,88.4],[-9.0,88.1],[-12.0,88.0],[-15.0,88.7],[-17.4,90.7],[-19.8,90.7],[-22.5,88.3],[-25.5,86.5],[-28.4,84.4],[-30.9,82.0],[-33.5,81.0],[-36.5,81.0],[-39.5,81.0],[-42.5,80.5]],TAM_PTS=[[-38.0,96.0],[-38.0,93.0],[-38.0,90.0],[-38.6,87.0],[-40.5,84.0],[-43.5,81.0],[-45.9,78.0],[-48.5,75.0],[-51.5,72.0],[-54.5,69.3],[-57.5,67.7],[-60.5,66.3],[-63.5,64.7],[-66.5,63.5],[-69.5,62.2],[-72.5,61.0],[-75.5,60.0],[-78.5,58.0],[-81.2,55.0],[-82.5,52.0],[-83.3,49.0],[-84.3,46.0],[-85.0,43.0],[-86.6,40.0],[-88.3,37.8],[-90.0,36.0]];
+const KEE_PTS=[[70.0,92.0],[68.4,93.8],[65.5,93.7],[62.5,92.7],[59.5,92.0],[56.5,92.0],[53.5,92.3],[50.5,93.3],[47.5,94.9],[44.5,95.6],[41.5,95.7],[38.5,95.7],[35.5,95.7],[32.5,95.6],[29.5,95.5],[27.4,94.4],[26.2,91.5],[24.0,90.0],[21.0,90.7],[18.0,92.0],[15.0,91.8],[12.0,90.5],[9.0,89.6],[6.0,89.1],[3.0,88.9],[0.0,88.6],[-3.0,88.5],[-6.0,88.4],[-9.0,88.1],[-12.0,88.0],[-15.0,88.7],[-17.4,90.7],[-19.8,90.7],[-22.5,88.3],[-25.5,86.5],[-28.4,84.4],[-30.9,82.0],[-33.5,81.0],[-36.5,81.0],[-39.5,81.0],[-42.5,80.5]],TAM_PTS=[[-38.0,96.0],[-38.0,93.0],[-38.0,90.0],[-38.6,87.0],[-40.5,84.0],[-43.5,81.0],[-45.9,78.0],[-48.5,75.0],[-51.5,72.0],[-54.5,69.3],[-57.5,67.7],[-60.5,66.3],[-63.5,64.7],[-66.5,63.5],[-69.5,62.2],[-72.5,61.0],[-75.5,60.0],[-78.5,58.0],[-81.2,55.0],[-82.5,52.0],[-83.3,49.0],[-84.3,46.0],[-85.0,43.0],[-86.6,40.0],[-88.3,37.8],[-90.0,36.0],[-92.0,33.8],[-94.0,31.6]];
 const TPE_POLY=[...KEE_PTS,[-40.5,84],[-38.6,87],[-38,90],[-38,93],[-38,97],[71,97]];
 function inPoly(x,z,P){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const [xi,zi]=P[i],[xj,zj]=P[j];if(((zi>z)!==(zj>z))&&(x<(xj-xi)*(z-zi)/(zj-zi)+xi))c=!c;}return c;}
 function tpeFlat(x,z){if(z<79||!inPoly(x,z,TPE_POLY))return 0;let d=1e9;for(const P of[KEE_PTS,TAM_PTS])for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],vx=b[0]-a[0],vz=b[1]-a[1],l2=vx*vx+vz*vz,t=Math.min(1,Math.max(0,((x-a[0])*vx+(z-a[1])*vz)/l2));d=Math.min(d,Math.hypot(x-a[0]-vx*t,z-a[1]-vz*t));}return sstep(0.4,2.6,d);}
@@ -232,10 +232,10 @@ function peakShape(p,x,z){
 }
 const PADS=[
   {x:-4,z:9,r:4.5,t:7.7,s:0.6},{x:-14.6,z:79.4,r:5.6,t:2.75,s:1},{x:-45,z:-7.6,r:1.6,t:15.15,s:1},{x:-40,z:28,r:8,t:0.85,s:1},
-  {x:60,z:-58.5,r:5,t:0.9,s:1},{x:-45,z:-56,r:4.5,t:2.8,s:0.8},{x:-61.5,z:-67.2,r:4.2,t:1.2,s:1},{x:29,z:-1,r:11,t:14.0,s:1},
+  {x:60,z:-58.5,r:7,t:0.9,s:1},{x:-45,z:-56,r:4.5,t:2.8,s:0.8},{x:-61.5,z:-67.2,r:4.2,t:1.2,s:1},{x:29,z:-1,r:11,t:14.0,s:1},
 ];
 var RAIL_PROF=null;
-const coastZ=x=>-66+2.5*Math.sin(x*0.09)+1.5*Math.sin(x*0.23+1)-5*Math.exp(-(((x+62)/5)**2));
+const coastZ=x=>-66+2.5*Math.sin(x*0.09)+1.5*Math.sin(x*0.23+1)-5*Math.exp(-(((x+62)/5)**2))-4.2*Math.exp(-(((x-65.6)/2.8)**2));
 function H0(x,z){
   let b=0.7+5.4*Math.exp(-(((x-4)/44)**2+((z+12)/25)**2));
   b+=0.8*n2(x,z)*Math.exp(-(((z+8)/34)**2));
@@ -248,6 +248,7 @@ function H0(x,z){
     if(c.breach){const ux=x-c.x,uz=z-c.z,t=ux*c.breach[0]+uz*c.breach[1];
       if(t>0){const perp=Math.abs(ux*c.breach[1]-uz*c.breach[0]);h-=c.d*VS*0.75*Math.exp(-((perp/1.6)**2))*Math.exp(-((t/7)**2))*sstep(0,1.5,t);}}
   }
+  h=Math.max(h,1.5*Math.exp(-(((x-65.6)/2.3)**2+((z+67.6)/2.4)**2)));
   h=lerp(-1.4,h,sstep(coastZ(x)-3,coastZ(x)+7,z));
   for(const pd of PADS){
     const d=Math.hypot(x-pd.x,z-pd.z);const w=sstep(pd.r,pd.r*0.45,d)*pd.s;if(w<=0)continue;
@@ -258,7 +259,7 @@ function H0(x,z){
 }
 /* 鐵道路基：沿線高度以一列火車以上的長度平滑，坡度連續 */
 var LATE_FLATS=[],LATE_G=new Map();
-function H(x,z){let h=Hr(x,z);if(LATE_FLATS.length){const L=LATE_G.get(Math.floor(x/4)+','+Math.floor(z/4));if(L)for(const f of L){const dx=x-f.x,dz=z-f.z;
+function H(x,z){let h=Hr(x,z);if(x>63&&z>86&&z<97){const d=polyDist(x,z,KEE_PTS);if(d<1.6)h=Math.min(h,lerp(0.8,h,sstep(1.0,1.6,d)));}if(LATE_FLATS.length){const L=LATE_G.get(Math.floor(x/4)+','+Math.floor(z/4));if(L)for(const f of L){const dx=x-f.x,dz=z-f.z;
   const u=Math.abs(f.c*dx-f.s*dz)-f.hx,v=Math.abs(f.s*dx+f.c*dz)-f.hz,e=Math.hypot(Math.max(u,0),Math.max(v,0));if(e<f.m)h=lerp(h,f.y,sstep(f.m,0,e));}}return h;}
 function Hr(x,z){let h=H0(x,z);if(!RAIL_PROF)return h;let best=null;
   for(const L of RAIL_PROF){if(x<L.x0||x>L.x1||z<L.z0||z>L.z1)continue;
@@ -271,7 +272,7 @@ const G=(x,z)=>Math.max(H(x,z),SEA);
 /* -------------------- 線狀地物 -------------------- */
 const RIVERS=[
   {name:'淡水河',w:1.9,pts:TAM_PTS},
-  {name:'基隆河',w:1.15,pts:KEE_PTS},
+  {name:'基隆河',w:1.15,pts:[[73.2,88.4],[71.6,90.2],...KEE_PTS]},
   {name:'北投溪',w:0.4,pts:[[-35.0,28.5],[-37.5,28.5],[-40.0,28.5],[-42.5,29.3],[-45.0,31.5],[-47.5,34.0],[-50.0,36.5],[-52.5,38.7],[-55.0,39.5],[-57.5,39.6],[-60.0,40.0],[-62.3,41.3],[-64.0,43.4],[-66.0,45.7],[-68.4,48.0],[-69.8,50.5],[-70.0,53.0],[-70.0,55.5],[-70.0,58.0],[-69.2,60.5],[-67.0,62.8],[-64.5,64.4],[-62.0,65.6],[-59.5,66.8],[-57.5,67.5]]},
   {name:'磺溪',w:0.45,pts:[[-10,-9.5],[-11.5,-8.8],[-12.5,-7.3],[-13.7,-6.0],[-14.0,-4.3],[-13.4,-2.6],[-12.8,-0.9],[-12.8,0.9],[-12.6,2.6],[-12.3,4.4],[-12.0,6.1],[-11.1,7.7],[-11.4,9.4],[-12.0,11.1],[-12.0,12.9],[-12.5,14.6],[-12.9,16.3],[-13.7,17.9],[-14.5,19.4],[-15.4,20.9],[-15.6,22.5],[-15.0,24.2],[-15.3,26.6],[-14.7,29.0],[-14.2,31.5],[-14.0,34.0],[-14.1,36.5],[-15.2,39.0],[-17.5,41.5],[-19.3,44.0],[-19.9,46.5],[-20.0,49.0],[-20.3,51.5],[-22.0,54.0],[-24.5,56.5],[-26.8,59.0],[-27.9,61.5],[-28.0,64.0],[-28.0,66.5],[-28.4,69.0],[-29.7,71.5],[-31.2,74.0],[-31.3,76.5],[-31.4,78.9],[-32.2,80.4],[-33.5,81.0]]},
   {name:'北磺溪',w:0.4,pts:[[22.5,-18],[23.1,-19.6],[22.8,-21.4],[22.2,-23.0],[23.0,-24.5],[24.3,-25.8],[25.5,-27.2],[26.7,-28.4],[28.5,-28.7],[30.2,-29.3],[31.8,-29.9],[33.5,-29.5],[35.2,-29.9],[36.9,-29.9],[38.5,-29.9],[40.1,-30.7],[41.6,-31.7],[43.3,-32.0],[44.5,-33.2],[45.8,-34.5],[46.5,-36.0],[46.6,-37.8],[47.4,-39.4],[47.6,-41.2],[48.0,-42.9],[49.2,-44.3],[50.4,-45.5],[51.5,-47.0],[52.9,-48.0],[54.1,-49.4],[55.4,-50.5],[56.8,-51.7],[58.3,-52.7],[59.9,-53.3],[61.7,-53.0],[63.4,-53.5],[65.1,-53.9],[66.8,-54.1],[68.6,-54.5],[70,-54.6]]},
@@ -291,17 +292,17 @@ RAIL_PROF=(()=>{const out=[];[RAIL_MAIN,RAIL_SPUR].forEach((Lp,li)=>{const segs=
     const f=b.s/S*(n-1),i=Math.min(n-2,Math.floor(f));return lerp(prof[i],prof[i+1],f-i);};
   out.push(L);});return out;})();
 const ROADS=[
-  [[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-36,26],[-34,22],[-26,17],[-17,14],[-10,12],[-4,10],[1,5]],
+  [[-45.6,41.2],[-46.6,37],[-46.5,33.8],[-45.8,31.0],[-44.4,30.0],[-41.6,29.7],[-38.3,29.7],[-36,26],[-34,22],[-26,17],[-17,14],[-10,12],[-4,10],[1,5]],
   [[-4,10],[-7,3],[-9,-4],[-11,-10]],
-  [[1,5],[8,4],[14,1],[17,-1],[24,0],[29,-1]],
+  [[1,5],[8,4],[14,1],[17,-1],[21.6,-1]],
   [[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10]],
-  [[-21.5,69],[-26,61],[-31,53],[-37,46.5],[-43,41.5],[-45.6,41.2]],
+  [[-21.5,69],[-26,61],[-31,53],[-37.4,47.4],[-43.2,42.5],[-45.6,41.2]],
   [[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.2]],
   [[-19.4,74.8],[-18.6,78],[-17,83.8],[-15.1,85]],
-  [[-45.6,41.2],[-46.6,37],[-44.8,34.6]],
-  [[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2]],
+  [[-45.6,41.2],[-46.6,37]],
+  [[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.29,93.0]],
 ];
-const TRAIL=[[29,-1],[33,-10],[37,-18],[41,-28],[43,-38],[48,-46],[54,-52],[58,-56]];
+const TRAIL=[[21.6,-1.0],[21.85,-2.92],[22.59,-4.7],[23.77,-6.23],[25.3,-7.41],[27.08,-8.15],[29.0,-8.4],[30.92,-8.15],[32.01,-7.76],[33,-10],[37,-18],[41,-28],[43,-38],[48,-46],[54,-52],[58,-56]];
 function segDist(px,pz,ax,az,bx,bz){const vx=bx-ax,vz=bz-az,l2=vx*vx+vz*vz;const t=clamp01(l2?((px-ax)*vx+(pz-az)*vz)/l2:0);return Math.hypot(px-ax-vx*t,pz-az-vz*t);}
 function polyDist(x,z,pts){let m=1e9;for(let i=0;i<pts.length-1;i++)m=Math.min(m,segDist(x,z,pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1]));return m;}
 function nearLines(x,z,pad=1.2){
@@ -493,6 +494,14 @@ const WALL={
     x.fillStyle='#d9483b';[[0,16],[80,92],[164,176],[240,256]].forEach(([a,b])=>x.fillRect(a,0,b-a,h));x.fillRect(0,0,w,14);x.fillRect(0,120,w,8);
     x.fillStyle='#e7dcc4';x.fillRect(0,236,w,20);}),
 };
+function winOnly(src,patch){const c=document.createElement('canvas');c.width=src.image.width;c.height=src.image.height;const x=c.getContext('2d');x.drawImage(src.image,0,0);patch(x);
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t;}
+WALL.tw_w=winOnly(WALL.tw,x=>{x.fillStyle='#d27d58';x.fillRect(98,108,60,116);x.save();x.beginPath();x.rect(98,108,60,114);x.clip();bricks(x,256,256,'#ad5e40',0,222);x.restore();
+  x.fillStyle='#3d2f2a';x.fillRect(108,124,40,40);for(let i=1;i<5;i++)jl(x,108+i*8,124,108+i*8,164,3,'#8a6a4a');});
+WALL.stone_w=winOnly(WALL.stone,x=>{x.fillStyle='#bdb19b';x.fillRect(100,116,56,140);for(let i=0;i<10;i++){x.fillStyle=['#c9bea8','#ada28c','#b8ab92'][i%3];x.fillRect(102+(i%3)*18,122+Math.floor(i/3)*30,16,12);}
+  x.fillStyle='#3d2f2a';x.fillRect(110,122,36,30);});
+WALL.temple_w=winOnly(WALL.temple,x=>{x.fillStyle='#c4402f';x.fillRect(76,86,104,128);x.fillStyle='#3d2f2a';x.fillRect(106,112,44,40);for(let i=1;i<5;i++)jl(x,106+i*8.8,112,106+i*8.8,152,3,'#e2b04a');});
+var SHRINE_FIX=[];var TEMPLE_SL=null,BATH_OBJ=null,FERRY=null,TEMPLE_GD=null,GD_STALL=null;const REED_CLEAR=[];const atLocal0=(o,lx,lz)=>{const v=new THREE.Vector3(lx,0,lz);o.updateMatrixWorld(true);o.localToWorld(v);return[v.x,v.z];};const ONSEN_H=[];
 function roofTex(base,line,hi,style='tile'){
   return canvasTex((x,w,h)=>{x.fillStyle=base;x.fillRect(0,0,w,h);
     if(style==='tile'){for(let u=0;u<w;u+=16){jl(x,u,0,u,h,3,line,0.8);jl(x,u+5,0,u+5,h,1.4,hi,0.6);}
@@ -514,6 +523,7 @@ function texMat(kind,key,repeat){const k=kind+key+(repeat||'');if(texCache.has(k
 /* -------------------- 地形網格（含田埂、茶園的著色器） -------------------- */
 const X0=-90,Z0=-76,W=160,D=172,SEG=0.5;
 const nx=Math.round(W/SEG),nz=Math.round(D/SEG);
+var STRATA=null,REED_IM=null,HIKE_MV=[];
 const tgeo=new THREE.PlaneGeometry(W,D,nx,nz);tgeo.rotateX(-Math.PI/2);tgeo.translate(X0+W/2,0,Z0+D/2);
 {
   const pos=tgeo.attributes.position,col=new Float32Array(pos.count*3),kind=new Float32Array(pos.count);
@@ -523,8 +533,11 @@ const tgeo=new THREE.PlaneGeometry(W,D,nx,nz);tgeo.rotateX(-Math.PI/2);tgeo.tran
 }
 /* 稻田只畫「整格都落在平地」的田：逐格檢查，存成遮罩貼圖給著色器 */
 function paddyPointL(x,z){if(sanchiField(x,z))return true;const h=H(x,z),m=h/VS;if(h<SEA+0.12||m>=72||!(z>16||z<-56)||isMarsh(x,z))return false;if(inTown(x,z,0.3))return false;
-  for(const f of FUM)if(Math.hypot(x-f.x,z-f.z)<f.r+0.5)return false;for(const r of RIVERS)if(polyDist(x,z,r.pts)<r.w+0.35)return false;return true;}
-function paddyPointZ(x,z){const m=H(x,z)/VS;return Math.hypot((x+9.5)*0.9,z+9.8)<4.6&&m>620&&m<745;}
+  for(const f of FUM)if(Math.hypot(x-f.x,z-f.z)<f.r+0.5)return false;for(const r of RIVERS)if(polyDist(x,z,r.pts)<r.w+0.35)return false;
+  if(!PADDY_LINES)PADDY_LINES=[...ROADS.map(r=>[r,0.42+0.55]),[RAIL_MAIN,0.45+0.65],[RAIL_SPUR,0.45+0.65],[TRAIL,0.32+0.5]].map(([r,w])=>{const xs=r.map(q=>q[0]),zs=r.map(q=>q[1]);return{r,w,x0:Math.min(...xs)-w,x1:Math.max(...xs)+w,z0:Math.min(...zs)-w,z1:Math.max(...zs)+w};});
+  for(const b of PADDY_LINES)if(x>b.x0&&x<b.x1&&z>b.z0&&z<b.z1&&polyDist(x,z,b.r)<b.w)return false;return true;}
+var PADDY_LINES=null;
+function paddyPointZ(x,z){const m=H(x,z)/VS;if(!(Math.hypot((x+9.5)*0.9,z+9.8)<4.6&&m>620&&m<745))return false;for(const r of ROADS)if(polyDist(x,z,r)<0.42+0.3)return false;return true;}
 function cellFull(cx,cz,cs,fn){for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(!fn((cx+0.06+i*0.44)*cs,(cz+0.06+j*0.44)*cs))return false;return true;}
 function makeMask(cs,x0,x1,z0,z1,fn){const cx0=Math.floor(x0/cs),cz0=Math.floor(z0/cs),nx=Math.floor(x1/cs)-cx0+1,nz=Math.floor(z1/cs)-cz0+1,d=new Uint8Array(nx*nz);
   for(let j=0;j<nz;j++)for(let i=0;i<nx;i++)d[j*nx+i]=cellFull(cx0+i,cz0+j,cs,fn)?255:0;
@@ -597,6 +610,7 @@ function skirt(pts){
   for(let i=0;i<=nx;i++){const x=X0+i*SEG;N.push([x,Z0]);S.push([x,Z0+D]);}
   for(let j=0;j<=nz;j++){const z=Z0+j*SEG;Wd.push([X0,z]);E.push([X0+W,z]);}
   [N,S,Wd,E].forEach(p=>scene.add(skirt(p)));
+
   const base=new THREE.Mesh(new THREE.BoxGeometry(W+4,1.1,D+4),toon(0xe6c38c));base.position.set(X0+W/2,-5.55,Z0+D/2);base.receiveShadow=true;scene.add(base);
 }
 
@@ -618,7 +632,8 @@ function ribbon(way,width,edge,center,lift=0.12){
 }
 RIVERS.forEach(r=>ribbon(r.pts,r.w,'#c4ebf3',r.w>1?'#5fb0d8':'#78c3e2',0.1));
 ROADS.forEach(r=>ribbon(r,0.32,'#d9c08a','#f2e0b2',0.14));
-ribbon(TRAIL,0.26,'#b8a780','#ddd0aa',0.14);
+ribbon(TRAIL,0.26,'#d9c08a','#f2e0b2',0.14);
+{const j=new THREE.Mesh(new THREE.CircleGeometry(0.36,16),new THREE.MeshToonMaterial({color:0xe6d49e,gradientMap:grad,polygonOffset:true,polygonOffsetFactor:-3}));j.rotation.x=-Math.PI/2;j.position.set(21.6,G(21.6,-1)+0.15,-1);j.receiveShadow=true;scene.add(j);RIBBONS.push(j);}
 ribbon(RAIL_MAIN,0.5,'#9d917f','#c2b6a2',0.18);ribbon(RAIL_SPUR,0.45,'#9d917f','#c2b6a2',0.18);
 
 const dummy=new THREE.Object3D();
@@ -682,15 +697,19 @@ rippleMesh.castShadow=false;scene.add(rippleMesh);
 function roofGeo(w,h,d,over){const s=new THREE.Shape();s.moveTo(-w/2-over,0);s.lineTo(w/2+over,0);s.lineTo(0,h);s.closePath();
   const g=new THREE.ExtrudeGeometry(s,{depth:d+over*2,bevelEnabled:false});g.translate(0,0,-(d/2+over));return g;}
 const plainTop=toon(0x8a7a6a);
-function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.15,eaves=false,base=0.8,noren=null,lantern=false}={}){
-  const g=new THREE.Group();const wm=texMat('wall',wall);
-  const body=new THREE.Mesh(new THREE.BoxGeometry(w,h+base,d),[wm,wm,plainTop,plainTop,wm,wm]);body.position.y=(h-base)/2;body.castShadow=true;body.receiveShadow=true;body.userData.block={h,base};g.add(body);
+function wallUV(geo,h,base){const pa=geo.attributes.position,uv=geo.attributes.uv,H2=geo.parameters.height/2,yf=-H2+base;
+  for(let i=0;i<uv.count;i++){const f=Math.floor(i/4);if(f===2||f===3)continue;uv.setY(i,(pa.getY(i)-yf)/h);}uv.needsUpdate=true;return geo;}
+function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.15,eaves=false,base=0.8,noren=null,lantern=false,ridgeW=false,frontDoor=false}={}){
+  const g=new THREE.Group();const wm=texMat('wall',wall),wsd=frontDoor&&WALL[wall+'_w']?texMat('wall',wall+'_w'):wm;
+  const body=new THREE.Mesh(wallUV(new THREE.BoxGeometry(w,h+base,d),h,base),[wsd,wsd,plainTop,plainTop,wm,wsd]);body.position.y=(h-base)/2;body.castShadow=true;body.receiveShadow=true;body.userData.block={h,base};g.add(body);
   let r;
-  if(hip){r=new THREE.Mesh(new THREE.ConeGeometry(1,rh,4,1),texMat('roof',roof,[4,1.5]));r.rotation.y=Math.PI/4;r.scale.set((w/2+over)*1.414,1,(d/2+over)*1.414);r.position.y=h+rh/2;}
+  if(hip){r=new THREE.Mesh(new THREE.ConeGeometry(1,rh,4,1).rotateY(Math.PI/4),texMat('roof',roof,[4,1.5]));r.scale.set((w/2+over)*1.414,1,(d/2+over)*1.414);r.position.y=h+rh/2;}
+  else if(ridgeW){r=new THREE.Mesh(roofGeo(d,rh,w,over),texMat('roof',roof));r.rotation.y=Math.PI/2;r.position.y=h;
+    g.add(mesh(new THREE.BoxGeometry(w+over*2+0.06,0.1,0.13),0x6e6878,{y:h+rh}));}
   else{r=new THREE.Mesh(roofGeo(w,rh,d,over),texMat('roof',roof));r.position.y=h;
-    g.add(mesh(new THREE.BoxGeometry(0.13,0.1,d+over*2+0.06),0x3f3a44,{y:h+rh}));}
+    g.add(mesh(new THREE.BoxGeometry(0.13,0.1,d+over*2+0.06),0x6e6878,{y:h+rh}));}
   r.castShadow=true;g.add(r);
-  if(eaves&&!hip)for(const s of[-1,1])g.add(mesh(new THREE.BoxGeometry(0.13,0.08,0.22),0x3f3a44,{y:h+rh+0.06,z:(d/2+over+0.06)*s,rx:-s*0.45}));
+  if(eaves&&!hip)for(const s of[-1,1])g.add(ridgeW?mesh(new THREE.BoxGeometry(0.22,0.08,0.13),0x6e6878,{y:h+rh+0.06,x:(w/2+over+0.06)*s,rz:s*0.45}):mesh(new THREE.BoxGeometry(0.13,0.08,0.22),0x6e6878,{y:h+rh+0.06,z:(d/2+over+0.06)*s,rx:-s*0.45}));
   if(noren)g.add(mesh(new THREE.BoxGeometry(w*0.5,0.2,0.02),noren,{y:h*0.62,z:d/2+0.02}));
   if(lantern)for(const s of[-1,1]){g.add(mesh(new THREE.SphereGeometry(0.09,10,8),LANTERN_MAT,{x:w*0.32*s,y:h*0.8,z:d/2+0.1,sy:1.3}));glowAnchor(g,w*0.32*s,h*0.8,d/2+0.16,0.9,true);}
   {const wn=new THREE.Mesh(WIN_GEO,WIN_MAT);wn.scale.set(w*0.42,Math.max(0.16,h*0.3),1);wn.position.set(-w*0.12,h*0.42,d/2+0.012);g.add(wn);
@@ -719,15 +738,15 @@ function signboard(lines,x,z,ry){
 }
 function sanheyuan(scale=1,wall='tw',roof='tw'){
   const g=new THREE.Group();
-  g.add(house({w:1.8,d:0.8,h:0.62,wall,roof,rh:0.45,eaves:wall==='tw'}));
-  for(const s of[-1,1]){const b=house({w:1.1,d:0.7,h:0.52,wall,roof,rh:0.4});b.position.set(0.75*s,0,0.95);b.rotation.y=Math.PI/2;g.add(b);}
+  g.add(house({w:1.8,d:0.8,h:0.62,wall,roof,rh:0.45,ridgeW:true,frontDoor:true}));
+  for(const s of[-1,1]){const b=house({w:1.1,d:0.7,h:0.52,wall,roof,rh:0.4,ridgeW:true,frontDoor:true});b.position.set(0.75*s,0,0.95);b.rotation.y=-s*Math.PI/2;g.add(b);}
   const yard=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),toon(0xe8d9b0));yard.rotation.x=-Math.PI/2;yard.position.set(0,0.03,1);yard.userData.yard=true;g.add(yard);
   g.scale.setScalar(scale);return g;
 }
 function townHouse(r){
   if(r<0.4)return house({w:1.2,d:1.4,h:1.25,wall:'brick',roof:'brown',rh:0.45,noren:[0xd9483b,0x3f63a6,0xf2ead8][Math.floor(r*30)%3]});
   if(r<0.75)return house({w:1.5,d:1.1,h:0.75,wall:'jp',roof:r<0.6?'kawara':'kawara2',rh:0.55});
-  return house({w:1.6,d:0.9,h:0.62,wall:'tw',roof:'tw',rh:0.45});
+  return house({w:1.6,d:0.9,h:0.62,wall:'tw',roof:'tw',rh:0.45,ridgeW:true,frontDoor:true});
 }
 function torii(scale=1,color=0xd9483b){
   const g=new THREE.Group();
@@ -735,7 +754,9 @@ function torii(scale=1,color=0xd9483b){
   g.add(mesh(new THREE.BoxGeometry(1.7,0.1,0.18),0x2f2a33,{y:1.43}));g.add(mesh(new THREE.BoxGeometry(1.3,0.08,0.1),color,{y:1.18}));
   g.scale.setScalar(scale);return g;
 }
-const rng=(function(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};})(1937);
+let RNG_N=0;const rng=function(){RNG_N++;const a=(1937+Math.imul(RNG_N,0x6D2B79F5))|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+const RC_T={"c1":2481,"c2":55220,"c3":55393,"n0":55587,"n1":55606,"n2":55641,"n3":55669,"n4":55671,"n5":55694,"n6":55701,"n7":55730,"n8":55735,"n9":55788,"n10":55825,"n11":55844,"n12":55857,"n13":55892,"n14":55899,"n15":55902,"n16":55907,"n17":55910,"n18":55912,"n19":55914,"n20":55921,"n21":55933,"n22":55938,"n23":55943,"n24":55948,"n25":57350,"n26":57358,"n27":57364,"n28":57369,"n29":57372,"n30":57376,"n31":57379,"n32":57409,"n33":57411,"n34":57418,"n35":57425,"n36":57432,"c5":57443,"c6":57505,"c7":63282};
+function RCK(id){if(window.__RREC){(window.__RC=window.__RC||{})[id]=RNG_N;}else if(RC_T[id]!==undefined)RNG_N=RC_T[id];}
 const near=(x,z,px,pz,r)=>Math.hypot(x-px,z-pz)<r;
 const occupied=[];
 function free(x,z,r){for(const o of occupied)if(Math.hypot(x-o[0],z-o[1])<r+o[2])return false;return true;}
@@ -743,6 +764,10 @@ function claim(x,z,r){occupied.push([x,z,r]);}
 /* 房子不放在地圖邊緣（否則埋在地下的牆會從剖面露出來），並抬到腳下地面的最高點 */
 const nearEdge=(x,z,m=1.4)=>x<X0+m||x>X0+W-m||z<Z0+m||z>Z0+D-m;
 function liftTo(x,z,r=0.9){let mx=-1e9;for(const [dx,dz] of[[0,0],[r,r],[r,-r],[-r,r],[-r,-r],[r,0],[-r,0],[0,r],[0,-r]])mx=Math.max(mx,G(x+dx,z+dz));return mx-G(x,z);}
+function fillTownWith(cx,cz,r,n,mk){let placed=0;
+  for(let i=0;i<n*40&&placed<n;i++){const a=rng()*Math.PI*2,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
+    if(nearEdge(x,z)||nearLines(x,z,0.85)||!free(x,z,1.0)||H(x,z)<SEA+0.2)continue;
+    claim(x,z,1.0);place(mk(),x,z,Math.round(rng()*3)*Math.PI/2+(rng()-0.5)*0.12,liftTo(x,z));placed++;}}
 function fillTown(cx,cz,r,n){
   let placed=0;
   for(let i=0;i<n*30&&placed<n;i++){const a=rng()*Math.PI*2,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
@@ -753,26 +778,34 @@ function fillTown(cx,cz,r,n){
 /* 北投 */
 {
   const bath=new THREE.Group();
-  const low=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.8,2.1),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;low.userData.block={h:1.0,base:0.8};bath.add(low);
+  const low=new THREE.Mesh(wallUV(new THREE.BoxGeometry(3.2,1.8,2.1),1.0,0.8),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;low.userData.block={h:1.0,base:0.8};bath.add(low);
   const up=house({w:3.0,d:1.94,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.3,base:0.02});up.position.y=1.0;up.children[0].userData.block.upper=true;bath.add(up);
-  place(bath,-37,24.6,0.3);claim(-37,24.6,2.2);
+  BATH_OBJ=place(bath,-37,24.6,0.3);claim(-37,24.6,2.2);
   [[-42,23.5,0.2],[-44.5,26,0.6],[-38.5,21.3,-0.2],[-34,23,0.4],[-41.5,20.8,0],[-46,23,0.1],[-36,31.5,-0.2]].forEach(([x,z,r],i)=>{
-    place(house({w:1.7,d:1.1,h:0.8,wall:'jp',roof:i%2?'kawara':'kawara2',rh:0.55,lantern:true}),x,z,r);claim(x,z,1);});
+    ONSEN_H.push(place(house({w:1.7,d:1.1,h:0.8,wall:'jp',roof:i%2?'kawara':'kawara2',rh:0.55,lantern:true}),x,z,r));claim(x,z,1);});
   place(house({w:2.2,d:1,h:0.8,wall:'wood',roof:'red',rh:0.55,over:0.3}),-42.2,32.3,0.4);claim(-42.2,32.3,1.4);
   place(mesh(new THREE.CylinderGeometry(1.6,1.7,0.2,24),0x9fe3d2,{sz:0.7}),-35,27.5,0.4,0.05);claim(-35,27.5,1.8);
-  place(house({w:2.4,d:1.1,h:0.85,wall:'wood',roof:'red',rh:0.6,over:0.3}),-47.6,42.4,0.2);claim(-47.6,42.4,1.5);
-  fillTown(-50,42.5,3.8,10);
+  claim(-47.3,41.8,2.5); // 北投庄東北的空地廣場
+  {const st=new THREE.Group();st.add(house({w:2.4,d:1.0,h:0.75,wall:'wood',roof:'kawara2',rh:0.5,over:0.3,noren:0x3f63a6}));
+   st.add(mesh(new THREE.BoxGeometry(2.8,0.14,0.55),0xbdb3a2,{y:0.07,z:0.8}));for(const sx of[-1.1,1.1])st.add(mesh(new THREE.CylinderGeometry(0.03,0.03,0.7,6),0x6b4a34,{x:sx,y:0.4,z:1.0}));
+   st.add(mesh(new THREE.BoxGeometry(2.6,0.04,0.7),0x5c6274,{y:0.76,z:0.85,rx:0.12}));
+   const c=document.createElement('canvas');c.width=256;c.height=64;const cx=c.getContext('2d');cx.fillStyle='#fffdf6';cx.fillRect(0,0,256,64);cx.strokeStyle='#3d3446';cx.lineWidth=5;cx.strokeRect(3,3,250,58);cx.fillStyle='#3d3446';cx.font='900 40px "Zen Maru Gothic",sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('北投驛',128,34);
+   const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;signRedraws.push(()=>{cx.fillStyle='#fffdf6';cx.fillRect(6,6,244,52);cx.fillStyle='#3d3446';cx.fillText('北投驛',128,34);tx.needsUpdate=true;});
+   st.add(mesh(new THREE.PlaneGeometry(0.8,0.2),new THREE.MeshToonMaterial({map:tx,gradientMap:grad}),{y:0.66,z:0.52,shadow:false}));
+   place(st,-46.74,41.47,-2.925);claim(-46.74,41.47,1.4);}
+  fillTown(-50,42.5,3.8,9);
 }
 /* 士林街 */
 place(house({w:2.4,d:1.1,h:0.85,wall:'wood',roof:'red',rh:0.6,over:0.3}),-21.8,72.8,1.5);claim(-21.8,72.8,1.5);
-{const t=house({w:1.8,d:1.3,h:0.8,wall:'temple',roof:'orange',rh:0.55,eaves:true});place(t,-23.5,69.0,0.3);claim(-23.5,69.0,1.3);}
-fillTown(-19.5,70,5.5,18);
+{const t=house({w:1.8,d:1.3,h:0.8,wall:'temple',roof:'orange',rh:0.55,eaves:true,ridgeW:true,frontDoor:true});TEMPLE_SL=place(t,-23.5,69.0,0.3);claim(-23.5,69.0,1.3);}
 {const mk=new THREE.Group();mk.add(mesh(new THREE.BoxGeometry(3,0.12,1.8),0x8a6a4a,{y:1.1}));
   for(const sx of[-1.3,1.3])for(const sz of[-0.75,0.75])mk.add(mesh(new THREE.CylinderGeometry(0.06,0.06,1.1,6),0x8a6a4a,{x:sx,y:0.55,z:sz}));
   const r=new THREE.Mesh(roofGeo(3,0.5,1.8,0.2),texMat('roof','tw'));r.position.y=1.15;mk.add(r);
-  for(let i=0;i<4;i++)mk.add(mesh(new THREE.BoxGeometry(0.55,0.3,0.4),[0x9a6b46,0xc9a066][i%2],{x:-1.1+i*0.75,y:0.15,z:0.3}));
+  for(let i=0;i<4;i++){const bx=mesh(new THREE.BoxGeometry(0.55,0.3,0.4),[0x9a6b46,0xc9a066][i%2],{x:-1.1+i*0.75,y:0.15,z:0.3});bx.userData.block={h:0.3,base:0};mk.add(bx);}
   for(let i=0;i<6;i++)mk.add(mesh(new THREE.SphereGeometry(0.1,6,5),[0x7cbf5a,0xe0892f,0xd9483b][i%3],{x:-1.1+i*0.42,y:0.36,z:0.3}));
   place(mk,-15.6,71.2,0.4);claim(-15.6,71.2,1.8);}
+claim(-17.5,70.8,1.4); // 市場旁、緊鄰鐵道的廣場
+fillTownWith(-19.5,70,5.5,11,()=>house({w:1.25,d:1.3,h:1.15,wall:'brick',roof:rng()<0.5?'kawara':'kawara2',rh:0.45,ridgeW:true,noren:[0xd9483b,0x3f63a6,0xf2ead8][Math.floor(rng()*3)]}));
 /* 芝山巖 */
 place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);claim(-13.8,61.2,1);
 /* 臺灣神社 */
@@ -793,19 +826,29 @@ place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);cl
   fence(-2.2,-2.8,2.2,-2.8);fence(-2.2,-2.8,-2.2,2.3);fence(2.2,-2.8,2.2,2.3);fence(-2.2,2.3,-0.95,2.3);fence(0.95,2.3,2.2,2.3);
   for(const s of[-1,1])sh.add(mesh(new THREE.BoxGeometry(0.16,0.55,0.16),0xd6d0c2,{x:0.75*s,y:0.28,z:1.4}));
   place(sh,-14.6,79.4,0);claim(-14.6,79.4,3.4);
-  {const tr=torii(1.6);tr.userData.pass=1;place(tr,-14.6,83.3,0);}
-  for(const s of[-1,1]){const sl=place(mesh(new THREE.BoxGeometry(0.2,0.8,0.2),0xd6d0c2,{y:0.4}),-14.6+s*1.4,84.2);sl.add(mesh(new THREE.BoxGeometry(0.16,0.14,0.16),LAMP_MAT,{y:0.5}));glowAnchor(sl,0,0.5,0,0.9,true);}}
+  {const tr=torii(1.6);tr.scale.y=1.6;tr.userData.pass=1;place(tr,-14.6,83.3,0);SHRINE_FIX.push([tr,0.88]);}
+  for(const s of[-1,1]){const sl=place(mesh(new THREE.BoxGeometry(0.2,0.8,0.2),0xd6d0c2,{y:0.4}),-14.6+s*0.88,84.05);SHRINE_FIX.push([sl,0.1,0.4]);sl.add(mesh(new THREE.BoxGeometry(0.16,0.14,0.16),LAMP_MAT,{y:0.5}));glowAnchor(sl,0,0.5,0,0.9,true);}}
 /* 臺北市 */
-for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,1.0)||!free(x,z,0.85))continue;claim(x,z,0.85);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
+const TP_KEEP=[[-9.9,91.9,1.5],[-12.6,90.9,1.6]];
+for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,1.0)||!free(x,z,0.85))continue;if(TP_KEEP.some(([a,b,r])=>Math.hypot(x-a,z-b)<r))continue;claim(x,z,0.85);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
+for(let i=0;i<260;i++){const x=-24+rng()*36,z=89.2+rng()*6.8;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,0.8)||!free(x,z,0.8)||polyDist(x,z,RAIL_MAIN)<1.4)continue;
+  if([[-9.9,91.9,1.6],[-5.6,93.8,2.2],[-12.5,91.1,1.6],[7.5,94.9,3.6],[-4,93.35,5.2]].some(([a,b,r])=>Math.hypot(x-a,z-b)<r))continue;
+  claim(x,z,0.8);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
+RCK('c1');
 /* 軍艦岩 */
 {const rk=new THREE.Group();const rm=toon(0xbcb29c);
   [[0,0.35,0,1.9,0.55,0.7],[0.7,0.75,0.05,0.9,0.35,0.5],[-0.9,0.25,0.15,0.8,0.3,0.55]].forEach(([x,y,z,sx,sy,sz])=>{const m=new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),rm);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;rk.add(m);});
   rk.userData.rock=true;place(rk,-26.8,38.2,0.5);claim(-26.8,38.2,1.8);}
 /* 關渡宮 */
-{const g=new THREE.Group();g.add(house({w:2.2,d:1.4,h:0.8,wall:'temple',roof:'orange',rh:0.6,eaves:true}));
-  const f=house({w:1.6,d:0.9,h:0.6,wall:'temple',roof:'orange',rh:0.5,eaves:true});f.position.z=1.2;g.add(f);place(g,-79,45.5,-1.48);claim(-79,45.5,2);}
+{const g=new THREE.Group();g.add(house({w:2.2,d:1.4,h:0.8,wall:'temple',roof:'orange',rh:0.6,eaves:true,ridgeW:true,frontDoor:true}));
+  const f=house({w:1.6,d:0.9,h:0.6,wall:'temple',roof:'orange',rh:0.5,eaves:true,ridgeW:true,frontDoor:true});f.position.z=1.2;g.add(f);TEMPLE_GD=place(g,-77.6,45.4,-1.48);claim(-77.6,45.4,2.2);{const fr=atLocal0(g,0,3.2);claim(fr[0],fr[1],1.4);REED_CLEAR.push([fr[0],fr[1],2.6],[-77.6,45.4,3.2]);}}
 /* 金山庄、三芝庄、燈塔 */
-fillTown(60,-58.5,3.8,10);fillTown(-45,-56,3.2,6);
+{const cx=60,cz=-58.5;claim(cx,cz,1.8);let placed=0;
+  for(let i=0;i<600&&placed<7;i++){const a=rng()*6.283,d=2.3+rng()*1.3,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;if(nearEdge(x,z)||nearLines(x,z,1.15)||!free(x,z,1.15)||H(x,z)<SEA+0.2||polyDist(x,z,[[58,-56],[60.3,-58.9]])<1.9||polyDist(x,z,TRAIL)<1.9)continue;
+    claim(x,z,1.15);place(house({w:1.5+rng()*0.3,d:0.9,h:0.62,wall:'tw',roof:'tw',rh:0.45,ridgeW:true,frontDoor:true}),x,z,Math.atan2(cx-x,cz-z)+(rng()-0.5)*0.45);placed++;}}
+{const cx=-45,cz=-56;let placed=0; // 三芝庄：漢式農家
+  for(let i=0;i<500&&placed<6;i++){const a=rng()*6.283,d=1.2+rng()*2.3,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;if(nearEdge(x,z)||nearLines(x,z,0.9)||!free(x,z,1.05)||H(x,z)<SEA+0.2)continue;
+    claim(x,z,1.05);place(house({w:1.5+rng()*0.3,d:0.9,h:0.62,wall:rng()<0.5?'tw':'stone',roof:rng()<0.6?'tw':'thatch',rh:0.45,ridgeW:true,frontDoor:true}),x,z,Math.atan2(cx-x,cz-z)+(rng()-0.5)*0.5,liftTo(x,z));placed++;}}
 {const g=new THREE.Group();
   for(let i=0;i<6;i++)g.add(mesh(new THREE.CylinderGeometry(0.42-i*0.02,0.44-i*0.02,0.45,8),i%2?0x2f2a33:0xfbf8f0,{y:0.225+i*0.45}));
   g.add(mesh(new THREE.CylinderGeometry(0.3,0.3,0.4,8),LAMP_MAT,{y:2.9}));glowAnchor(g,0,2.9,0,2.2,false);
@@ -818,10 +861,8 @@ place(house({w:2.2,d:1.6,h:0.95,wall:'jp',roof:'brown',hip:true,rh:0.75,over:0.2
 [[-7.8,11.5,0.3],[-2,12.6,-0.5],[-8.5,7.2,0.8]].forEach(([x,z,r])=>{place(house({w:1.4,d:1,h:0.7,wall:'jp',roof:'kawara',rh:0.5,lantern:true}),x,z,r);claim(x,z,1);});
 /* 竹子湖 */
 place(house({w:1.8,d:1.1,h:0.8,wall:'jp',roof:'kawara',rh:0.55}),-9.5,-12.8,0.5);claim(-9.5,-12.8,1.2);
-{place(mesh(new THREE.CylinderGeometry(0.04,0.04,2.2,6),0xf2f2f2),-8.2,-12.4,0,1.1);
-  const fc=canvasTex((x)=>{x.fillStyle='#fffdf6';x.fillRect(0,0,96,64);x.fillStyle='#de5b45';x.beginPath();x.arc(48,32,17,0,7);x.fill();},96,64);
-  const flag=new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.46),new THREE.MeshToonMaterial({map:fc,side:THREE.DoubleSide,gradientMap:grad}));flag.position.set(-7.85,H(-8.2,-12.4)+1.95,-12.4);scene.add(flag);}
-signboard(['蓬萊米原種田','臺北州'],-7.4,-11.2,-0.2);
+/* 國旗已移除 */
+
 [[-13.2,-11.6,0.9],[-5.6,-12.4,-0.6],[-5.4,-7.6,-1.9],[-12.6,-7.4,0.3]].forEach(([x,z,r])=>{place(sanheyuan(1,'stone','thatch'),x,z,r);claim(x,z,1.5);});
 const wheel=new THREE.Group();
 {wheel.add(mesh(new THREE.TorusGeometry(0.75,0.09,8,20),0x8a5a3a));for(let i=0;i<8;i++)wheel.add(mesh(new THREE.BoxGeometry(0.08,1.5,0.18),0xa9744c,{rz:i*Math.PI/8}));
@@ -833,11 +874,11 @@ place(house({w:2.4,d:1.3,h:0.9,wall:'wood',roof:'kawara2',rh:0.75,over:0.2}),31.
   instanced(new THREE.CylinderGeometry(0.07,0.07,0.75,6),toon(0x9a7350),posts,(p,o)=>{o.position.set(p.x,H(p.x,p.z)+0.3,p.z);});
   posts.forEach((p,i)=>{const q=posts[(i+1)%N];if(i===5)return;const len=Math.hypot(q.x-p.x,q.z-p.z);
     const a=new THREE.Vector3(p.x,H(p.x,p.z)+0.5,p.z),b=new THREE.Vector3(q.x,H(q.x,q.z)+0.5,q.z);const r=mesh(new THREE.BoxGeometry(0.06,0.06,a.distanceTo(b)),0xb48a62);r.position.copy(a).add(b).multiplyScalar(0.5);r.lookAt(b);scene.add(r);});}
-signboard(['大嶺牧場','昭和九年'],33.5,-6.4,0.3);
+
 place(mesh(new THREE.CylinderGeometry(0.9,1,0.18,20),0xbde9f0),17.3,-0.6,0,0.05);
 place(house({w:1.2,d:0.9,h:0.6,wall:'jp',roof:'kawara2',rh:0.45}),15.8,0.6,0.4);
 place(house({w:1.3,d:0.9,h:0.6,wall:'jp',roof:'kawara',rh:0.45}),23.3,-17,-0.5);
-place(house({w:1.1,d:1.1,h:0.8,wall:'wood',roof:'kawara2',hip:true,rh:0.5}),-21.6,-11.6,0.2);
+/* 大屯山頂小屋已移除 */
 place(mesh(new THREE.BoxGeometry(0.3,0.5,0.3),0xe8e4dc),8.5,-5.7,0,0.2);
 
 /* 平原農家 */
@@ -847,7 +888,7 @@ for(let i=0;i<1400&&farms.length<64;i++){const x=X0+3+rng()*(W-6),z=30+rng()*64,
   if(Math.hypot(x+1.6,z-16.5)<6||inTaipei(x,z))continue;claim(x,z,2.2);farms.push({x,z,r:rng()*Math.PI*2});}
 for(let i=0;i<300&&farms.length<56;i++){const x=X0+3+rng()*(W-6),z=-64+rng()*12,h=H(x,z),m=h/VS;
   if(m<20||m>300||inTown(x,z,2)||nearLines(x,z,1.2)||!free(x,z,2.2))continue;claim(x,z,2.2);farms.push({x,z,r:rng()*Math.PI*2});}
-farms.forEach(f=>place(sanheyuan(0.95),f.x,f.z,f.r,liftTo(f.x,f.z,1.2)));
+farms.forEach(f=>{const o=sanheyuan(0.95),ly=liftTo(f.x,f.z,1.2);if(Math.hypot(f.x+13.2,f.z-85.1)<1.8)return;/* 神社鳥居前那間三合院移除 */place(o,f.x,f.z,f.r,ly);});
 /* 稻草堆：只放在已收割（著色器判定）的田格 */
 const stacks=[];
 for(let cz=Math.floor(16/2.5);cz<Math.floor(96/2.5);cz++)for(let cx=Math.floor(X0/2.5);cx<Math.floor(70/2.5);cx++){
@@ -903,7 +944,7 @@ instanced(new THREE.SphereGeometry(0.32,8,6),toon(0x4f8f4c),tea,(t,o)=>{o.positi
 { // 河岸蘆葦
   const reeds=[];RIVERS.forEach(r=>{trace(r.pts,1.6).forEach(([x,z],i)=>{if(rng()<0.5)return;const s=i%2?1:-1;const xx=x+(r.w+0.5)*s*(rng()*0.5+0.75),zz=z+(rng()-0.5);if(!inTown(xx,zz)&&H(xx,zz)>SEA)reeds.push({x:xx,z:zz});});});
   for(let i=0;i<9000;i++){const x=-90+rng()*55,z=34+rng()*62;if(isMarsh(x,z)&&!nearLines(x,z,0.3)&&rng()<0.55)reeds.push({x,z,s:0.7+rng()*0.6});}
-  instanced(new THREE.ConeGeometry(0.12,0.6,4),toon(0xa7be6b),reeds,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+0.28*(p.s||1),p.z);o.scale.setScalar(p.s||1);});
+  REED_IM=instanced(new THREE.ConeGeometry(0.12,0.6,4),toon(0xa7be6b),reeds,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+0.28*(p.s||1),p.z);o.scale.setScalar(p.s||1);});
 }
 
 /* -------------------- 動物 -------------------- */
@@ -916,21 +957,23 @@ function horn(pts,r0,tipK=0.12){
   g.computeVertexNormals();return g;
 }
 const HORN_B=[-1,1].map(s=>horn([[0.0,0.12,0.09*s],[-0.03,0.15,0.15*s],[-0.08,0.175,0.18*s],[-0.13,0.2,0.16*s]],0.045,0.2));
-const HORN_T=[-1,1].map(s=>horn([[0.0,0.12,0.1*s],[0.01,0.17,0.17*s],[0.05,0.23,0.19*s],[0.1,0.27,0.15*s]],0.028,0.25));
+const HORN_T=[-1,1].map(s=>horn([[0.0,0.12,0.1*s],[0.005,0.145,0.135*s],[0.025,0.175,0.145*s],[0.05,0.195,0.125*s]],0.026,0.25));
 const BOVLEG=new THREE.CylinderGeometry(0.065,0.055,0.34,7).translate(0,-0.17,0);
 /* 可點擊的動物與交通工具 */
 const HITMAT=new THREE.MeshBasicMaterial({visible:false});
 const INFO={
   buffalo:{chip:'動物',kind:'animal',title:'水牛',tag:'農家最重要的幫手',body:'臺灣農家用來犁田、拉車的役牛，耐熱、愛泡在水裡降溫。一頭水牛常是一戶人家最值錢的財產；農閒時，大臺北的農民會把水牛牽上大嶺牧場寄養，農忙再牽回來。'},
   tajima:{chip:'動物',kind:'animal',title:'但馬牛',tag:'從日本運來的黑毛牛',body:'日本兵庫縣但馬地方出產的黑毛牛。昭和 8 到 9 年間，兩百多頭但馬牛從日本以船運到基隆，再趕上大嶺牧場飼養。牠們比水牛小、角短，性情溫和，習慣有人照顧。'},
-  egret:{chip:'動物',kind:'animal',title:'白鷺鷥',tag:'水田裡的常客',body:'常在水田、溪邊出現的白色鷺鳥。農夫犁田時，牠們會跟在水牛後面啄食被翻出來的蟲子和田螺，有的乾脆站在牛背上，所以民間也叫牠們「牛背鷺」。'},
-  egretFly:{chip:'動物',kind:'animal',title:'白鷺鷥群',tag:'傍晚成群飛回棲地',body:'白天分散在水田覓食的白鷺鷥，常常成群在稻田上空盤旋，再飛回河邊或山腳的樹林過夜，是北投、士林平原上常見的風景。',noRing:true},
+  egret:{chip:'動物',kind:'animal',title:'黃頭鷺',tag:'水田裡的常客',body:'常在水田、牧場出現的小型鷺鳥，平時一身雪白，繁殖期頭頸會染上橙黃色。農夫犁田時，牠們會跟在水牛後面啄食被翻出來的蟲子和田螺，有的乾脆站在牛背上，所以民間也叫牠們「牛背鷺」。'},
+  egretFly:{chip:'動物',kind:'animal',title:'黃頭鷺群',tag:'傍晚成群飛回棲地',body:'白天分散在水田覓食的黃頭鷺，常常成群在稻田上空盤旋，再飛回河邊或山腳的樹林過夜，是北投、士林平原上常見的風景。',noRing:true},
   duck:{chip:'動物',kind:'animal',title:'鴨子',tag:'田裡的除草隊',body:'農家常把鴨群趕進收割後或插秧後的水田，讓牠們吃掉雜草、害蟲和落穗，鴨糞又能肥田。鴨蛋可以做成鹹蛋、皮蛋，是重要的副業收入。'},
   chicken:{chip:'動物',kind:'animal',title:'雞',tag:'三合院前的放養雞',body:'幾乎每戶農家都在禾埕上放養幾隻雞，啄食穀粒和小蟲。雞蛋給家人補身體，逢年過節或拜拜時才會殺雞。'},
   eagle:{chip:'動物',kind:'animal',title:'大冠鷲',tag:'山區最常見的猛禽',body:'臺灣山區最常見的大型猛禽，展翅超過一公尺，翅膀下有一道明顯的白色橫帶。天氣晴朗、上升氣流旺盛時，常在山谷上空張開雙翅盤旋，一邊發出「忽悠—忽悠—」的響亮叫聲；牠們最愛吃蛇，所以又叫「蛇鷹」。',noRing:true},
   muntjac:{chip:'野生動物',kind:'animal',title:'山羌',tag:'臺灣最小的鹿',body:'體型像中型狗的小型鹿，紅褐色，公的頭上有一對短短的角。個性害羞，多在清晨和黃昏到森林邊緣吃嫩葉、果實；受到驚嚇時會發出像狗吠的「咔、咔」叫聲，所以又叫「吠鹿」。大屯山、竹子山一帶的闊葉林裡都有牠們的蹤影。'},
   boar:{chip:'野生動物',kind:'animal',title:'山豬',tag:'臺灣野豬・山裡的大傢伙',body:'全身覆蓋粗硬的黑褐色鬃毛，公豬嘴邊有向上彎的獠牙。用長鼻子翻土找竹筍、根莖和蚯蚓，常常把山腳的番薯田、竹林翻得亂七八糟，是山村農家又怕又恨的對象，也是獵人眼中的大獵物。'},
   piglet:{chip:'野生動物',kind:'animal',title:'山豬仔',tag:'身上有西瓜紋的小山豬',body:'剛出生幾個月的小野豬，身上有淺色的縱向條紋，像西瓜皮一樣，可以在草叢和落葉間保護色躲藏。長到半歲左右，條紋就會慢慢消失。牠們會緊跟在母豬身邊一起覓食。'},
+  dolphin:{chip:'動物',kind:'animal',title:'海豚',tag:'北海岸外海的訪客',body:'北海岸外海偶爾可以看到成群的海豚，跟著洋流和魚群移動，有時會躍出水面。金山、石門一帶的漁夫說，看到海豚就代表附近有魚群，是好兆頭。',noRing:true},
+  geology:{chip:'地景',kind:'place',title:'五指山的地層',tag:'模型斷面・地底的故事',body:'五指山一帶是比大屯火山群更古老的沉積岩，一層層砂岩、頁岩是幾百萬年前在海底堆積而成，裡面常可以找到貝殼、螺類等海洋生物的化石，表示這裡曾經是一片海。後來地殼抬升、大屯火山群噴發，熔岩和火山灰才覆蓋在上面。',noRing:true},
   mainTrain:{chip:'交通',kind:'train',title:'淡水線列車',tag:'臺北—淡水・蒸汽機關車牽引',body:'由黑色蒸汽機關車牽引幾節木造客車，在臺北與淡水之間往返，沿途停靠圓山、士林、石牌、北投、關渡等驛。假日常坐滿要去北投泡湯、去淡水看海的乘客，煙囪冒出的白煙老遠就看得見。'},
   spurTrain:{chip:'交通',kind:'train',title:'新北投支線列車',tag:'北投驛—新北投驛',body:'只掛一節客車的短程列車，在北投驛和新北投驛之間來回，專門接送泡湯客。車程只有幾分鐘，一下車就是溫泉鄉。'},
 };
@@ -953,7 +996,7 @@ function bovine(kind='buffalo'){
 function egret(){const g=new THREE.Group();g.add(mesh(new THREE.SphereGeometry(0.1,8,6),0xffffff,{y:0.3,sz:1.8}));
   const nk=new THREE.Group();nk.position.set(0,0.34,0.13);g.add(nk);nk.add(mesh(new THREE.CylinderGeometry(0.025,0.03,0.2,5),0xffffff,{y:0.1,rx:0.3}));
   nk.add(mesh(new THREE.SphereGeometry(0.05,8,6),0xffffff,{y:0.21,z:0.04}));nk.add(mesh(new THREE.ConeGeometry(0.018,0.12,5),0xe8c040,{y:0.2,z:0.12,rx:Math.PI/2}));
-  for(const s of[-1,1])g.add(mesh(new THREE.CylinderGeometry(0.01,0.01,0.24,4),0x2a252e,{x:0.04*s,y:0.12}));g.userData={neck:nk};addHit(g,INFO.egret,0.32,0.3);return g;}
+  for(const s of[-1,1])g.add(mesh(new THREE.CylinderGeometry(0.012,0.012,0.24,4),0xe0b43c,{x:0.04*s,y:0.12}));g.userData={neck:nk};addHit(g,INFO.egret,0.32,0.3);return g;}
 function duck(col=0xffffff){const g=new THREE.Group();g.add(mesh(new THREE.SphereGeometry(0.11,8,6),col,{y:0.1,sz:1.4,sy:0.8}));
   g.add(mesh(new THREE.SphereGeometry(0.065,8,6),col===0xffffff?0xffffff:0x3f6b45,{y:0.2,z:0.11}));g.add(mesh(new THREE.BoxGeometry(0.05,0.02,0.07),0xe8932f,{y:0.19,z:0.19}));addHit(g,INFO.duck,0.26,0.13);return g;}
 function chicken(col){const g=new THREE.Group();const b=new THREE.Group();g.add(b);b.add(mesh(new THREE.SphereGeometry(0.1,8,6),col,{y:0.14,sz:1.2}));
@@ -1016,6 +1059,7 @@ const STYLES={
   yukataF:{top:0xf2efe6,robe:0xf2efe6,obi:0x3f63a6,hair:'bun',sleeves:true,detail:'kimono'},
   suit:{top:0x4a4458,bottom:0x4a4458,hat:'boater',hatC:0xf0e2b6,detail:'suit'},
   suitF:{top:0x5b5268,bottom:0x5b5268,hat:'fedora',hatC:0x3d3446,detail:'suit'},
+  athlete:{top:0xfbfbf6,bottom:0xfbfbf6,shorts:true,armSkin:true,hat:'headband',detail:'bib'},
   student:{top:0x2a2d3a,bottom:0x2a2d3a,hat:'cap',hatC:0x2a2d3a,detail:'buttons'},
   police:{top:0xf3f1ea,bottom:0xf3f1ea,hat:'cap',hatC:0x2a2d3a,detail:'buttons',sword:true},
   rail:{top:0x2f3a5a,bottom:0x2f3a5a,hat:'cap',hatC:0x2f3a5a,detail:'buttons'},
@@ -1038,7 +1082,7 @@ function person(styleName,o={}){
   const add=(geo,col,parent,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const m=mesh(geo,col,{x,y,z,rx,ry,rz,shadow:!tiny.has(geo)});parent.add(m);return m;};
   const legs=[];
   for(const s of[-1,1]){const p=new THREE.Group();p.position.set(0.075*s,0.24,0);g.add(p);
-    add(PG.leg,S.bottom||S.top,p);if(S.legSkin)add(PG.shin,skin,p);add(PG.foot,S.robe?0xd8c49a:0x4a3a30,p,0,-0.22,0.03);legs.push(p);}
+    if(S.shorts){add(PG.leg,skin,p);p.add(mesh(new THREE.CylinderGeometry(0.078,0.072,0.13,8),S.bottom,{y:-0.035}));}else{add(PG.leg,S.bottom||S.top,p);if(S.legSkin)add(PG.shin,skin,p);}add(PG.foot,S.robe?0xd8c49a:0x4a3a30,p,0,-0.22,0.03);legs.push(p);}
   add(PG.torso,S.top,inner,0,0.17,0);
   if(S.robe){if(S.robeLong)add(PG.robeL,S.robe,inner,0,-0.08,0);else add(PG.robe,S.robe,inner,0,-0.04,0);}
   if(S.obi)add(PG.obi,S.obi,inner,0,0.07,0);
@@ -1046,20 +1090,22 @@ function person(styleName,o={}){
   if(S.detail==='kimono'){add(PG.vee,0xfbf9f2,inner,0.04,0.25,0.15,0.2,0,0.5);add(PG.vee,0xfbf9f2,inner,-0.04,0.25,0.15,0.2,0,-0.5);}
   if(S.detail==='suit'){add(PG.vee,0xfbf9f2,inner,0,0.24,0.14,0.2);add(PG.tie,0x9a2f3a,inner,0,0.22,0.155,0.2);}
   if(S.detail==='tw')add(PG.trim,dc===0xffffff?0xfbf3df:dc,inner,0.05,0.2,0.16,0.2,0,0.55);
+  if(S.shorts)inner.add(mesh(new THREE.BoxGeometry(0.29,0.12,0.2),S.bottom,{y:0.03}));
+  if(S.detail==='bib'){inner.add(mesh(new THREE.BoxGeometry(0.16,0.12,0.02),0xffffff,{y:0.31,z:0.165}));inner.add(mesh(new THREE.BoxGeometry(0.045,0.27,0.02),0xd9483b,{y:0.25,z:0.17,rz:0.62}));}
   if(S.detail==='knots'||S.detail==='buttons')for(let i=0;i<3;i++)add(PG.cheek,S.detail==='knots'?0xd9c38c:0xe2b04a,inner,0,0.29-i*0.08,0.15+i*0.008);
   if(S.detail==='magua')add(new THREE.CylinderGeometry(0.15,0.2,0.22,12),0x2a2530,inner,0,0.22,0);
   if(S.detail==='apron')add(PG.apron,0xfbf9f2,inner,0,0.03,0.2,0.08);
   if(S.sword)add(PG.sword,0x8d8d96,inner,-0.17,-0.04,0.04,0.3,0,0.2);
   const arms=[];
   for(const s of[-1,1]){const p=new THREE.Group();p.position.set(0.18*s,0.33,0);inner.add(p);
-    add(PG.arm,S.top,p);add(PG.hand,skin,p,0,-0.3,0);if(S.sleeves)add(PG.sleeve,S.robe||S.top,p,0.02*s,0,0);p.userData.s=s;arms.push(p);}
+    add(PG.arm,S.armSkin?skin:S.top,p);add(PG.hand,skin,p,0,-0.3,0);if(S.sleeves)add(PG.sleeve,S.robe||S.top,p,0.02*s,0,0);p.userData.s=s;arms.push(p);}
   const head=new THREE.Group();head.position.y=0.58;inner.add(head);
   add(PG.head,skin,head);
   for(const s of[-1,1]){add(PG.eye,0x2f2a33,head,0.075*s,0,0.185);const ck=add(PG.cheek,0xf0a3a0,head,0.12*s,-0.06,0.15);ck.scale.y=0.55;}
   const hc=S.hairC||(S.old?0xb9b4bd:0x2f2a33);
   if(S.hair!=='none'){const hm=add(PG.hair,hc,head,0,0.02,-0.02);hm.rotation.x=-0.45;}
-  if(S.hair==='bun')add(PG.bun,hc,head,0,0.16,-0.13);
   const hat=S.hat,hC=S.hatC||0xd9b56a;
+  if(S.hair==='bun'){if(hat==='kasa'||hat==='straw'||hat==='boater'||hat==='fedora')add(PG.bun,hc,head,0,0.03,-0.19);else add(PG.bun,hc,head,0,0.16,-0.13);}
   if(hat==='kasa')add(PG.kasa,hC,head,0,0.21,0);
   if(hat==='straw'){add(PG.brim,hC,head,0,0.16,0);add(PG.crown,hC,head,0,0.22,0);}
   if(hat==='boater'||hat==='fedora'){add(PG.brim,hC,head,0,0.16,0,hat==='fedora'?0.1:0);add(PG.crown,hC,head,0,0.22,0);add(PG.band,0x2a2530,head,0,0.19,0);}
@@ -1076,13 +1122,15 @@ function person(styleName,o={}){
   return g;
 }
 /* 手持道具 */
-function hold(p,kind,col){
+function hold(p,kind,col){if(kind!=='tucked'&&kind!=='papers')p.userData.held=true;
   const hand=p.userData.arms[1],h=new THREE.Group();h.position.y=-0.3;hand.add(h);
   const a=(geo,c,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const m=mesh(geo,c,{x,y,z,rx,ry,rz});h.add(m);return m;};
   switch(kind){
     case 'hoe':a(PG.stick,0x8a6a4a,0,0,0.38,Math.PI/2,0,0).scale.y=0.95;a(PG.blade,0x8d8d96,0,-0.07,0.84,0.2);break;
+    case 'axe':a(PG.stick,0x8a6a4a,0,0,0.16,Math.PI/2,0,0).scale.y=0.35;a(new THREE.BoxGeometry(0.03,0.1,0.08),0x8d8d96,0,-0.03,0.32,0);break;
+    case 'rifle':a(PG.stick,0x3a3036,0,0.02,0.32,Math.PI/2,0,0).scale.y=0.78;a(new THREE.BoxGeometry(0.05,0.08,0.22),0x6b4a34,0,-0.02,0.02,0);break;
     case 'sickle':a(PG.stick,0x8a6a4a,0,0,0.08,Math.PI/2,0,0).scale.y=0.18;a(PG.sickle,0xa8a8b2,0,0.02,0.24,0,Math.PI/2,0);break;
-    case 'sheaf':a(PG.sheaf,0xe2c771,0,0.12,0.06,0.3);break;
+    case 'sheaf':a(PG.sheaf,0xe2c771,-0.07,0.02,0.04,0,0,0);break;
     case 'broom':{const bg=new THREE.Group();bg.rotation.x=-0.85;h.add(bg);bg.add(mesh(PG.stick,0xb79a6a,{y:-0.12,sy:0.72}));
       const br=new THREE.Group();br.position.y=-0.46;bg.add(br);br.add(mesh(new THREE.ConeGeometry(0.15,0.32,10,1,true),0xd9bd7a,{y:-0.1,sz:0.4,rx:Math.PI}));br.add(mesh(new THREE.CylinderGeometry(0.035,0.04,0.06,8),0x8a6a4a,{y:0.04}));
       for(const xx of[-0.08,0,0.08])br.add(mesh(new THREE.BoxGeometry(0.012,0.3,0.012),0xc4a460,{x:xx,y:-0.12,rz:-xx*1.6}));break;}
@@ -1090,64 +1138,85 @@ function hold(p,kind,col){
     case 'rod':{const r=new THREE.Group();r.rotation.x=1.92;h.add(r);r.add(mesh(PG.stick,0x9a8a5a,{y:0.9,sy:1.8}));
       const ln=new THREE.Group();ln.position.y=1.8;ln.rotation.x=2.18;r.add(ln);ln.add(mesh(new THREE.CylinderGeometry(0.004,0.004,1,3),0xf2efe6,{y:0.75,sy:1.5,shadow:false}));
       ln.add(mesh(new THREE.SphereGeometry(0.04,6,5),0xd9483b,{y:1.5}));break;}
-    case 'flag':p.userData.parasolG=h;a(PG.stick,0x6b4a34,0,0.42,0,0).scale.y=0.95;h.add(mesh(PG.flag,new THREE.MeshToonMaterial({color:col||0xfffdf6,side:THREE.DoubleSide,gradientMap:grad}),{x:0,y:0.75,z:0.17,ry:Math.PI/2}));break;
+    case 'flag':p.userData.parasolG=h;a(PG.stick,0x6b4a34,0,0.42,0,0).scale.y=0.95;h.add(mesh(PG.flag,new THREE.MeshToonMaterial({color:col||0xfffdf6,side:THREE.DoubleSide,gradientMap:grad}),{x:0,y:0.75,z:-0.17,ry:Math.PI/2}));break;
+    case 'doc':a(PG.board,0xe8dcc0,0.05,-0.1,0.02,-0.15,Math.PI/2,0);break;
+    case 'tucked':{const sd=new THREE.Group();sd.position.set(0.21,0.34,0.05);sd.rotation.set(0.15,0,-0.1);sd.add(mesh(new THREE.BoxGeometry(0.035,0.24,0.32),0xf2ead6));sd.add(mesh(new THREE.BoxGeometry(0.04,0.2,0.03),0x6b4a34,{z:0.06}));p.userData.inner.add(sd);break;}
+    case 'paper1':{p.userData.hasParasol=true;const pm=new THREE.Mesh(new THREE.PlaneGeometry(0.36,0.36),new THREE.MeshToonMaterial({color:col||0xe2d4b4,side:THREE.DoubleSide,gradientMap:grad}));pm.position.set(0.04,-0.16,0.17);pm.rotation.y=Math.PI/2;pm.castShadow=true;h.add(pm);
+      h.add(mesh(new THREE.BoxGeometry(0.004,0.03,0.26),0x6b6258,{y:-0.06,z:0.17,x:0.043}));h.add(mesh(new THREE.BoxGeometry(0.004,0.02,0.2),0x6b6258,{y:-0.12,z:0.17,x:0.043}));break;}
+    case 'papers':{p.userData.hug=true;const st=new THREE.Group();st.position.set(0,0.27,0.17);p.userData.hasParasol=true;st.position.z=0.24;for(let i=0;i<6;i++)st.add(mesh(new THREE.BoxGeometry(0.24,0.025,0.17),i%2?0xdcc8a4:0xcfb994,{y:i*0.026,ry:(i%3-1)*0.06}));st.add(mesh(new THREE.BoxGeometry(0.26,0.012,0.04),0x6b4a34,{y:0.08}));p.userData.inner.add(st);break;}
     case 'parasol':p.userData.hasParasol=true;p.userData.parasolG=h;a(PG.stick,0x6b4a34,0,0.42,0,0).scale.y=0.95;a(PG.parasol,col||0xd9483b,0,0.9,0);break;
     case 'basket':a(PG.basket,0xc9a066,0,-0.1,0.06);break;
     case 'brush':a(PG.stick,0x6b4a34,0,0.05,0.08,1.2).scale.y=0.25;break;
-    case 'longpole':a(PG.stick,0x9fca59,0,0.1,0.9,Math.PI/2-0.25).scale.y=2.2;break;
-    case 'stick':a(PG.stick,0x8a6a4a,0,-0.1,0.25,1.1).scale.y=0.8;break;
-    case 'board':a(PG.board,0xe8dcc0,0,0.04,0.06,-0.4);break;
+    case 'bugnet':{p.userData.parasolG=h;a(PG.stick,0x9a7a5a,0,0.3,0,0).scale.y=0.55;a(new THREE.TorusGeometry(0.1,0.009,5,14),0x6b5a46,0,0.665,0,0,0,0);
+      const nm=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.42,side:THREE.DoubleSide,depthWrite:false});nm.opacity=0.35;const cn=new THREE.Mesh(new THREE.ConeGeometry(0.1,0.26,12,1,true),nm);cn.position.set(0,0.665,-0.13);cn.rotation.x=-Math.PI/2;h.add(cn);break;}
+    case 'longpole':a(PG.stick,0x9fca59,0,0.21,0.83,Math.PI/2-0.25).scale.y=2.2;break;
+    case 'stick':a(PG.stick,0x8a6a4a,0,0.045,0.089,1.1).scale.y=0.8;break;
+    case 'board':a(PG.board,0xe8dcc0,0.05,-0.1,0.07,-0.4);break;
     case 'beater':a(PG.stick,0x8a6a4a,0,0,0.2,Math.PI/2).scale.y=0.4;break;
   }
   return h;
 }
-function shoulderPole(p,load=0xc9a066){const i=p.userData.inner;i.add(mesh(PG.stick,0x8a6a4a,{y:0.36,z:0.02,rz:Math.PI/2,sy:1.2}));
-  for(const s of[-1,1]){i.add(mesh(PG.basket,load,{x:0.56*s,y:-0.06}));i.add(mesh(new THREE.CylinderGeometry(0.006,0.006,0.4,3),0x5a4a3a,{x:0.56*s,y:0.15}));}}
+function shoulderPole(p,load=0xc9a066){const i=p.userData.inner;i.add(mesh(PG.stick,0x8a6a4a,{y:0.46,z:-0.13,rz:Math.PI/2,sy:1.2}));
+  for(const s of[-1,1]){i.add(mesh(PG.basket,load,{x:0.56*s,y:0.04,z:-0.13}));i.add(mesh(new THREE.CylinderGeometry(0.006,0.006,0.4,3),0x5a4a3a,{x:0.56*s,y:0.25,z:-0.13}));}}
 function backBasket(p,col=0xc9a066){p.userData.inner.add(mesh(PG.backBasket,col,{y:0.22,z:-0.25}));}
-function satchel(p,col=0x7a5a3a){p.userData.inner.add(mesh(PG.bag,col,{x:-0.18,y:0.06,z:0.02,rz:0.1}));}
+const SATCHELS=[];function satchel(p,col=0x7a5a3a){SATCHELS.push([p,col]);}
+function placeBags(){SATCHELS.forEach(([p,col])=>{if(!p.userData.held&&p.userData.arms){p.userData.arms[1].add(mesh(PG.bag,col,{y:-0.4,z:0.02,ry:Math.PI/2}));}else p.userData.inner.add(mesh(PG.bag,col,{x:-0.18,y:0.06,z:0.02,ry:Math.PI/2,rz:0.1}));});}
 
 /* 動作 */
 function pose(p,a,t,ph,moving=true){
   const u=p.userData;if(!u||!u.arms)return;
   const L=u.legs,A=u.arms,I=u.inner,Hd=u.head;
-  I.rotation.set(0,0,0);I.position.y=0.24;L.forEach(l=>l.rotation.set(0,0,0));
+  I.rotation.set(0,0,0);I.position.y=0.24;L.forEach(l=>{l.rotation.set(0,0,0);l.position.y=0.24;l.scale.y=1;});
+  const sit=(dy)=>{I.position.y=dy;L.forEach(l=>{l.position.y=dy+0.04;l.rotation.set(-1.45,0,0);});};
   A[0].rotation.set(0,0,-0.15);A[1].rotation.set(0,0,0.15);Hd.rotation.set(0,0,0);
   const w=Math.sin(t*8+ph),walk=(amp=0.6)=>{if(!moving)return;L[0].rotation.x=w*amp;L[1].rotation.x=-w*amp;I.position.y=0.24+Math.abs(w)*0.03;};
   const cyc=sp=>fract(t*sp+ph*0.17);
   switch(a){
     case 'walk':walk();if(moving){A[0].rotation.x=-w*0.5;A[1].rotation.x=w*0.5;}Hd.rotation.y=0.15*Math.sin(t*0.7+ph);break;
     case 'stroll':walk(0.4);if(moving){A[0].rotation.x=-w*0.25;}A[1].rotation.x=-0.5;break; // 拄杖或撐傘
-    case 'carry':walk(0.5);A[1].rotation.x=-2.75;A[1].rotation.z=0.35;A[0].rotation.x=moving?-w*0.4:0;I.position.y-=moving?Math.abs(w)*0.02:0;break;
+    case 'carry2':case 'carry':walk(0.5);A[1].rotation.set(0.35,0,1.35);A[0].rotation.x=moving?-w*0.4:0;I.position.y-=moving?Math.abs(w)*0.02:0;break;
     case 'pull':walk(0.65);A[0].rotation.x=A[1].rotation.x=-0.5;I.rotation.x=0.18;break;
     case 'herd':walk(0.4);A[1].rotation.x=-0.7;A[0].rotation.x=moving?-w*0.3:0;break;
     case 'hoe':{const c=cyc(0.75),up=c<0.6?sstep(0,0.6,c):1-sstep(0.6,0.72,c);
       A[0].rotation.x=A[1].rotation.x=lerp(-0.45,-2.9,up);A[0].rotation.z=0.3;A[1].rotation.z=-0.3;I.rotation.x=lerp(0.4,0.02,up);L[0].rotation.x=-0.25;L[1].rotation.x=0.2;break;}
     case 'sickle':I.rotation.x=0.8;L[0].rotation.x=-0.5;L[1].rotation.x=0.15;A[0].rotation.x=-1.15;A[0].rotation.z=0.4;A[1].rotation.x=-1.0;A[1].rotation.z=0.2+0.55*Math.sin(t*3+ph);break;
     case 'plant':I.rotation.x=0.9;L[0].rotation.x=-0.45;L[1].rotation.x=0.25;A[0].rotation.x=-1.2+0.4*Math.sin(t*3+ph);A[1].rotation.x=-1.2+0.4*Math.sin(t*3+ph+Math.PI);break;
-    case 'thresh':{const c=cyc(0.6),up=c<0.55?sstep(0,0.55,c):1-sstep(0.55,0.68,c);A[0].rotation.x=A[1].rotation.x=lerp(-0.7,-3.05,up);A[0].rotation.z=0.3;A[1].rotation.z=-0.3;I.rotation.x=lerp(0.55,0.05,up);break;}
-    case 'wash':L[0].rotation.x=L[1].rotation.x=-1.45;I.position.y=0.07;I.rotation.x=0.45;A[0].rotation.x=-0.9;A[1].rotation.x=-1.4+0.7*Math.max(0,Math.sin(t*5+ph));break;
+    case 'thresh':{const c=cyc(0.6),up=c<0.55?sstep(0,0.55,c):1-sstep(0.55,0.68,c);A[0].rotation.x=A[1].rotation.x=lerp(-0.7,-3.05,up);A[0].rotation.z=0.42;A[1].rotation.z=-0.42;I.rotation.x=lerp(0.55,0.05,up);break;}
+    case 'wash':sit(0.07);I.rotation.x=0.45;A[0].rotation.x=-0.9;A[1].rotation.x=-1.4+0.7*Math.max(0,Math.sin(t*5+ph));break;
     case 'sweep':I.rotation.x=0.25;A[0].rotation.x=-0.7;A[1].rotation.x=-0.6;const sw=Math.sin(t*2.2+ph);A[0].rotation.z=0.35+0.25*sw;A[1].rotation.z=-0.1+0.25*sw;I.rotation.y=0.2*sw;break;
     case 'chat':A[1].rotation.x=-0.7+0.3*Math.sin(t*2.5+ph);A[1].rotation.z=0.35+0.25*Math.sin(t*1.7+ph);Hd.rotation.x=0.08*Math.sin(t*3+ph);I.rotation.y=0.12*Math.sin(t*0.8+ph);break;
     case 'bow':{const c=cyc(0.3),b=sstep(0.1,0.25,c)*(1-sstep(0.45,0.6,c));I.rotation.x=b*0.85;A[0].rotation.x=A[1].rotation.x=-0.15-b*0.3;break;}
     case 'clap':{const c=cyc(0.3);A[0].rotation.x=A[1].rotation.x=-1.2;A[0].rotation.z=0.5-0.2*Math.abs(Math.sin(t*8));A[1].rotation.z=-0.5+0.2*Math.abs(Math.sin(t*8));I.rotation.x=c>0.7?0.5:0;break;}
-    case 'paint':L[0].rotation.x=L[1].rotation.x=-1.45;I.position.y=0.1;A[1].rotation.x=-1.35+0.12*Math.sin(t*4+ph);A[1].rotation.z=0.25+0.18*Math.sin(t*3+ph);A[0].rotation.x=-0.7;Hd.rotation.y=0.3*Math.sin(t*0.5+ph);break;
+    case 'paint':sit(0.1);A[1].rotation.x=-1.35+0.12*Math.sin(t*4+ph);A[1].rotation.z=0.25+0.18*Math.sin(t*3+ph);A[0].rotation.x=-0.7;Hd.rotation.y=0.3*Math.sin(t*0.5+ph);break;
     case 'write':{const look=Math.sin(t*0.4+ph)>0.6;A[0].rotation.x=-1.1;A[0].rotation.z=0.5;A[1].rotation.x=-1.0+0.1*Math.sin(t*6+ph);A[1].rotation.z=-0.35;Hd.rotation.x=look?-0.15:0.35;Hd.rotation.y=look?0.5*Math.sin(t*0.6):0;break;}
     case 'feed':{const f=Math.max(0,Math.sin(t*2+ph));A[1].rotation.x=-0.5-0.7*f;A[1].rotation.z=0.2+0.6*f;A[0].rotation.x=-0.9;A[0].rotation.z=0.4;I.rotation.x=0.15;break;}
-    case 'fish':A[0].rotation.x=A[1].rotation.x=-0.95+(Math.sin(t*0.7+ph)>0.95?-0.4:0);A[0].rotation.z=0.4;A[1].rotation.z=-0.2;L[0].rotation.x=L[1].rotation.x=-1.4;I.position.y=0.08;break;
+    case 'fish':A[0].rotation.x=A[1].rotation.x=-0.95+(Math.sin(t*0.7+ph)>0.95?-0.4:0);A[0].rotation.z=0.4;A[1].rotation.z=-0.2;sit(0.08);break;
     case 'net':{const c=cyc(0.35),s=c<0.4?sstep(0,0.4,c):1-sstep(0.4,0.55,c);A[0].rotation.x=A[1].rotation.x=lerp(-0.6,-2.4,s);I.rotation.y=lerp(-0.4,0.3,s);break;}
-    case 'mend':L[0].rotation.x=L[1].rotation.x=-1.45;I.position.y=0.07;A[0].rotation.x=-1.0+0.1*Math.sin(t*4+ph);A[1].rotation.x=-1.0+0.1*Math.sin(t*4+ph+1);Hd.rotation.x=0.35;break;
+    case 'mend':sit(0.07);A[0].rotation.x=-1.0+0.1*Math.sin(t*4+ph);A[1].rotation.x=-1.0+0.1*Math.sin(t*4+ph+1);Hd.rotation.x=0.35;break;
     case 'kite':A[1].rotation.x=-2.3+0.2*Math.sin(t*1.2+ph);Hd.rotation.x=-0.45;walk(0.3);break;
     case 'photo':I.rotation.x=0.35;A[0].rotation.x=A[1].rotation.x=-1.25;Hd.rotation.x=0.2;break;
     case 'pedal':L[0].rotation.x=-1.1+0.55*Math.sin(t*6+ph);L[1].rotation.x=-1.1-0.55*Math.sin(t*6+ph);A[0].rotation.x=A[1].rotation.x=-1.15;I.rotation.x=0.25;break;
-    case 'ride':L[0].rotation.x=L[1].rotation.x=-1.45;I.position.y=0.06;Hd.rotation.y=0.35*Math.sin(t*0.5+ph);A[1].rotation.x=-0.4;break;
+    case 'ride':sit(0.06);Hd.rotation.y=0.35*Math.sin(t*0.5+ph);A[1].rotation.x=-0.4;break;
     case 'wave':A[1].rotation.x=Math.sin(t*0.5+ph)>0.3?-2.6+0.25*Math.sin(t*6):-0.1;Hd.rotation.y=0.3*Math.sin(t*0.4+ph);break;
     case 'run':{const r=Math.sin(t*13+ph);L[0].rotation.x=r*0.9;L[1].rotation.x=-r*0.9;A[0].rotation.x=-r*0.8;A[1].rotation.x=r*0.8;I.position.y=0.24+Math.abs(r)*0.07;I.rotation.x=0.12;break;}
+    case 'chop':{const c=cyc(0.8),up=c<0.6?sstep(0,0.6,c):1-sstep(0.6,0.75,c);const ax=-0.75-1.7*up;A[0].rotation.set(ax,0,0.55);A[1].rotation.set(ax,0,-0.4);I.rotation.x=0.25-0.2*up;I.rotation.y=-0.35;break;}
+    case 'busk':{const u=p.userData,mode=Math.floor(t/5+ph*3)%3,bl=u.balls||[];bl.forEach(b=>b.visible=mode===0);if(u.staff)u.staff.visible=mode===1;
+      if(mode===0){const k=t*5;A[0].rotation.set(-1.2+0.35*Math.sin(k),0,0.25);A[1].rotation.set(-1.2-0.35*Math.sin(k),0,-0.25);Hd.rotation.x=-0.35;
+        bl.forEach((b,i)=>{const a=k+i*2.094;b.position.set(Math.cos(a)*0.17,0.62+Math.abs(Math.sin(a))*0.42,0.24);});}
+      else if(mode===1){A[1].rotation.set(-2.9,0,-0.1);A[0].rotation.set(-0.3,0,-0.5);if(u.staff){u.staff.position.set(0.05,1.05,0.1);u.staff.rotation.set(0,0,t*9);}Hd.rotation.x=-0.3;}
+      else{const c=cyc(0.5);I.rotation.y=Math.sin(c*6.283)*0.8;A[0].rotation.set(-1.5,0,-0.2);A[1].rotation.set(-1.5*Math.max(0,Math.sin(c*12.57)),0,0.2);L[0].rotation.x=-0.9*Math.max(0,Math.sin(c*6.283+1));}
+      break;}
+    case 'gassho':A[0].rotation.set(-1.1,0,0.7);A[1].rotation.set(-1.1,0,-0.7);Hd.rotation.x=0.15+0.1*Math.max(0,Math.sin(t*0.5+ph));break;
+    case 'hawk':walk(0.6);A[1].rotation.set(-2.3+0.35*Math.sin(t*9+ph),0,0.15);A[0].rotation.x=moving?-w*0.5:0;Hd.rotation.y=0.25*Math.sin(t*1.3+ph);break;
+    case 'banzai':{const c=cyc(0.9);A[0].rotation.set(-2.9,0,-0.25);A[1].rotation.set(-2.9,0,0.25);I.position.y=0.24;u.hop=0.2*Math.max(0,Math.sin(c*6.283));break;}
+    case 'aim':I.rotation.x=0.06;A[1].rotation.set(-1.45,0,0.05);A[0].rotation.set(-1.35,0,0.55);Hd.rotation.x=0.08;break;
     case 'pick':I.rotation.x=0.35;A[0].rotation.x=-1.0+0.3*Math.sin(t*4+ph);A[1].rotation.x=-1.0+0.3*Math.sin(t*4+ph+2);walk(0.15);break;
     case 'cook':A[0].rotation.x=-0.9;A[1].rotation.x=-1.0;A[1].rotation.z=0.3+0.3*Math.sin(t*4+ph);Hd.rotation.x=0.3;break;
     case 'stand':Hd.rotation.y=0.35*Math.sin(t*0.3+ph);A[0].rotation.z=-0.08;A[1].rotation.z=0.08;break;
     default:Hd.rotation.y=0.4*Math.sin(t*0.5+ph);I.position.y=0.24+0.01*Math.sin(t*2+ph);
   }
-  if(u.umb&&u.umb.visible){A[0].rotation.set(-1.25,0,-0.25);u.umb.rotation.set(1.25,0,0.25);}
+  if(u.umb&&u.umb.visible){const k=u.umbArm||0,sg=k?-1:1;A[k].rotation.set(-1.25,0,-0.25*sg);u.umb.rotation.set(1.25,0,0.25*sg);}
+  if(u.hug){A[0].rotation.set(-1.05,0,0.5);A[1].rotation.set(-1.05,0,-0.5);}
   if(u.parasolG){if(a==='wave'){A[0].rotation.x=A[1].rotation.x;A[0].rotation.z=-0.2;}A[1].rotation.set(-1.15,0,0.3);u.parasolG.rotation.set(1.15,0,-0.3);u.parasolG.position.z=-0.04;}
 }
 
@@ -1163,16 +1232,32 @@ function addMover(obj,pts,{speed=0.6,start=0,loop=false,water=false,walkers=null
 const offsetPath=(pts,o)=>pts.map(([x,z],i)=>{const a=pts[Math.min(i+1,pts.length-1)],b=pts[Math.max(i-1,0)];const dx=a[0]-b[0],dz=a[1]-b[1],l=Math.hypot(dx,dz)||1;return[x-dz/l*o,z+dx/l*o];});
 const I=(name,age,job,bio)=>({name,age,job,bio});
 
+const SELLER={x:60.3,z:-58.9,ry:-0.37};
+{const rm=toon(0x8a7d6e);[[65.4,-71.6,0.55,2.2],[66.9,-71.2,0.45,1.7]].forEach(([x,z,r,h])=>{const g=new THREE.Group();const m=new THREE.Mesh(new THREE.CylinderGeometry(r*0.55,r,h,7),rm);m.position.y=h/2;m.castShadow=true;g.add(m);
+  const tp=new THREE.Mesh(new THREE.DodecahedronGeometry(r*0.6,0),toon(0x6f8a5a));tp.position.y=h+0.05;tp.scale.y=0.5;g.add(tp);g.position.set(x,-0.9,z);g.rotation.y=x;scene.add(g);});} // 燭台雙嶼
+/* 建築不要擋在馬路上：和道路重疊的建築往路外推開 */
+{const v=new THREE.Vector3(),ws=new THREE.Vector3(),wx=new THREE.Vector3(),bb=new THREE.Box3(),c=new THREE.Vector3(),sz=new THREE.Vector3();
+  const boxes=o=>{o.updateMatrixWorld(true);const out=[];o.traverse(m=>{if(m.isMesh&&m.userData.block&&!m.userData.block.upper&&m.geometry.parameters){const P=m.geometry.parameters;m.getWorldPosition(v);m.getWorldScale(ws);wx.set(1,0,0).transformDirection(m.matrixWorld);const a=Math.atan2(-wx.z,wx.x);out.push({x:v.x,z:v.z,c:Math.cos(a),s:Math.sin(a),hx:P.width/2*ws.x+0.15,hz:P.depth/2*ws.z+0.15});}});
+    if(out.length)return out;const P=o.position.clone(),ry=o.rotation.y;o.position.set(0,0,0);o.rotation.y=0;o.updateMatrixWorld(true);bb.setFromObject(o);o.position.copy(P);o.rotation.y=ry;o.updateMatrixWorld(true);
+    if(bb.isEmpty()||bb.max.y<0.3)return out;bb.getCenter(c);bb.getSize(sz);if(sz.x>5.2||sz.z>5.2)return out;const co=Math.cos(ry),si=Math.sin(ry);out.push({x:P.x+co*c.x+si*c.z,z:P.z-si*c.x+co*c.z,c:co,s:si,hx:sz.x/2,hz:sz.z/2});return out;};
+  const LINES=[...ROADS];
+  const hitAt=(bx)=>{for(const L of LINES)for(let i=0;i<L.length-1;i++){const [ax,az]=L[i],[ex,ez]=L[i+1];const n=Math.ceil(Math.hypot(ex-ax,ez-az)/0.2);for(let k=0;k<=n;k++){const x=ax+(ex-ax)*k/n,z=az+(ez-az)*k/n;
+      for(const b of bx){if(Math.abs(x-b.x)>4||Math.abs(z-b.z)>4)continue;const dx=x-b.x,dz=z-b.z;const u=b.c*dx-b.s*dz,w=b.s*dx+b.c*dz;if(Math.abs(u)<b.hx+0.32&&Math.abs(w)<b.hz+0.32)return[x,z];}}}return null;};
+  OCCLUDERS.forEach(o=>{if(o.isInstancedMesh||o.userData.pass)return;let bx=boxes(o);if(!bx.length)return;let hit=hitAt(bx);if(!hit)return;
+    const g0=G(o.position.x,o.position.z);for(let k=0;k<25&&hit;k++){const dx=o.position.x-hit[0],dz=o.position.z-hit[1],l=Math.hypot(dx,dz)||1;o.position.x+=dx/l*0.2;o.position.z+=dz/l*0.2;bx=boxes(o);hit=hitAt(bx);}
+    o.position.y+=G(o.position.x,o.position.z)-g0;});}
+
 /* ---------- 竹子湖 ---------- */
 {
   const tech=person('tech');hold(tech,'board');
-  addActor(tech,-9.4,-11.6,0.6,'write',I('平澤 實',34,'臺北州農業技手','負責巡視竹子湖原種田的技術員。每週從臺北搭淡水線到北投，再沿山路走上竹子湖，記錄稻株的高度、抽穗日期和有沒有混到別的品種。雨天下田回來，卡其褲總是一路泥巴到膝蓋。'));
+  {const iso=person('suit',{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x6b5a46});hold(iso,'doc');iso.userData.keep=true;addActor(iso,-8.2,-10.95,-2.07,'chat',{chip:'名人',kind:'person',title:'磯永吉',tag:'農學家・蓬萊米之父（1886–1972）',body:'臺北帝國大學教授，與末永仁一起投入稻種改良，育成適合臺灣種植、又符合日本人口味的蓬萊米，被稱為「蓬萊米之父」。他常常上山巡視竹子湖的原種田，和技手平澤實一起討論今年稻子的生長情形。'});}
+  tech.userData.keep=true;addActor(tech,-9.4,-11.6,0.6,'write',I('平澤 實',34,'臺北州農業技手','負責巡視竹子湖原種田的技術員。每週從臺北搭淡水線到北投，再沿山路走上竹子湖，記錄稻株的高度、抽穗日期和有沒有混到別的品種。雨天下田回來，卡其褲總是一路泥巴到膝蓋。'));
   const p1=person('farmer');hold(p1,'hoe');
-  addActor(p1,-7.4,-9.4,2.2,'hoe',I('高阿水',46,'原種田代耕農','世居竹子湖的佃農，替臺北州代種蓬萊米的種子。種子收成後由農會用較高的價錢收購，比種一般稻子划算。他正在翻整收割後的田，打算多存點錢，把自家的茅草屋頂換成瓦片。'));
+  addActor(p1,-7.4,-9.4,2.2,'hoe',I('高水龍',46,'原種田代耕農','世居竹子湖的佃農，替臺北州代種蓬萊米的種子。種子收成後由農會用較高的價錢收購，比種一般稻子划算。他正在翻整收割後的田，打算多存點錢，把自家的茅草屋頂換成瓦片。'));
   const p2=person('farmerW',{top:0x9bb2bf});hold(p2,'sickle');
-  addActor(p2,-10.6,-8.6,0.4,'sickle',I('曹阿梅',38,'農婦','高阿水的鄰居。割稻時她最仔細，原種田的稻子要一株一株檢查，混進一株不一樣的就得拔掉。'));
-  const tub=new THREE.Group();tub.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tub.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tub,-11.4,-10.4,0);
-  const t1=person('farmer',{top:0x5c7392});hold(t1,'sheaf');addActor(t1,-11.4,-9.6,Math.PI,'thresh',I('曹阿財',19,'農家子弟','曹阿梅的兒子。打穀的時候抓起一把稻穗往木桶邊緣用力摔，穀粒就掉進桶裡。他的力氣大，一個下午能打完好幾分田的稻子。'));
+  addActor(p2,-10.6,-8.6,0.4,'sickle',I('曹秀梅',38,'農婦','高水龍的鄰居。割稻時她最仔細，原種田的稻子要一株一株檢查，混進一株不一樣的就得拔掉。'));
+  const tub=new THREE.Group();tub.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tub.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tub,-12.1,-11.1,0);
+  const t1=person('farmer',{top:0x5c7392});hold(t1,'sheaf');addActor(t1,-11.4,-9.6,Math.PI,'thresh',I('曹金財',19,'農家子弟','曹秀梅的兒子。打穀的時候抓起一把稻穗往木桶邊緣用力摔，穀粒就掉進桶裡。他的力氣大，一個下午能打完好幾分田的稻子。'));
   const carrier=person('coolie');shoulderPole(carrier,0xe2c771);
   addMover(carrier,[[-10,-9.8],[-12.2,-8.4],[-13.4,-6.2]],{speed:0.25,walkers:[[carrier,'carry']]},I('簡老伯',63,'挑米人','把竹子湖收成的稻穀挑到溪邊的水車寮碾米，走的就是人稱「米路」的小徑。挑了一輩子，路上哪塊石頭會滑他都知道。'));
   for(let i=0;i<3;i++){const e=egret();addActor(e,-9.5+i*1.5,-8.2+i*0.4,rng()*6,'egret');}
@@ -1185,7 +1270,7 @@ const onsenLoop=[[-38.5,27],[-36,25.8],[-34.5,24],[-36.2,22.6],[-39.5,23.4],[-41
   const y1=person('yukataM');addMover(y1,onsenLoop,{speed:0.33,loop:true,start:0.35},I('中村 正雄',41,'公學校教員','在臺北的公學校教書，這個週末帶著太太來北投過夜。穿著旅館借的浴衣，在溫泉街上慢慢散步。'));
   const k1=person('kimono');hold(k1,'parasol',0xd9483b);addMover(k1,onsenLoop,{speed:0.33,loop:true,start:0.38,walkers:[[k1,'stroll']]},I('中村 キヨ',36,'主婦','中村正雄的太太，撐著紅色和傘，正往地獄谷走去，想看看那片終年冒著熱氣的池子。'));
   const y2=person('yukataF');y2.userData.head.add(mesh(PG.towel,0xffffff,{y:0.21}));addMover(y2,onsenLoop,{speed:0.4,loop:true,start:0.7},I('林碧霞',24,'泡湯客','大稻埕布行老闆的女兒，跟姊妹淘一起來北投。她說公共浴場的大浴池比旅館的還氣派。'));
-  const n1=person('nakai');hold(n1,'broom');addActor(n1,-41.3,24.3,0.5,'sweep',I('陳阿嬌',22,'旅館女中','在溫泉旅館工作的女中，早上打掃玄關，晚上替客人端菜鋪被。為了招呼日本客人學了一口流利的日語，假日會把薪水寄回士林的家。'));
+  const n1=person('nakai');addActor(n1,-41.3,24.3,0.5,'wave',I('陳阿嬌',22,'旅館女中','在溫泉旅館工作的女中，早上打掃玄關，晚上替客人端菜鋪被。為了招呼日本客人學了一口流利的日語，假日會把薪水寄回士林的家。'));
   const own=person('yukataM',{top:0x5a4a3a,robe:0x5a4a3a,old:true});addActor(own,-42.4,22.5,0.8,'chat',I('松本 武',58,'溫泉旅館主人','大正年間來北投開旅館，看著新北投驛通車、公共浴場落成，客人一年比一年多。正在門口和熟客聊天。'));
   const sta=person('rail');hold(sta,'flag',0xd9483b);addActor(sta,-43.0,33.6,0.4,'wave',I('李清泉',27,'新北投驛驛員','士林出身，公學校畢業後考進鐵道部。每天在月台揮旗目送支線小火車進出，泡湯客多的週末忙到中午才能扒兩口便當。'));
   const pol=person('police');addActor(pol,-46.4,42.3,0.3,'stand',I('渡邊 茂',31,'巡查','派駐北投的巡查，夏天穿白色制服、腰間佩刀，在北投驛前站崗，也負責溫泉街一帶的戶口與治安。'));
@@ -1198,8 +1283,8 @@ const onsenLoop=[[-38.5,27],[-36,25.8],[-34.5,24],[-36.2,22.6],[-39.5,23.4],[-41
   for(let i=0;i<2;i++){const r=person('coolie',{top:0xf2efe6});const g=new THREE.Group();r.position.z=0.55;g.add(r);
     g.add(mesh(new THREE.BoxGeometry(0.62,0.32,0.5),0x2f2a33,{y:0.55,z:-0.5}));g.add(mesh(new THREE.BoxGeometry(0.66,0.05,0.56),0x2f2a33,{y:1.32,z:-0.55}));g.add(mesh(new THREE.BoxGeometry(0.66,0.8,0.05),0x2f2a33,{y:0.95,z:-0.82}));
     for(const s of[-1,1]){g.add(mesh(new THREE.TorusGeometry(0.3,0.04,6,16),0x5a3a2a,{x:0.37*s,y:0.3,z:-0.5,ry:Math.PI/2}));g.add(mesh(new THREE.BoxGeometry(0.04,0.04,1),0x5a3a2a,{x:0.26*s,y:0.5,z:0.1}));}
-    const pas=person(i?'suitF':'kimono',i?{}:{top:0x7b8fc9,robe:0x7b8fc9,obi:0xf2efe6});pas.scale.setScalar(0.85);pas.position.set(0,0.42,-0.5);g.add(pas);
-    addMover(g,offsetPath(ROADS[0],i?-0.2:0.2),{speed:0.6,start:i*0.55,walkers:[[r,'pull'],[pas,'ride']]},i?I('林旺來',40,'人力車夫','在北投驛前排班拉車，最常跑的是從北投上草山的上坡路。客人多是去草山泡湯的紳士。上坡時他把身子壓得很低，一步一步往上拖。'):I('蔡阿水',35,'人力車夫','北投庄的車夫，載著和服太太往草山去。他說下坡比上坡難，車子會推著人跑，要用腳死命煞住。'));
+    const pas=person(i?'suitF':'kimono',i?{}:{top:0x7b8fc9,robe:0x7b8fc9,obi:0xf2efe6});pas.scale.setScalar(0.85);pas.position.set(0,0.6,-0.5);g.add(pas);
+    addMover(g,offsetPath(ROADS[0],i?-0.2:0.2),{speed:0.6,start:i*0.55,walkers:[[r,'pull'],[pas,'ride']]},i?I('林旺來',40,'人力車夫','在北投驛前排班拉車，最常跑的是從北投上草山的上坡路。客人多是去草山泡湯的紳士。上坡時他把身子壓得很低，一步一步往上拖。'):I('蔡水生',35,'人力車夫','北投庄的車夫，載著和服太太往草山去。他說下坡比上坡難，車子會推著人跑，要用腳死命煞住。'));
     if(i===0)register(pas,I('高橋 ふみ',29,'人力車乘客','從臺北來草山賞櫻的太太，第一次坐人力車上山，一路緊緊抓著扶手。'));
     else register(pas,I('黃金生',44,'人力車乘客','大稻埕的茶商，穿西裝、戴禮帽，要上草山的旅館跟日本商人談生意。'));
   }
@@ -1212,39 +1297,43 @@ const onsenLoop=[[-38.5,27],[-36,25.8],[-34.5,24],[-36.2,22.6],[-39.5,23.4],[-41
   addMover(b,[[-6,11],[-3.6,12],[-1.5,11]],{speed:0.3,start:0.4},I('郭再興',33,'公學校訓導','臺灣人教員，剛在眾樂園泡完湯，頭上頂著毛巾，打算再走去御賓館附近看看風景。'));
   const painter=person('suit',{top:0x6b5a46,bottom:0x6b5a46,hat:'fedora',hatC:0x5a4a3a});hold(painter,'brush');
   const easel=easelM();
-  place(easel,-0.9,7.9,-2.2+Math.PI);const stool=mesh(new THREE.CylinderGeometry(0.16,0.16,0.22,8),0x8a6a4a);place(stool,-0.45,8.6,0);painter.userData.keep=true;
-  addActor(painter,-0.45,8.6,-2.4,'paint',I('藍文彬',29,'洋畫家','從東京美術學校畢業回臺的年輕畫家，正坐在草山的櫻花樹下寫生七星山，準備把這幅畫送去參加臺展。'),0.14);
-  const care=person('twOld',{top:0x2f2a33});hold(care,'broom');addActor(care,1.9,3.7,0.4,'sweep',I('吳阿惜',61,'御賓館雜役','在草山御賓館打掃了十幾年，最得意的是曾經遠遠看過皇太子行啟的車隊。'));
+  let pb=null;{const rx=Math.cos(0.94),rz=-Math.sin(0.94);for(let m=0.2;m<=1.6;m+=0.1)for(let q=-0.3;q<=0.3;q+=0.15){const ex=-0.9+rx*m-rz*q,ez=7.9+rz*m+rx*q;if(nearLines(ex,ez,0.45))continue;const ge=G(ex,ez);for(let a=-0.6;a<=0.6;a+=0.1)for(let d=0.95;d<=1.35;d+=0.05){const dir=0.94+a,px=ex+Math.sin(dir)*d,pz=ez+Math.cos(dir)*d;if(nearLines(px,pz,0.4))continue;let sl=0;for(const [ox,oz] of[[0.25,0],[-0.25,0],[0,0.25],[0,-0.25]])sl+=Math.abs(G(px+ox,pz+oz)-G(px,pz))+Math.abs(G(ex+ox,ez+oz)-ge);const dh=Math.abs(G(px,pz)-ge)*2+sl+Math.abs(a)*0.05+Math.abs(m-0.6)*0.05;if(!pb||dh<pb.dh)pb={dh,px,pz,dir,ex,ez};}}}
+  place(easel,pb.ex,pb.ez,pb.dir);const stool=mesh(new THREE.CylinderGeometry(0.16,0.16,0.22,8),0x8a6a4a);place(stool,pb.px,pb.pz,0);painter.userData.keep=true;
+  addActor(painter,pb.px,pb.pz,pb.dir+Math.PI,'paint',I('藍文彬',29,'洋畫家','從東京美術學校畢業回臺的年輕畫家，正坐在草山的櫻花樹下寫生七星山，準備把這幅畫送去參加臺展。'),0.03);
+  const care=person('twOld',{top:0x2f2a33});hold(care,'broom');addActor(care,1.9,3.7,0.4,'sweep',I('吳罔腰',61,'御賓館雜役','在草山御賓館打掃了十幾年，最得意的是曾經遠遠看過皇太子行啟的車隊。'));
 }
 /* ---------- 冷水坑、大嶺、硫磺 ---------- */
 const cows=[];
 {
   for(let i=0;i<16;i++){const c=bovine(i%3?'buffalo':'tajima');c.userData.wander={a:rng()*Math.PI*2,r:1+rng()*4.3,speed:(0.02+rng()*0.04)*(rng()<0.5?1:-1),phase:rng()*10};folk.add(c);cows.push(c);
     if(i%4===1){const e=egret();e.scale.setScalar(0.8);e.position.set(0,0.95,-0.1);c.add(e);}}
-  const boy=person('farmer',{child:true,hat:'straw',hatC:0xead9a0,top:0x9bb2bf});hold(boy,'stick');
+  const boy=person('farmer',{child:true,top:0x9bb2bf});hold(boy,'stick');
   addMover(boy,[[25,-2],[27,2],[31,1.5],[32,-3],[28,-5],[25,-2]],{speed:0.3,loop:true},I('吳添丁',13,'牧童','山下士林農家的孩子，農閒時跟著大人把家裡的水牛牽上大嶺寄養，順便幫牧場看牛，一天能領幾錢工資。'));
   const keeper=person('tech',{hat:'straw',hatC:0xead9a0,top:0xe8dcc0});hold(keeper,'board');
   addActor(keeper,33.2,1.5,-1.4,'write',I('岡田 正一',39,'牧場管理人','臺北州派來管理大嶺牧場的職員，負責登記每一頭寄養的牛：主人是誰、哪天上山、哪天要牽回去耕田。'));
   const m1=person('miner');backBasket(m1,0xe8d36a);
-  addMover(m1,[[20,-14],[22,-10],[24,-6],[24.5,-2]],{speed:0.28},I('謝阿義',41,'採硫工人','在大油坑採硫磺，背簍裡裝的是黃澄澄的硫磺塊。長年吸硫氣，咳嗽成了老毛病，但工錢比種田好。'));
-  const m2=person('miner',{top:0xa89a6a});backBasket(m2,0xe8d36a);addActor(m2,2.6,-10.8,1.2,'pick',I('洪天賜',23,'採硫工人','謝阿義帶出來的年輕人，在小油坑的噴氣孔旁撬硫磺結晶。他說噴氣孔的聲音像大鍋在燒水。'));
-  for(let i=0;i<3;i++){const p=person('coolie',{top:[0xf2efe6,0x8aa0a8,0x6f8fb3][i]});shoulderPole(p,0x9fb6c4);
-    addMover(p,TRAIL,{speed:0.5,start:i*0.3,walkers:[[p,'carry']]},[I('許阿炎',44,'魚路挑夫','半夜從金山庄的磺港挑著魚出發，翻過大嶺，天亮前要趕到士林的市場，魚才新鮮。一擔將近百斤，一個晚上走三十幾公里。'),I('楊石頭',37,'魚路挑夫','許阿炎的搭檔。兩人約好在大嶺的石厝歇腳喝水，再一路下坡。他的扁擔已經磨得發亮。'),I('曾火旺',26,'魚路挑夫','剛入行兩年的年輕挑夫，回程挑的是士林買的米和日用品，賣給金山的人家。')][i]);}
+  addMover(m1,[[20,-14],[22,-10],[24,-6],[24.5,-2]],{speed:0.28},I('謝義雄',41,'採硫工人','在大油坑採硫磺，背簍裡裝的是黃澄澄的硫磺塊。長年吸硫氣，咳嗽成了老毛病，但工錢比種田好。'));
+  const m2=person('miner',{top:0xa89a6a});backBasket(m2,0xe8d36a);addActor(m2,2.6,-10.8,1.2,'pick',I('洪天賜',23,'採硫工人','謝義雄帶出來的年輕人，在小油坑的噴氣孔旁撬硫磺結晶。他說噴氣孔的聲音像大鍋在燒水。'));
+  const FISH_ROAD=[[SELLER.x+Math.sin(SELLER.ry)*0.8,SELLER.z+Math.cos(SELLER.ry)*0.8],[58.6,-56.6],[58,-56],...[...TRAIL].reverse(),[17,-1],[14,1],[8,4],[1,5],[-4,10],[-5,17],[-6,25],[-7,35],[-9,45],[-12,55],[-16,63],[-18.6,68.4],[-17.7,70.5]];
+  for(let i=0;i<5;i++){const p=person('coolie',{top:[0xf2efe6,0x8aa0a8,0x6f8fb3,0xd9cfb4,0x5c7392][i]});shoulderPole(p,[0x9fb6c4,0x9fb6c4,0x9fb6c4,0xc9a066,0x9fb6c4][i]);
+    const fm=addMover(p,offsetPath(FISH_ROAD,(i%2?0.18:-0.18)),{speed:0.62,start:[0.02,0.12,0.38,0.6,0.86][i],pause:8,walkers:[[p,'carry']]},[I('許炎坤',44,'魚路挑夫','半夜從金山庄的磺港挑著魚出發，翻過大嶺，天亮前要趕到士林的市場，魚才新鮮。一擔將近百斤，一個晚上走三十幾公里。'),I('楊石頭',37,'魚路挑夫','許炎坤的搭檔。兩人約好在大嶺的石厝歇腳喝水，再一路下坡。他的扁擔已經磨得發亮。'),I('曾火旺',26,'魚路挑夫','剛入行兩年的年輕挑夫，回程挑的是士林買的米和日用品，賣給金山的人家。'),I('簡德旺',52,'魚路挑夫','挑了快三十年的老挑夫，熟悉古道上每一塊石階。走到大嶺時總會停下來，對著土地公的小祠拜一拜。'),I('林春生',31,'魚路挑夫','原本在金山討海，風浪大、船出不了港的日子就改當挑夫，把魚貨挑到士林，順便帶回孩子要的筆記本。')][i]);fm.greet=true;fm.pauseEnd=30;fm.fishQ=true;}
 }
 /* ---------- 登山隊 ---------- */
 {
-  const hike=[[-12.5,-1.5],[-15.5,-5],[-18.5,-8.5],[-21,-10.6],[-22.6,-11.6]];
-  const t=person('suit',{hat:'fedora',hatC:0x5a4a3a});hold(t,'flag',0xfffdf6);
-  addMover(t,hike,{speed:0.3,start:0.32},I('吉田 正治',38,'中學校教師','帶著中學校的山岳部學生攀登大屯山。大屯山剛被指定為國立公園，學校爭相舉辦登山健行。'));
+  const hike0=[[-15.3,-6.3],[-16.6,-7.2],[-18.5,-8.5],[-21,-10.6],[-22.6,-11.6]];
+  const ring=(c,r,a0)=>Array.from({length:9},(_,k)=>{const a=a0+k/8*6.283;return[c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r];});
+  const hike=[...offsetPath(hike0,0.3),...ring([-22.6,-11.6],0.9,2.4),...offsetPath([...hike0].reverse(),0.3)];HIKE_MV.length=0;
+  const t=person('suit',{hat:'fedora',hatC:0x5a4a3a});hold(t,'flag',0xd9483b);t.userData.hasParasol=true;
+  HIKE_MV.push(addMover(t,hike,{speed:0.3,start:0.32},I('吉田 正治',38,'中學校教師','帶著中學校的山岳部學生攀登大屯山。大屯山被選為國立公園候補地之後，學校爭相舉辦登山健行。')));
   [['小林 義一',15,'中學校學生','山岳部的社員，背包裡裝著飯糰和水壺，最期待在山頂吹風吃便當。'],['陳文雄',15,'中學校學生','士林出身的臺灣學生，數學成績全班第一。他第一次爬大屯山，一路拿著筆記本畫地形。'],['田中 次郎',14,'中學校學生','體力最好的一個，一直想超到老師前面去。'],['林朝宗',14,'中學校學生','走得最慢，常停下來看路邊的蝴蝶和芒草。']].forEach((d,i)=>{
-    const s=person('student');satchel(s,0x7a5a3a);addMover(s,hike,{speed:0.3,start:0.25-i*0.06},I(...d));});
+    const s=person('student');hold(s,'cane');s.userData.hasParasol=true;HIKE_MV.push(addMover(s,hike,{speed:0.3,start:0.25-i*0.03},I(...d)));});
 }
 /* ---------- 平原農事 ---------- */
 const SANZHI_BIO=['三芝庄的山坡田，水全靠山泉一格一格往下引。他今天在修田埂，免得下大雨時被沖垮。','剛從小基隆的市場賣完菜回來，順手到田裡割一把番薯葉回去餵豬。',
   '家裡世代在三芝種田，最近聽說庄役場要推廣蓬萊米，正在考慮明年要不要改種。','趁著好天氣在田邊割草，割下來的草曬乾後可以當牛的飼料，也能鋪在豬舍裡。',
   '一邊翻土一邊抱怨今年的東北季風特別強，田邊的竹圍被吹倒了好幾叢。','嫁到三芝十年了，除了下田，還要照顧四個孩子和公婆，忙到天黑才能休息。'];
-const NAMES_M=['林阿土','陳水木','張阿福','吳添福','李萬枝','劉金水','黃阿樹','楊再發','周阿財','鄭清標'];
-const NAMES_F=['陳罔市','李阿嬌','黃秀英','張碧珠','吳阿梅','劉春花','郭寶珠','許阿招','楊月娥','蔡阿惜'];
+const NAMES_M=['林阿土','陳水木','張福壽','吳添福','李萬枝','劉金水','黃樹根','楊再發','周財源','鄭清標'];
+const NAMES_F=['陳罔市','李玉梅','黃秀英','張碧珠','吳梅英','劉春花','郭寶珠','許招治','楊月娥','蔡惜治'];
 const JOBS=[
   ['hoe','farmer','翻田的農夫','收割後的田要趕快翻鬆，準備下一期作。鋤頭一下一下往下挖，汗水沿著斗笠邊緣滴下來。'],
   ['sickle','farmerW','割稻的農婦','左手抓住一把稻莖，右手的鐮刀一拉就斷，割下來的稻束一堆一堆擺在田埂邊。'],
@@ -1252,31 +1341,66 @@ const JOBS=[
   ['thresh','farmer','打穀的農夫','把稻束舉過頭頂，再用力摔在打穀桶的邊緣，穀粒嘩啦啦落進桶裡。'],
   ['feed','farmerW','餵雞的農婦','一手提著竹籃，一手撒米糠，雞群一擁而上。家裡的雞蛋是逢年過節才捨得吃的。'],
 ];
-farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
+/* 平原農家的人物表：每個人有自己的名字和小故事 */
+const FARM_M=[
+ ['林塗城','家裡三代都是佃農，今年終於攢夠錢，打算向地主多租一分地。'],
+ ['張秋田','腰上掛著一個菸斗，休息時總要抽兩口，說這是他一天裡最享受的時刻。'],
+ ['吳樑木','力氣是庄裡數一數二的，廟會扛神轎時總是站在最前面。'],
+ ['游阿川','年輕時在基隆港當過搬運工，存了點錢回鄉種田，最愛講碼頭的見聞給孩子聽。'],
+ ['黃榮輝','種田之餘還會編竹簍，編好的竹簍拿去士林市場賣，貼補家用。'],
+ ['楊天墩','認得幾個字，庄裡誰家要寫信、看契約都來找他幫忙。'],
+ ['周樂生','家裡的水牛老了，他捨不得賣，說牠是家裡的一份子，要養到牠老死。'],
+ ['鄭龜壽','剛娶了隔壁庄的姑娘，下田時總是哼著歌，被鄰居笑說是新郎倌。'],
+ ['陳水木','種了一輩子在來米，今年第一次改種蓬萊米，天天擔心收成好不好。'],
+ ['蘇旺枝','做事慢條斯理，但田埂整得最直，鄰居都說他的田像用尺畫的。'],
+ ['廖財旺','農閒時到北投溫泉旅館打零工，聽了很多內地客人的故事。'],
+ ['林發順','家裡有六個孩子，最大的已經可以幫忙下田，最小的還在背上。'],
+ ['洪德興','喜歡在田邊養鴨，鴨子吃田裡的福壽螺和雜草，一舉兩得。'],
+ ['許成家','每年中元普渡都負責殺豬，是庄裡有名的好刀手。'],
+ ['謝貴春','年輕時學過武館，現在還會在廟口教孩子打拳。'],
+ ['曾炎山','剛從日本兵役回來不久，常跟朋友說起在內地看到的電車和高樓。'],
+ ['卓天生','喜歡看布袋戲，收工後常常跑到士林廟口看夜戲，看到劇情精彩處還會跟著喊。'],['魏全福','種田之外還會修理農具，誰家的犁壞了都來找他。'],
+ ['賴阿乞','小時候身體不好，取了個賤名好養，現在卻是全庄最勇的壯丁。'],['紀添福','每天收工都要去溪邊摸蜆仔，帶回家煮薑絲湯。'],['施阿在','家裡供著一尊從唐山帶來的媽祖，每年都要回關渡宮刈香。'],['葉阿田','剛買了一台腳踏車，雖然還騎不太穩，卻天天騎著去田裡。']];
+const FARM_F=[
+ ['李玉梅','手腳俐落，插秧比男人還快，大家都叫她「秧仔嬸」。'],
+ ['郭寶珠','嫁過來五年，最拿手的是醃菜脯和做草仔粿，鄰居都來跟她學。'],
+ ['吳梅英','每天天沒亮就起床煮飯、餵豬，再跟著丈夫下田，忙到天黑。'],
+ ['蔡惜治','丈夫在大稻埕當茶工，家裡的田大多由她一個人照顧。'],
+ ['陳罔市','名字取「罔市」是希望她好養大，現在已經是三個孩子的媽媽。'],
+ ['黃秀枝','最愛唱山歌，割稻時一開口，整片田的人都跟著和。'],
+ ['張碧蓮','在公學校讀過兩年書，會寫自己的名字，偶爾教鄰居孩子認字。'],
+ ['劉春燕','娘家在北投，常常提著自家種的菜回娘家，順便泡個溫泉。'],
+ ['許玉妹','家裡養了十幾隻雞，雞蛋除了自己吃，還拿去市場換鹽和糖。'],
+ ['楊月娥','年紀輕輕就守寡，一個人撐起家裡的田，庄裡沒人不佩服她。'],
+ ['陳滿妹','笑聲很大，隔著兩塊田都聽得到，大家說她一來田裡就熱鬧了。'],
+ ['黃阿罔','做得一手好竹編，曬穀用的竹篩都是自己編的。'],
+ ['鄭阿花','剛從鄰庄嫁過來，還不太認得路，常常跟在婆婆後面走。']];
+let farmMi=0,farmFi=0;const farmPick=female=>female?FARM_F[(farmFi++)%FARM_F.length]:FARM_M[(farmMi++)%FARM_M.length];
+RCK('c2');farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
   const [anim,style,job,bio]=JOBS[i%JOBS.length];
   const a=f.r+Math.PI*0.5+rng(),d=2.4+rng()*0.8;let x=f.x+Math.cos(a)*d,z=f.z+Math.sin(a)*d;
   if(anim==='feed'){x=f.x+Math.sin(f.r)*1.25;z=f.z+Math.cos(f.r)*1.25;}
   if(H(x,z)>1.4||nearLines(x,z,0.4))return;
   const female=style==='farmerW';const p=person(style,{top:female?[0x9bb2bf,0xd9a0a8,0x7aa6c9][i%3]:[0x6f8fb3,0x5c7392,0x8aa0a8][i%3]});
-  const age=22+Math.floor(rng()*40),name=female?NAMES_F[i%NAMES_F.length]:NAMES_M[i%NAMES_M.length];
+  const age=22+Math.floor(rng()*40);const [name,story]=farmPick(female);
   const where=f.z<60?'北投、唭哩岸一帶':(f.z<80?'士林街外':'圓山附近');
-  const info=I(name,age,job,`在${where}耕作的佃農家。${bio}`);
-  if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));place(tb,x,z+0.8,0);}
+  const info=I(name,age,job,`在${where}耕作的佃農家。${bio}${story}`);
+  if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);p.userData.faceRy=0;}
   if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.5,z+Math.sin(k*1.6)*0.5,rng()*6,'peck');});}
   if(anim==='plant'){const dx=Math.cos(a),dz=Math.sin(a);addMover(p,[[x,z],[x+dx*2.4,z+dz*2.4]],{speed:0.06,backward:true,walkers:[[p,'plant']],pause:0.5},info);}
-  else addActor(p,x,z,a+Math.PI,anim,info);
+  else{if(anim==='thresh')p.userData.keep=true;addActor(p,x,z,anim==='thresh'?0:a+Math.PI,anim,info);}
   if(i%4===0){const e=egret();addActor(e,x+0.8,z-0.6,rng()*6,'egret');}
 });
-/* 從「整格完整」的稻田中挑位置給犁田、養鴨、放風箏 */
+RCK('c3');/* 從「整格完整」的稻田中挑位置給犁田、養鴨、放風箏 */
 const FIELDS=[];{const inf=MASK_L.info;for(let cz=inf.y;cz<inf.y+inf.w;cz++)for(let cx=inf.x;cx<inf.x+inf.z;cx++)
   if(cz*2.5>30&&MASK_L.full(cx,cz)&&MASK_L.full(cx+1,cz)&&MASK_L.full(cx,cz+1)&&MASK_L.full(cx+1,cz+1)){const x=cx*2.5,z=cz*2.5;if(!nearLines(x+2.5,z+2.5,1.2)&&free(x+2.5,z+2.5,1.6))FIELDS.push([x,z]);}}
 function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.floor(rng()*FIELDS.length),1)[0];claim(f[0]+2.5,f[1]+2.5,2.5);return f;}
 { // 水牛犁田
-  [0,1,2,3].map(()=>{const f=takeField();return f?[[f[0]+0.8,f[1]+2.5],[f[0]+4.2,f[1]+2.5]]:null;}).filter(Boolean).forEach((pts,i)=>{
+  [0,1,2].map(()=>{let f=takeField();for(let k=0;k<12&&f&&inBoardXZ(f[0]+2.5,f[1]+2.5)<10;k++)f=takeField();return f?[[f[0]+0.8,f[1]+2.5],[f[0]+4.2,f[1]+2.5]]:null;}).filter(Boolean).forEach((pts,i)=>{
     const g=new THREE.Group();const b=bovine('buffalo');g.add(b);const p=person('farmer',{top:[0x8aa0a8,0x6f8fb3,0x5c7392,0x9bb2bf][i]});hold(p,'stick');p.position.z=-1.3;g.add(p);
     g.add(mesh(new THREE.BoxGeometry(0.05,0.05,0.9),0x8a6a4a,{y:0.35,z:-0.65,rx:0.2}));g.add(mesh(new THREE.BoxGeometry(0.3,0.1,0.06),0x8d8d96,{y:0.1,z:-1.0}));
     const e=egret();e.position.set(0.6,0,-1.8);g.add(e);
-    addMover(g,pts,{speed:0.3,walkers:[[p,'herd'],[b,'animal']]},I(['周阿財','鄭清標','李萬枝','劉金水'][i],[48,36,52,29][i],'犁田的農夫','牽著自家的水牛犁田。水牛是農家最重要的財產，農閒時要送上大嶺寄養，農忙時再牽回來。後面總跟著幾隻撿蟲吃的白鷺鷥。'));
+    addMover(g,pts,{speed:0.3,walkers:[[p,'herd'],[b,'animal']]},I(['周財源','鄭清標','劉金水'][i],[48,36,29][i],'犁田的農夫',['牽著自家的水牛犁田。水牛是農家最重要的財產，農閒時要送上大嶺寄養，農忙時再牽回來。','剛學會自己駛牛犁田，牛走得太快，他在後面跌跌撞撞地跟著，黃頭鷺倒是跟得很開心。','年紀最輕的犁田手，邊犁田邊吹口哨，說水牛聽到口哨聲會走得比較穩。'][i]));
   });
 }
 { // 牛車
@@ -1284,13 +1408,13 @@ function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.fl
     cart.add(mesh(new THREE.BoxGeometry(0.9,0.25,1),0x9a6b46,{y:0.55}));cart.add(mesh(new THREE.BoxGeometry(0.8,0.4,0.9),0xe6cf6a,{y:0.85}));
     for(const s of[-1,1])cart.add(mesh(new THREE.TorusGeometry(0.38,0.06,6,16),0x6b4a34,{x:0.5*s,y:0.4,ry:Math.PI/2}));
     const p=person('farmer',{top:0x6f8fb3});hold(p,'stick');p.position.set(0.7,0,0.2);g.add(p);return[g,p,b];};
-  const [g1,p1,b1]=mk();addMover(g1,offsetPath(ROADS[4],0.35),{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張阿福',50,'牛車伕','用牛車把稻穀從田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));
-  const [g2,p2,b2]=mk();addMover(g2,offsetPath(ROADS[3].slice(0,3),0.35),{speed:0.35,start:0.6,walkers:[[p2,'herd'],[b2,'animal']]},I('黃阿樹',42,'牛車伕','載著一車稻草往士林街去，稻草可以賣給人家當燃料或鋪牛舍。'));
+  const [g1,p1,b1]=mk();const mvZ=addMover(g1,offsetPath(ROADS[4],0.35),{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張福壽',50,'牛車伕','用牛車把稻穀從田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));mvZ.noSpur=true;
+  const [g2,p2,b2]=mk();addMover(g2,offsetPath(ROADS[3].slice(0,3),0.35),{speed:0.35,start:0.6,walkers:[[p2,'herd'],[b2,'animal']]},I('黃樹根',42,'牛車伕','載著一車稻草往士林街去，稻草可以賣給人家當燃料或鋪牛舍。'));
 }
 { // 養鴨人家
   const h=person('farmer',{hat:'kasa',top:0x5c7392});hold(h,'longpole');
   const ducks=[];for(let i=0;i<12;i++){const d=duck(i%4===0?0x9a7a5a:0xffffff);folk.add(d);ducks.push({obj:d,lag:0.8+i*0.22,side:(rng()-0.5)*1.4});}
-  addMover(h,(f=>[[f[0]+0.8,f[1]+0.8],[f[0]+4.2,f[1]+0.8],[f[0]+4.2,f[1]+4.2],[f[0]+0.8,f[1]+4.2],[f[0]+0.8,f[1]+0.8]])(takeField()||[-60,80]),{speed:0.3,loop:true,walkers:[[h,'herd']],followers:ducks},I('郭阿成',47,'養鴨人家','拿著長竹竿趕著一群鴨子，在收割後的田裡撿稻穀和田螺吃。鴨子養肥了賣到士林市場，鴨蛋則拿去做鹹蛋。'));
+  addMover(h,(f=>[[f[0]+0.8,f[1]+0.8],[f[0]+4.2,f[1]+0.8],[f[0]+4.2,f[1]+4.2],[f[0]+0.8,f[1]+4.2],[f[0]+0.8,f[1]+0.8]])(takeField()||[-60,80]),{speed:0.3,loop:true,walkers:[[h,'herd']],followers:ducks},I('郭成發',47,'養鴨人家','拿著長竹竿趕著一群鴨子，在收割後的田裡撿稻穀和田螺吃。鴨子養肥了賣到士林市場，鴨蛋則拿去做鹹蛋。'));
 }
 { // 放風箏的孩子
   const k=person('twM',{child:true,top:0xe3a35b,legSkin:true});
@@ -1301,59 +1425,66 @@ function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.fl
 }
 /* ---------- 士林街、河邊 ---------- */
 TEA_PATCHES.forEach(([cx,cz],i)=>{const p=person('farmerW',{top:[0x9bb2bf,0xd9a0a8,0x7aa6c9][i]});backBasket(p,0xc9a066);
-  addActor(p,cx+0.6,cz-0.4,rng()*6,'pick',I(['張碧珠','劉春桃','吳阿秀'][i],[35,19,50][i],'採茶婦',['在山腳的小茶園採茶，只摘一心二葉，背簍滿了就送去茶寮炒製。','茶園主人家的女兒，第一次跟著大人上山採茶，動作還不夠快，常被阿姨們笑。','採了三十年的茶，聞一下茶菁就知道今年的茶好不好。'][i]));});
+  addActor(p,cx+0.6,cz-0.4,rng()*6+(i===0?Math.PI:0),'pick',I(['張碧珠','劉春桃','吳秀琴'][i],[35,19,50][i],'採茶婦',['在山腳的小茶園採茶，只摘一心二葉，背簍滿了就送去茶寮炒製。','茶園主人家的女兒，第一次跟著大人上山採茶，動作還不夠快，常被阿姨們笑。','採了三十年的茶，聞一下茶菁就知道今年的茶好不好。'][i]));});
 function bankAt(pts,w,px,pz,off,side=1){let best=null;
   for(let i=0;i<pts.length-1;i++){const [ax,az]=pts[i],[bx,bz]=pts[i+1];const vx=bx-ax,vz=bz-az,l2=vx*vx+vz*vz;const t=clamp01(((px-ax)*vx+(pz-az)*vz)/l2);const cx=ax+vx*t,cz=az+vz*t,d=Math.hypot(px-cx,pz-cz);
     if(!best||d<best.d){const l=Math.sqrt(l2);best={d,cx,cz,nx:-vz/l,nz:vx/l};}}
   const x=best.cx+best.nx*(w+off)*side,z=best.cz+best.nz*(w+off)*side;return{x,z,ry:Math.atan2(best.cx-x,best.cz-z)};}
 {
-  const v=person('twF',{top:0x7aa6c9});addActor(v,-14.6,70.0,-0.6,'chat',I('王玉蘭',49,'菜販','每天清早從士林郊外挑菜進市場賣，菜攤上有空心菜、蘿蔔和番薯。跟熟客講價的時候嗓門最大。'));
-  const buyer=person('kimono',{top:0x7b8fc9,robe:0x7b8fc9,obi:0xf2efe6});hold(buyer,'basket');addActor(buyer,-15.1,69.1,2.5,'chat',I('伊藤 トミ',34,'主婦','住在士林的日本人家庭主婦，每天提著竹籃來市場買菜，已經學會用臺灣話說「多少錢」。'));
+  const v=person('twF',{top:0x7aa6c9});v.userData.keep=true;addActor(v,-14.79,72.1,0.4+Math.PI,'chat',I('王玉蘭',49,'菜販','每天清早從士林郊外挑菜進市場賣，菜攤上有空心菜、蘿蔔和番薯。跟熟客講價的時候嗓門最大。'));
+  const buyer=person('kimono',{top:0x7b8fc9,robe:0x7b8fc9,obi:0xf2efe6});hold(buyer,'basket');buyer.userData.keep=true;addActor(buyer,-15.37,70.72,0.4,'chat',I('伊藤 トミ',34,'主婦','住在士林的日本人家庭主婦，每天提著竹籃來市場買菜，已經學會用臺灣話說「多少錢」。'));
   const old=person('changpao');hold(old,'cane');
-  addMover(old,[[-23,71.5],[-22.4,68.5],[-21.2,66.4]],{speed:0.22,walkers:[[old,'stroll']]},I('潘清和',66,'漢醫','在士林街開漢藥鋪的老先生，穿長袍馬褂、戴瓜皮帽，每天傍晚拄著手杖到廟埕和老朋友下棋。'));
+  addMover(old,[[-21.5,71.8],[-21.7,68.6],[-21.2,66.4]],{speed:0.22,walkers:[[old,'stroll']]},I('潘清和',66,'漢醫','在士林街開漢藥鋪的老先生，穿長袍馬褂、戴瓜皮帽，每天傍晚拄著手杖到廟埕和老朋友下棋。'));
   const sh=[[-16.8,69.0],[-13.8,68.6],[-13.2,71.0],[-14.6,73.2],[-16.8,69.0]];
-  const w1=person('twF',{top:0xd9a0a8});hold(w1,'basket');addMover(w1,offsetPath([[-19,70],[-17.5,66.5]],0.25),{speed:0.3,start:0.1,pause:3},I('劉春花',31,'主婦','穿著淡紅色的臺灣衫，到市場買豬肉準備拜拜。'));
+  const w1=person('twF',{top:0xd9a0a8});hold(w1,'basket');const mvL=addMover(w1,[atLocal0(TEMPLE_SL,-0.2,2.3),[-18.0,70.2],[-16.6,70.5],[-16.15,70.85]],{speed:0.3,start:0.1,pause:10},I('劉春花',31,'主婦','穿著淡紅色的臺灣衫，到市場買豬肉準備拜拜。'));mvL.faceEnds=[[TEMPLE_SL.position.x,TEMPLE_SL.position.z],[-15.48,71.48]];
   const sm=person('suit',{hat:'fedora',hatC:0x3d3446});addMover(sm,offsetPath([[-19.4,74.8],[-18.6,78]],-0.25),{speed:0.35,start:0.55,pause:3},I('何松年',37,'庄役場書記','在士林街役場上班的臺灣人書記，穿西裝戴帽子，中午走到市場吃一碗米粉湯。'));
-  const pm=person('rail',{top:0x3a4a3a,bottom:0x3a4a3a,hatC:0x3a4a3a});satchel(pm,0x6b4a34);
-  addMover(pm,offsetPath(ROADS[4],-0.3),{speed:0.45,start:0.3},I('楊再發',32,'郵便配達夫','士林郵便局的送信員，背著皮製郵袋，每天走路把信送到北投、唭哩岸一帶的人家。'));
-  [[-26.5,86.0,'黃秀英',28],[-29.0,84.0,'許阿招',45]].forEach(([x,z,n,a])=>{const p=person('twF',{top:n==='許阿招'?0x2f2a33:0x9bb2bf});hold(p,'beater');
+  const pm=person('rail',{top:0x3a4a3a,bottom:0x3a4a3a,hatC:0x3a4a3a});const pb=new THREE.Group();for(const z of[-0.45,0.45])pb.add(mesh(new THREE.TorusGeometry(0.28,0.03,6,16),0x2f2a33,{y:0.3,z,ry:Math.PI/2}));
+  pb.add(mesh(new THREE.BoxGeometry(0.04,0.04,0.9),0x2f2a33,{y:0.48}));pb.add(mesh(new THREE.BoxGeometry(0.04,0.4,0.04),0x2f2a33,{y:0.5,z:0.4}));pb.add(mesh(new THREE.BoxGeometry(0.42,0.035,0.035),0x2f2a33,{y:0.71,z:0.4}));pb.add(mesh(PG.bag,0x6b4a34,{y:0.55,z:-0.42,ry:Math.PI/2}));pm.position.set(0,0.28,-0.12);pb.add(pm);pm.userData.hasParasol=true;
+  addMover(pb,offsetPath(ROADS[4],-0.3),{speed:0.9,start:0.3,walkers:[[pm,'pedal']]},I('楊再發',32,'郵便配達夫','士林郵便局的送信員，騎著自轉車、後座綁著皮製郵袋，每天把信送到北投、唭哩岸一帶的人家。'));
+  [[-26.5,86.0,'黃秀英',28],[-29.0,84.0,'許招治',45]].forEach(([x,z,n,a])=>{const p=person('twF',{top:n==='許招治'?0x2f2a33:0x9bb2bf});hold(p,'beater');
     const b=bankAt(RIVERS[1].pts,1.15,x,z,0.35,1);addActor(p,b.x,b.z,b.ry,'wash',I(n,a,'洗衣婦',n==='黃秀英'?'在基隆河邊用木棒捶打衣服，一邊和鄰居聊天。河邊的大石頭是大家固定的洗衣位置。':'替街上幾戶人家洗衣服賺錢，每天要洗好幾籃，手指泡得發白。'));});
   const fisher=person('farmer',{hat:'straw',hatC:0xead9a0,top:0x8aa0a8});hold(fisher,'rod');const fb=bankAt(RIVERS[1].pts,1.15,-36.5,80.0,0.55,1);addActor(fisher,fb.x,fb.z,fb.ry,'fish',I('蔡天來',58,'釣客','退休的老船夫，每天下午坐在基隆河邊釣魚，釣到的小魚帶回家煮湯給孫子喝。'));
   const sch=[[-21,74.5],[-19.4,76.6],[-17.6,78.6]];
-  [['阿玉',10],['秀鳳',11]].forEach(([n,a],i)=>{const p=person('twF',{child:true,top:0xf2efe6,bottom:0x2f3a5a});satchel(p,0x8a5a3a);addMover(p,offsetPath(sch,i?0.25:-0.25),{speed:0.4,start:i*0.08},I(n,a,'公學校學生','士林公學校的學生，放學後一起走路回家。書包裡有國語讀本和算盤。'));});
+  [['阿玉',10],['秀鳳',11]].forEach(([n,a],i)=>{const p=person('twF',{child:true,top:0xf2efe6,bottom:0x2f3a5a});satchel(p,0x8a5a3a);addMover(p,offsetPath(sch,i?0.25:-0.25),{speed:0.4,start:i*0.08},I(n,a,'公學校學生',i?'阿玉的好朋友，最喜歡上唱歌課，回家路上總是把新學的歌唱給阿玉聽。':'士林公學校四年級的學生，書包裡有國語讀本和算盤，放學後要先幫媽媽顧弟弟才能出去玩。'));});
 }
 /* ---------- 臺灣神社、臺北 ---------- */
 {
   const priest=person('priest');hold(priest,'broom');addActor(priest,-13.6,80.6,2.8,'sweep',I('佐々木 清',47,'神職','在臺灣神社奉職的神職人員，每天清晨打掃參道和社殿前的砂地。'));
-  const sando=[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.4]];
-  [['suit','鈴木 一郎',38,'參拜客','帶著家人從臺北市搭車來參拜的公司職員。'],['kimono','鈴木 千代',33,'參拜客','鈴木一郎的太太，穿著外出用的和服。'],['twM','陳萬益',50,'參拜客','大稻埕商行的老闆，應同業組合之邀一起來神社參拜。'],['student','小林 實',16,'中學校學生','學校安排的團體參拜，參拜完就解散，打算順路去圓山動物園。']].forEach(([st,n,a,j,b],i)=>{
-    const p=person(st);addMover(p,offsetPath(sando,i%2?0.25:-0.25),{speed:0.4,start:i*0.18,pause:5},I(n,a,j,b));});
-  const bw=person('kimono',{top:0x7aa6c9,robe:0x7aa6c9,obi:0xf2d27a});addActor(bw,-14.6,82.6,Math.PI,'bow',I('高橋 ふさ',58,'參拜客','每個月一號一定來神社參拜，祈求在內地的兒子平安。'));
+  const sando=[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.1]];
+  {const g=new THREE.Group();const a1=person('suit'),a2=person('kimono');a1.position.x=-0.36;a2.position.x=0.36;a1.userData.umbArm=1;a1.userData.bigUmb=true;a2.userData.hasParasol=true;g.add(a1,a2);register(a1,I('鈴木 一郎',38,'參拜客','帶著家人從臺北市搭車來參拜的公司職員，和太太一起走上參道、一起參拜，再一起回去。'));
+   const mvS=addMover(g,sando,{speed:0.4,start:0,pause:8,walkers:[[a2,'walk'],[a1,'walk']]},I('鈴木 千代',33,'參拜客','鈴木一郎的太太，穿著外出用的和服，和丈夫並肩走上參道，一同參拜。'));
+   g.userData.couple=[a1,a2];mvS.shrine=true;mvS.size=2;}
+  [['twM','陳萬益',50,'參拜客','大稻埕商行的老闆，應同業組合之邀一起來神社參拜。'],['student','小林 實',16,'中學校學生','學校安排的團體參拜，參拜完就解散，打算順路去圓山動物園。']].forEach(([st,n,a,j,b],i)=>{
+    const p=person(st);const mq=addMover(p,offsetPath(sando,i%2?0.25:-0.25),{speed:0.4,start:0.3+i*0.25,pause:8},I(n,a,j,b));mq.shrine=true;});
+  const bw=person('kimono',{top:0x7aa6c9,robe:0x7aa6c9,obi:0xf2d27a});const mvT=addMover(bw,offsetPath([...ROADS[8].slice(0,-1),[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.1]],0.12),{speed:0.4,start:0.05,pause:8,walkers:[[bw,'walk']]},I('高橋 ふさ',58,'參拜客','每個月一號一定從城裡走來神社參拜，祈求在內地的兒子平安，拜完再沿著原路走回家。'));mvT.shrine=true;
   const ph=person('suit',{hat:'fedora',hatC:0x2f2a33});addActor(ph,-12.5,91.1,-2.4,'photo',I('葉清泉',41,'寫真師','在臺北市開寫真館的攝影師，假日在明治橋邊替遊客拍紀念照，三腳架上的箱型相機要蓋上黑布才能對焦。'));
   const cam=new THREE.Group();for(let s=0;s<3;s++)cam.add(mesh(PG.stick,0x6b4a34,{y:0.4,sy:0.8,rx:0.25*Math.cos(s*2.1),rz:0.25*Math.sin(s*2.1)}));cam.add(mesh(new THREE.BoxGeometry(0.28,0.25,0.3),0x2f2a33,{y:0.85}));cam.add(mesh(new THREE.CylinderGeometry(0.06,0.06,0.12,8),0x5a5a66,{y:0.85,z:-0.2,rx:Math.PI/2}));
   place(cam,-13.0,90.6,-2.4);
   // 腳踏車
   const bike=new THREE.Group();for(const z of[-0.45,0.45]){const wh=mesh(new THREE.TorusGeometry(0.28,0.03,6,16),0x2f2a33,{y:0.3,z,ry:Math.PI/2});bike.add(wh);}
-  bike.add(mesh(new THREE.BoxGeometry(0.04,0.04,0.9),0x2f2a33,{y:0.48}));bike.add(mesh(new THREE.BoxGeometry(0.04,0.4,0.04),0x2f2a33,{y:0.5,z:0.4}));
+  bike.add(mesh(new THREE.BoxGeometry(0.04,0.04,0.9),0x2f2a33,{y:0.48}));bike.add(mesh(new THREE.BoxGeometry(0.04,0.4,0.04),0x2f2a33,{y:0.5,z:0.4}));bike.add(mesh(new THREE.BoxGeometry(0.42,0.035,0.035),0x2f2a33,{y:0.71,z:0.4}));
   const rider=person('suit',{hat:'boater',hatC:0xf0e2b6});rider.position.set(0,0.28,-0.12);bike.add(rider);
   addMover(bike,offsetPath(ROADS[8],0.12),{speed:1.0,walkers:[[rider,'pedal']]},I('簡金來',26,'新聞配達','騎著自轉車替報社送《臺灣日日新報》，車子是分期付款買的，比他一個月的薪水還貴。'));
 }
 /* ---------- 船、金山、三芝、燈塔 ---------- */
 function boatM(sail=0xfdf6e6){const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(0.75,0.4,2),0xb0744e));g.add(mesh(new THREE.ConeGeometry(0.37,0.7,4),0xb0744e,{z:1.3,rx:Math.PI/2,ry:Math.PI/4}));
+  if(sail===null){g.add(mesh(new THREE.BoxGeometry(0.6,0.05,0.12),0x8a5a3a,{y:0.2,z:-0.5}));return g;}
   g.add(mesh(new THREE.CylinderGeometry(0.04,0.04,1.7,6),0x6b4a34,{y:1,z:-0.2}));const s=mesh(new THREE.PlaneGeometry(0.85,1.2),toon(sail,{side:THREE.DoubleSide}),{y:1.1,z:-0.64,ry:Math.PI/2});g.add(s);
   for(let i=0;i<4;i++)s.add(mesh(new THREE.BoxGeometry(0.87,0.02,0.02),0x8a6a4a,{y:-0.45+i*0.3}));return g;}
 const bobbers=[];
-[[56,-70],[64,-71],[46,-72]].forEach(([x,z],i)=>{const b=boatM();b.position.set(x,SEA+0.15,z);b.rotation.y=i;folk.add(b);bobbers.push(b);
+[[56,-70],[52,-73],[46,-72]].forEach(([x,z],i)=>{const b=boatM();b.position.set(x,SEA+0.15,z);b.rotation.y=i;folk.add(b);bobbers.push(b);
   const p=person('fisher',{top:[0x5c7392,0x8aa0a8,0x6f8fb3][i]});p.position.set(0,0.2,0.5);b.add(p);actors.push({obj:p,anim:i===1?'net':'fish',ph:rng()*10});
-  register(p,[I('林阿成',43,'漁夫','金山庄的漁夫，天沒亮就出海。今天撒網的收穫不錯，回港後魚會交給挑夫翻過山送去臺北。'),I('陳阿海',31,'漁夫','正把漁網撒出去，網子落水的時候像一朵花打開。'),I('周阿六',55,'漁夫','在船上放手釣，等的是一種叫「白帶魚」的長魚，可以賣好價錢。')][i]);});
-{const p=person('twOld',{top:0x5a4a3a});addActor(p,61.5,-62.5,2.4,'mend',I('林阿罔',60,'補網婦','林阿成的母親，坐在海邊的石頭上補漁網，手上的梭子一刻也沒停過。'));}
+  register(p,[I('林成福',43,'漁夫','金山庄的漁夫，天沒亮就出海。今天撒網的收穫不錯，回港後魚會交給挑夫翻過山送去臺北。'),I('陳海水',31,'漁夫','正把漁網撒出去，網子落水的時候像一朵花打開。'),I('周六福',55,'漁夫','在船上放手釣，等的是一種叫「白帶魚」的長魚，可以賣好價錢。')][i]);});
+{const p=person('twOld',{top:0x5a4a3a});addActor(p,61.5,-62.5,2.4,'mend',I('林秀綢',60,'補網婦','林成福的母親，坐在海邊的石頭上補漁網，手上的梭子一刻也沒停過。'));}
 {const g=boatM(0xe9d7b0);const p=person('coolie');p.position.set(0,0.2,0.55);g.add(p);
   addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],0.4),{speed:0.45,water:true,start:0.2,walkers:[[p,'stand']]},I('張進財',50,'帆船船夫','駕著載米的帆船在淡水河上往來，從大稻埕順流而下到淡水，再載回鹽和雜貨。'));}
-{const g=boatM(0xf2e6c8);addMover(g,offsetPath([[76,91.4],...KEE_PTS.filter(p=>p[0]>-10.5)],-0.3),{speed:0.35,water:true,start:0.5,walkers:[],pause:4});}
+[[0xe2d5b8,0.9,0.55,0.25],[0xf6efe0,-0.8,0.38,0.7]].forEach(([sc,off,sp,st])=>{const g=boatM(sc);const p=person(off>0?'fisher':'coolie',{top:off>0?0x5c7392:0xd9cfb4});p.position.set(0,0.2,0.55);g.add(p);
+  addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],off),{speed:sp,water:true,start:st,walkers:[[p,'stand']],pause:3},off>0?I('李水波',39,'河上漁夫','駕著小帆船在淡水河上捕魚，退潮時在關渡一帶撒網，漲潮再順流回大稻埕賣魚。'):I('陳興旺',45,'運貨船夫','用帆船載著大稻埕的茶葉和布疋往淡水港，回程載的是從對岸運來的雜貨。'));});
+/* 基隆河上的帆船已移除 */
 for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;if(!isTerrace(x,z,m)||!free(x,z,0.6))continue;
-  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I((c%2?NAMES_F:NAMES_M)[c+3],30+c*7,'三芝庄農家',SANZHI_BIO[c%SANZHI_BIO.length]));c++;}
+  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I(['江坤山','盧春蕊','練添旺','華秀勸','江傳福','盧阿綢'][c%6],30+c*7,'三芝庄農家',SANZHI_BIO[c%SANZHI_BIO.length]));c++;}
 {const p=person('rail',{top:0x3d4a6b,bottom:0x3d4a6b});addActor(p,-60.6,-67,0.4,'stand',I('森田 勇',44,'燈台守','在富貴角燈塔值勤的燈台守，每天傍晚爬上塔頂點燈、擦拭透鏡，夜裡每隔幾小時就要檢查一次。'));}
-{const p=person('twF',{top:0x7aa6c9});addActor(p,-77.6,44.4,-1.0,'bow',I('洪阿珍',52,'香客','從關渡附近來拜媽祖的婦人，祈求出海捕魚的丈夫平安。'));}
+{const p=person('twF',{top:0x7aa6c9});const q=atLocal0(TEMPLE_GD,0,2.6);p.userData.keep=true;addActor(p,q[0],q[1],-1.48+Math.PI,'bow',I('洪阿珍',52,'香客','從關渡附近來拜媽祖的婦人，祈求出海捕魚的丈夫平安。'));}
 
 /* 狗 */
 const dogs=[];
@@ -1365,7 +1496,7 @@ farms.slice(0,8).forEach((f,i)=>{const ck=['tan','brown','spot','brindle','yello
   const a=person('suit',{hat:'fedora',hatC:0x5a4a3a,top:0x6b5a46,bottom:0x6b5a46});satchel(a,0x7a5a3a);
   addMover(a,road,{speed:0.55,start:0.1},I('吳振聲',35,'淡水來的商人','從淡水沿著河岸走到北投談生意，順便打算泡個溫泉再回去。'));
   const b=person('twM');shoulderPole(b,0xd9b56a);
-  addMover(b,offsetPath(road,0.3),{speed:0.45,start:0.6,walkers:[[b,'carry']]},I('李阿龍',41,'挑貨郎','挑著針線、布料和雜貨，在淡水、關渡、北投一帶的庄頭之間來回叫賣。'));
+  addMover(b,offsetPath(road,0.3),{speed:0.45,start:0.6,walkers:[[b,'carry2']]},I('李阿龍',41,'挑貨郎','挑著針線、布料和雜貨，在淡水、關渡、北投一帶的庄頭之間來回叫賣。'));
   const c=person('twF',{top:0xd9a0a8});hold(c,'basket');addMover(c,offsetPath(road,-0.3),{speed:0.4,start:0.35},I('陳秀蘭',27,'回娘家的媳婦','嫁到關渡的北投女兒，提著一籃自家種的菜回北投娘家。'));}
 
 /* 雨天時撐傘的行人 */
@@ -1373,89 +1504,134 @@ const umbrellas=[];
 movers.forEach(m=>m.walkers.forEach(([p,a],k)=>{
   if(!p.userData||!p.userData.arms||p.userData.hasParasol||p.userData.hat==='kasa'||!['walk','stroll','herd'].includes(a))return;
   const u=new THREE.Group();u.position.set(0,-0.3,0);
-  u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,[0xc9873f,0x2f2a33,0x9a4a3a,0x3f63a6][umbrellas.length%4],{y:0.76}));
-  u.visible=false;p.userData.arms[0].add(u);p.userData.umb=u;umbrellas.push(u);}));
+  u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,[0xc9873f,0x2f2a33,0x9a4a3a,0x3f63a6][umbrellas.length%4],{y:0.76,sx:p.userData.bigUmb?1.55:1,sz:p.userData.bigUmb?1.55:1}));
+  u.visible=false;p.userData.arms[p.userData.umbArm||0].add(u);p.userData.umb=u;umbrellas.push(u);}));
 
 {const a=person('suit',{hat:'boater',hatC:0xf0e2b6,top:0x6b6a7a,bottom:0x6b6a7a});satchel(a,0x6b4a34);
   addMover(a,offsetPath(ROADS[8],-0.2),{speed:0.45,start:0.15},I('王進財',34,'行商','從臺北城內往北走，到圓山、士林一帶的商店收帳。'));
-  const b=person('twF',{top:0xd9a0a8});hold(b,'basket');addMover(b,offsetPath(ROADS[8],0.22),{speed:0.38,start:0.7},I('林阿蘭',29,'上街買菜的婦人','提著竹籃從家裡走去市場，回程順路帶一包餅給孩子。'));
-  const c=person('twM',{top:0x5c7392});shoulderPole(c,0xd9b56a);addMover(c,offsetPath(ROADS[8],0.05),{speed:0.4,start:0.42,walkers:[[c,'carry']]},I('陳阿發',46,'挑貨郎','挑著雜貨沿街叫賣，從城內一路走到明治橋頭。'));}
+  const b=person('twF',{top:0xd9a0a8});hold(b,'basket');addMover(b,offsetPath(ROADS[8],0.22),{speed:0.38,start:0.7},I('林素蘭',29,'上街買菜的婦人','提著竹籃從家裡走去市場，回程順路帶一包餅給孩子。'));
+  const c=person('twM',{top:0x5c7392});shoulderPole(c,0xd9b56a);addMover(c,offsetPath(ROADS[8],0.05),{speed:0.4,start:0.42,walkers:[[c,'carry']]},I('陳發祥',46,'挑貨郎','挑著雜貨沿街叫賣，從城內一路走到明治橋頭。'));}
 /* ---------- 各行各業（追加） ---------- */
-const SPOTS={SL:[-19.5,70,4.5],BT:[-50,42.5,3.5],ON:[-39,25,3.2],KS:[-4,9,3],TP:[-2,93.4,3.2],ZZ:[-9.5,-10,3],QT:[29,-1,5],KJ:[60,-58.5,3],SC:[-45,-56,2.5],KD:[-79,41,2.5],YB:[-27,41,2.5],MT:[24,6,4],SH:[-30,50,3]};
+const SPOTS={SL:[-19.5,70,5.8],BT:[-50.5,43.2,4.8],ON:[-39,25,3.2],KS:[-4,9,3],TP:[-2,93.4,3.2],ZZ:[-9.5,-10,3],QT:[29,-1,5],KJ:[60,-58.5,3],SC:[-45,-56,2.5],KD:[-79,41,2.5],YB:[-27,41,2.5],MT:[24,6,4],SH:[-30,50,3]};
 function spotNear(key){const [cx,cz,r]=SPOTS[key];for(let k=0;k<80;k++){const a=rng()*6.283,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
   if(H(x,z)>SEA+0.15&&inBoardXZ(x,z)>2&&!nearLines(x,z,0.35)&&free(x,z,0.45)){claim(x,z,0.45);return[x,z];}}return null;}
 const loopPts=(x,z,r)=>[[x-r,z],[x,z-r*0.8],[x+r,z],[x,z+r*0.8],[x-r,z]];
 function booth(x,z){const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(1.1,0.9,0.5),0xc4402f,{y:0.45}));g.add(mesh(new THREE.BoxGeometry(0.8,0.4,0.05),0x2f2a33,{y:0.6,z:0.26}));
   g.add(mesh(roofGeo(1.2,0.35,0.6,0.1),0xe0892f,{y:0.9}));place(g,x,z-0.7,0);}
+var PENDING_VENTS=[];
+function charSpot(){const wc=NPCS.find(q=>q.nm==='簡樹德');let best=null;
+  for(let k=0;k<700;k++){const x=24+(rng()-0.5)*16,z=7+(rng()-0.5)*14;if(inBoardXZ(x,z)<4||H(x,z)<SEA+1||nearLines(x,z,1.0)||!free(x,z,1.4)||Math.hypot(x-29,z+1)<9)continue;
+    if(wc&&wc._sp&&Math.hypot(x-wc._sp[0],z-wc._sp[1])<4.2)continue;let mn=1e9,mx=-1e9;for(const [ox,oz] of[[0,0],[0.85,0],[1.4,0],[-0.6,0],[0.4,0.6],[0.4,-0.6],[-1.2,-0.3]]){const g=G(x+ox,z+oz);mn=Math.min(mn,g);mx=Math.max(mx,g);}
+    const sc=mx-mn;if(!best||sc<best.sc)best={sc,x,z};}
+  if(best){claim(best.x,best.z,1.2);return[best.x,best.z];}return spotNear('MT');}
+function kiln(x,z){const g=new THREE.Group();g.add(mesh(new THREE.SphereGeometry(0.6,14,8,0,Math.PI*2,0,Math.PI/2),0x8a6a4a,{sy:0.8}));
+  g.add(mesh(new THREE.BoxGeometry(0.26,0.26,0.1),0x2f2a33,{y:0.12,z:0.56}));g.add(mesh(new THREE.CylinderGeometry(0.07,0.09,0.35,8),0x6b5a46,{y:0.55,x:0.15}));
+  for(let i=0;i<5;i++)g.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.5,6),0x7a5a3a,{x:-0.85,y:0.05+i*0.1,z:-0.25+(i%2)*0.1,rz:Math.PI/2}));
+  const kx=x+0.85,kz=z;place(g,kx,kz,0);claim(kx,kz,0.8);PENDING_VENTS.push([kx+0.15,kz,0.5,5,0.14,0.75]);}
 function anvil(x,z){place(mesh(new THREE.BoxGeometry(0.3,0.25,0.18),0x4a4652,{y:0.13}),x+0.45,z,0);}
 function stonePile(x,z){const g=new THREE.Group();for(let i=0;i<4;i++)g.add(mesh(new THREE.BoxGeometry(0.3,0.18,0.22),0x9a8f7a,{x:(i%2)*0.32-0.16,y:0.09+Math.floor(i/2)*0.18}));place(g,x+0.6,z,0.3);}
+const atLocal=(o,lx,lz)=>{const v=new THREE.Vector3(lx,0,lz);o.updateMatrixWorld(true);o.localToWorld(v);return[v.x,v.z];};
 const NPCS=[
- {at:'SL',st:'twM',o:{top:0x3f63a6},hold:'brush',anim:'cook',nm:'王清水',age:52,job:'剃頭師',bio:'在士林市場邊擺剃頭攤，一張竹椅、一面小鏡子，替客人剃頭、修面、挖耳朵，順便聽遍街坊的大小事。'},
- {at:'SL',st:'changpao',o:{robe:0x5a4f6a,top:0x5a4f6a},anim:'chat',nm:'林半仙',age:64,job:'算命仙',bio:'在廟口擺一張小桌，替人看相、卜卦、選好日子，招牌寫著「鐵口直斷」。'},
- {at:'SL',st:'twM',o:{child:true,top:0xf2efe6,legSkin:true},hold:'flag',hc:0xf2efe6,walk:1.2,sp:0.9,nm:'阿進',age:12,job:'報童',bio:'放學後在士林街上叫賣報紙的少年，一邊跑一邊喊當天的新聞標題，賣完一疊才能回家吃飯。'},
- {at:'SL',st:'twM',o:{top:0x2f2a33},hold:'broom',anim:'sweep',nm:'黃廟公',age:70,job:'廟祝',bio:'負責打理廟裡香火的老廟公，每天清早掃廟埕、添香油，記得每一位信徒的名字。'},
- {at:'SL',st:'twM',o:{top:0x6b4a34},anim:'chat',prop:booth,nm:'李天祿仔',age:35,job:'布袋戲師傅',bio:'在廟埕演布袋戲的師傅，一個人同時操作好幾尊戲偶，口白、唱腔一手包辦，孩子們看得目不轉睛。'},
- {at:'SL',st:'twF',o:{child:true,top:0xe8a3b8},anim:'idle',nm:'阿桃',age:8,job:'看戲的孩子',bio:'蹲在布袋戲台前看得入迷，戲演完了還捨不得走。'},
- {at:'SL',st:'farmer',o:{top:0x8aa0a8},pole:0x8a6a4a,walk:1.4,anim:'carry',nm:'陳阿炭',age:45,job:'賣柴的山農',bio:'從山上挑柴下來賣的山農，柴火是街上人家燒飯燒水不可缺的燃料。'},
+ {at:'SL',st:'twM',o:{top:0x3f63a6},hold:'brush',anim:'cook',ryAdd:Math.PI,nm:'王清水',age:52,job:'剃頭師',bio:'在士林市場邊擺剃頭攤，一張竹椅、一面小鏡子，替客人剃頭、修面、挖耳朵，順便聽遍街坊的大小事。'},
+ {at:'SL',st:'changpao',o:{robe:0x5a4f6a,top:0x5a4f6a},anim:'chat',posFn:()=>atLocal(TEMPLE_SL,-1.2,1.45),ryFn:()=>TEMPLE_SL.rotation.y+Math.PI/2,nm:'林半仙',age:64,job:'算命仙',bio:'在廟口擺一張小桌，替人看相、卜卦、選好日子，招牌寫著「鐵口直斷」。'},
+ {at:'SL',st:'twM',o:{child:true,top:0xf2efe6,legSkin:true},hold:'paper1',railRun:true,walk:1.2,sp:0.9,nm:'阿進',age:12,job:'報童',bio:'放學後在士林街上叫賣報紙的少年，一邊跑一邊喊當天的新聞標題，賣完一疊才能回家吃飯。'},
+ {at:'SL',st:'twM',o:{top:0x2f2a33},hold:'broom',anim:'sweep',posFn:()=>atLocal(TEMPLE_SL,0.45,1.25),ryFn:()=>TEMPLE_SL.rotation.y,nm:'黃廟公',age:70,job:'廟祝',bio:'負責打理廟裡香火的老廟公，每天清早掃廟埕、添香油，記得每一位信徒的名字。'},
+ {at:'SL',st:'twM',o:{top:0x6b4a34},anim:'chat',prop:booth,ry:0,keep:true,nm:'李天祿仔',age:35,job:'布袋戲師傅',bio:'在廟埕演布袋戲的師傅，一個人同時操作好幾尊戲偶，口白、唱腔一手包辦，孩子們看得目不轉睛。'},
+ {at:'SL',st:'twF',o:{child:true,top:0xe8a3b8},anim:'idle',posFn:()=>{const L=NPCS.find(q=>q.nm==='李天祿仔');return L&&L._sp?[L._sp[0],L._sp[1]+0.95]:[-19.5,70];},ry:Math.PI,keep:true,nm:'阿桃',age:8,job:'看戲的孩子',bio:'蹲在布袋戲台前看得入迷，戲演完了還捨不得走。'},
+ {at:'SL',st:'farmer',o:{top:0x8aa0a8},pole:0x8a6a4a,walk:1.4,anim:'carry',nm:'陳炭山',age:45,job:'賣柴的山農',bio:'從山上挑柴下來賣的山農，柴火是街上人家燒飯燒水不可缺的燃料。'},
  {at:'BT',st:'coolie',o:{top:0x5a4f45},hold:'beater',anim:'hoe',prop:anvil,nm:'張鐵',age:48,job:'打鐵師傅',bio:'北投庄打鐵店的師傅，打造鋤頭、鐮刀和菜刀，叮叮噹噹的聲音從早響到晚。'},
- {at:'BT',st:'coolie',back:0xd9c38c,walk:1.1,nm:'吳阿生',age:33,job:'碾米間工人',bio:'在庄裡的碾米間扛米袋，一袋將近百斤，一天要扛上幾十趟。'},
- {at:'BT',st:'coolie',o:{top:0xf2efe6},back:0x6b4a34,walk:1.0,nm:'林阿吉',age:29,job:'驛前腳伕',bio:'在北投驛前替旅客搬行李的腳伕，看到穿浴衣的客人就上前招呼。'},
- {at:'BT',st:'suit',o:{hat:'fedora',hatC:0x5a4a3a},hold:'board',walk:1.3,sp:0.3,nm:'山本 清',age:38,job:'北投公學校教師',bio:'帶學生到庄外上自然課的老師，一路指著稻田、水牛和白鷺鷥講解。'},
+ {at:'BT',st:'coolie',back:0xd9c38c,walk:1.1,nm:'吳生財',age:33,job:'碾米間工人',bio:'在庄裡的碾米間扛米袋，一袋將近百斤，一天要扛上幾十趟。'},
+ {at:'BT',st:'coolie',o:{top:0xf2efe6},back:0x6b4a34,walk:1.0,nm:'林吉祥',age:29,job:'驛前腳伕',bio:'在北投驛前替旅客搬行李的腳伕，看到穿浴衣的客人就上前招呼。'},
+ {at:'BT',st:'suit',o:{hat:'fedora',hatC:0x5a4a3a},hold:'doc',walk:1.3,sp:0.3,nm:'山本 清',age:38,job:'北投公學校教師',bio:'帶學生到庄外上自然課的老師，一路指著稻田、水牛和黃頭鷺講解。'},
  {at:'BT',st:'twM',o:{child:true,top:0xf2efe6,bottom:0x2f3a5a},bag:0x8a5a3a,walk:1.5,sp:0.32,nm:'陳金水',age:9,job:'公學校學生',bio:'跟著老師去上戶外課的小學生，口袋裡偷偷裝了幾顆彈珠。'},
  {at:'BT',st:'twF',o:{child:true,top:0xf2efe6,bottom:0x2f3a5a},bag:0x8a5a3a,walk:1.5,sp:0.32,nm:'林春美',age:9,job:'公學校學生',bio:'班上國語念得最好的學生，老師提問時總是第一個舉手。'},
  {at:'ON',st:'kimono',o:{top:0x9a3f6a,robe:0x9a3f6a,obi:0xf2d27a},walk:1.2,sp:0.3,nm:'小菊',age:21,job:'藝妓',bio:'北投溫泉旅館的藝妓，晚上在宴席上彈三味線、跳舞助興，白天到溫泉街採買。'},
- {at:'ON',st:'yukataM',o:{top:0x4f4a5a,robe:0x4f4a5a},anim:'wave',nm:'田村 浩',age:46,job:'旅館番頭',bio:'溫泉旅館的番頭，站在門口招呼客人、安排房間，還記得每位常客喜歡哪一間。'},
+ {at:'ON',st:'yukataM',o:{top:0x4f4a5a,robe:0x4f4a5a},anim:'wave',posFn:()=>atLocal(ONSEN_H[3],-1.25,0.45),faceRoad:true,nm:'田村 浩',age:46,job:'旅館番頭',bio:'溫泉旅館的番頭，站在門口招呼客人、安排房間，還記得每位常客喜歡哪一間。'},
  {at:'ON',st:'nurse',walk:1.0,sp:0.3,nm:'中島 たか',age:24,job:'看護婦',bio:'在北投陸軍病院分院工作的看護婦，休假時到溫泉街走走，買一盒溫泉煎餅寄回家。'},
- {at:'ON',st:'monk',hold:'broom',anim:'sweep',nm:'了然',age:55,job:'僧侶',bio:'北投鐵真院的僧侶，每天清晨打掃寺前的石階，再為來泡湯的信徒誦經祈福。'},
- {at:'ON',st:'coolie',o:{top:0xf2efe6},hold:'broom',anim:'sweep',nm:'蔡阿德',age:39,job:'湯守',bio:'在公共浴場燒水、刷洗浴池的湯守，最清楚哪一池的水溫最剛好。'},
- {at:'KS',st:'kimono',o:{top:0x6b4a7a,robe:0x6b4a7a,obi:0xd9c38c},anim:'idle',nm:'岡田 ふく',age:50,job:'旅館女將',bio:'草山溫泉旅館的女將（老闆娘），親自在門口迎送客人，泡湯的毛巾都要她過目才行。'},
+ {at:'ON',st:'monk',anim:'gassho',faceRoad:true,posFn:()=>atLocal(BATH_OBJ,-1.15,1.7),nm:'了然',age:55,job:'僧侶',bio:'北投鐵真院的僧侶，常站在溫泉街邊，向往來的行人合十行禮，為來泡湯的信徒誦經祈福。'},
+ {at:'ON',st:'coolie',o:{top:0xf2efe6},hold:'broom',anim:'sweep',posFn:()=>atLocal(BATH_OBJ,2.05,0),ryFn:()=>BATH_OBJ.rotation.y+Math.PI/2,nm:'蔡阿德',age:39,job:'湯守',bio:'在公共浴場燒水、刷洗浴池的湯守，最清楚哪一池的水溫最剛好。'},
+ {at:'KS',st:'kimono',o:{top:0x6b4a7a,robe:0x6b4a7a,obi:0xd9c38c},anim:'bow',pos:[-7.33,7.9],ry:1.03,nm:'岡田 ふく',age:50,job:'旅館女將',bio:'草山眾樂園一帶溫泉旅館的女將（老闆娘），站在旅館門前的空地上，背對著旅館彎腰迎送往來的客人，泡湯的毛巾都要她過目才行。'},
  {at:'KS',st:'suit',o:{hat:'boater',hatC:0xf0e2b6},bag:0x6b4a34,walk:1.4,nm:'許文雄',age:28,job:'登山客',bio:'週末上草山健行的臺北上班族，打算從草山走到竹子湖，再繞去看大屯山的雪景候補地。'},
- {at:'KS',st:'sailor',hold:'brush',anim:'paint',nm:'陳月娥',age:16,job:'高等女學校學生',bio:'跟著美術老師上草山寫生的女學生，最喜歡畫櫻花和遠處的七星山。'},
+ {at:'KS',st:'sailor',hold:'brush',anim:'write',ryAdd:Math.PI,spot:[-1.6,5.3],keep:true,nm:'陳月娥',age:16,job:'高等女學校學生',bio:'跟著美術老師上草山寫生的女學生，最喜歡畫櫻花和遠處的七星山。'},
  {at:'QT',st:'tech',o:{hat:'straw',hatC:0xead9a0},bag:0x6b4a34,walk:2.0,sp:0.3,nm:'藤井 正',age:42,job:'牧場獸醫',bio:'臺北州派來巡視牧牛的獸醫，檢查牛隻有沒有生病、蹄子有沒有受傷。'},
- {at:'QT',st:'farmer',o:{top:0x6f8fb3},walk:1.6,sp:0.3,nm:'郭阿川',age:55,job:'寄養牛的主人',bio:'從士林上山來看自家寄養的水牛，順便帶一把番薯葉給牠加菜。'},
- {at:'MT',st:'farmer',o:{top:0x8a7a5a},back:0x8a6a4a,walk:1.5,sp:0.3,nm:'簡阿樹',age:47,job:'樵夫',bio:'上山砍柴的樵夫，背簍裝滿柴枝，下山前會在山泉邊洗把臉。'},
- {at:'MT',st:'miner',o:{top:0x4a4652},hold:'stick',anim:'pick',clear:3.2,nm:'翁阿炭',age:52,job:'炭工',bio:'在山裡燒木炭的炭工，相思樹燒成的木炭賣到臺北城，給人家生火煮飯。'},
- {at:'TP',st:'sailor',walk:1.6,sp:0.35,nm:'林秀琴',age:15,job:'高等女學校學生',bio:'放學後和同學一起走回家，邊走邊討論下週的運動會。'},
- {at:'TP',st:'sailor',walk:1.6,sp:0.35,nm:'佐藤 文子',age:15,job:'高等女學校學生',bio:'林秀琴的同班同學，家裡在城內開文具店。'},
+ {at:'QT',st:'farmer',o:{top:0x6f8fb3},walk:1.6,sp:0.3,nm:'郭明川',age:55,job:'寄養牛的主人',bio:'從士林上山來看自家寄養的水牛，順便帶一把番薯葉給牠加菜。'},
+ {at:'MT',st:'farmer',o:{top:0x8a7a5a},back:0x8a6a4a,walk:1.5,sp:0.3,nm:'簡樹德',age:47,job:'樵夫',bio:'上山砍柴的樵夫，背簍裝滿柴枝，下山前會在山泉邊洗把臉。'},
+ {at:'MT',st:'miner',o:{top:0x4a4652},hold:'stick',anim:'pick',clear:2.4,prop:kiln,keep:true,posFn:charSpot,ry:Math.PI/2,nm:'翁阿炭',age:52,job:'炭工',bio:'在山裡燒木炭的炭工，相思樹燒成的木炭賣到臺北城，給人家生火煮飯。'},
+ {at:'TP',st:'sailor',stroll:0.22,nm:'林秀琴',age:15,job:'高等女學校學生',bio:'放學後和同班的佐藤文子在街邊來回散步，邊走邊討論下週的運動會。'},
+ {at:'TP',st:'sailor',stroll:-0.22,nm:'佐藤 文子',age:15,job:'高等女學校學生',bio:'林秀琴的同班同學，家裡在城內開文具店。'},
  {at:'TP',st:'suit',o:{hat:'boater',hatC:0xf0e2b6},bag:0x2f2a33,walk:1.8,sp:0.45,nm:'黃仲明',age:31,job:'銀行員',bio:'在臺北本町銀行上班的行員，西裝筆挺，午休時間趕去郵便局寄信。'},
- {at:'TP',st:'coolie',anim:'mend',nm:'林阿成',age:37,job:'候客的車夫',bio:'在明治橋頭等客人的人力車夫，蹲在路邊休息，看到參拜客走來就起身招呼。'},
- {at:'TP',st:'twM',o:{top:0xf2efe6},pole:0x6fb7d6,walk:1.5,anim:'carry',nm:'阿德伯',age:58,job:'賣枝仔冰的小販',bio:'挑著冰箱叫賣枝仔冰，鈴鐺一響，整條街的孩子都跑出來。'},
- {at:'TP',st:'coolie',o:{top:0xd9483b},anim:'wave',nm:'江湖郎',age:40,job:'走江湖的藝人',bio:'在街頭耍刀弄槍、表演功夫，表演完再賣他自製的跌打膏藥。'},
- {at:'KJ',st:'twF',o:{top:0x8aa0a8},hold:'broom',anim:'sweep',nm:'李阿珠',age:44,job:'曬魚乾的漁婦',bio:'在海邊把魚剖開、抹鹽、攤在竹篩上曬乾，曬好的魚乾可以放很久。'},
- {at:'KJ',st:'twM',o:{top:0x3f63a6},anim:'chat',nm:'陳魚頭',age:50,job:'魚販',bio:'在磺港邊收購漁獲的魚販，挑好的魚交給挑夫，連夜翻山送去士林市場。'},
+ {at:'TP',st:'coolie',anim:'mend',faceRoad:true,pos:[-5.6,93.8],rick:true,nm:'江成龍',age:37,job:'候客的車夫',bio:'在明治橋頭等客人的人力車夫，坐在路邊的空地休息，看到參拜客走來就起身招呼。'},
+ {at:'TP',st:'twM',o:{top:0xf2efe6},pole:0x6fb7d6,line:[[4.6,94.9],[10.5,94.9]],anim:'carry',nm:'阿德伯',age:58,job:'賣枝仔冰的小販',bio:'挑著冰箱叫賣枝仔冰，鈴鐺一響，整條街的孩子都跑出來。'},
+ {at:'TP',st:'coolie',o:{top:0xd9483b},anim:'busk',faceRoad:true,pos:[-9.9,91.9],nm:'江湖郎',age:40,job:'走江湖的藝人',bio:'在街頭耍刀弄槍、表演功夫，表演完再賣他自製的跌打膏藥。'},
+ {at:'KJ',st:'twF',o:{top:0x8aa0a8},anim:'pick',sieve:true,sieveTurn:Math.PI/2,pos:[56.6,-57.2],nm:'李珠玉',age:44,job:'曬魚乾的漁婦',bio:'蹲在家門前的空地上翻整竹篩裡的魚乾。魚剖開、抹鹽後攤在竹篩上曬，曬好的魚乾可以放很久。'},
+ {at:'KJ',st:'twM',o:{top:0x3f63a6},anim:'chat',pos:[SELLER.x,SELLER.z],ry:SELLER.ry,fishBasket:true,nm:'陳魚頭',age:50,job:'魚販',bio:'在金山庄廣場收購漁獲的魚販。魚路挑夫一到，他就挑好魚、算好價錢裝進擔子，讓挑夫連夜翻山送去士林市場。'},
  {at:'SC',st:'farmer',o:{top:0x6f8fb3,old:true},hold:'cane',walk:1.2,sp:0.25,nm:'吳老丁',age:68,job:'老農',bio:'種了一輩子田的老農，現在把田交給兒子，每天還是要去田邊巡一巡才安心。'},
- {at:'YB',st:'coolie',o:{top:0x8a7a5a},hold:'beater',anim:'hoe',prop:stonePile,nm:'周阿石',age:43,job:'石匠',bio:'在唭哩岸山腳開採唭哩岸石的石匠。這種石材堅硬耐用，臺北許多建築的牆腳都用它砌成。'},
- {at:'YB',st:'coolie',back:0x9a8f7a,walk:1.3,nm:'周阿土',age:22,job:'搬石工',bio:'周阿石的兒子，把切好的石塊背到路邊，等牛車載去北投驛。'},
- {at:'SH',st:'farmerW',o:{top:0x7aa6c9},hold:'basket',anim:'feed',nm:'潘阿綿',age:36,job:'養鴨婦人',bio:'在石牌田邊養了一群鴨，每天撒穀子餵鴨，鴨蛋拿去做鹹蛋賣。'},
+ {at:'YB',st:'coolie',o:{top:0x8a7a5a},hold:'beater',anim:'hoe',prop:stonePile,nm:'周石松',age:43,job:'石匠',bio:'在唭哩岸山腳開採唭哩岸石的石匠。這種石材堅硬耐用，臺北許多建築的牆腳都用它砌成。'},
+ {at:'YB',st:'coolie',back:0x9a8f7a,walk:1.3,noUmb:true,nm:'周土生',age:22,job:'搬石工',bio:'周石松的兒子，把切好的石塊背到路邊，等牛車載去北投驛。'},
  {at:'SH',st:'twM',o:{top:0x5c7392},pole:0xc9a066,walk:1.6,anim:'carry',nm:'阿春伯',age:62,job:'賣菜郎',bio:'挑著自家種的菜，從石牌走到北投、士林叫賣，一路和熟人打招呼。'},
 ];
-NPCS.forEach(n=>{const sp=spotNear(n.at);if(!sp)return;const pp=person(n.st,n.o||{});
+NPCS.forEach((n,__i)=>{RCK('n'+__i);let sp=n.posFn?n.posFn():n.pos?n.pos.slice():spotNear(n.at);if(n.posFn&&n.ryFn)n.ry=n.ryFn();
+  if(sp&&n.offRoad){for(let k=0;k<30&&nearLines(sp[0],sp[1],n.offRoad);k++){const q=spotNear(n.at);if(q)sp=q;}}
+  if(sp&&n.avoid){const o=NPCS.find(q=>q.nm===n.avoid);if(o&&o._sp&&Math.hypot(sp[0]-o._sp[0],sp[1]-o._sp[1])<4.2){for(let k=0;k<16;k++){const a=k*0.4,x=o._sp[0]+Math.cos(a)*4.4,z=o._sp[1]+Math.sin(a)*4.4;if(H(x,z)>SEA+0.3&&inBoardXZ(x,z)>3&&!nearLines(x,z,0.6)&&free(x,z,0.8)){sp=[x,z];claim(x,z,0.8);break;}}}}
+  if(n.spot){sp=n.spot.slice();let bb=null;for(const b of blobs){if(!/^#f/.test(b.c))continue;const d=Math.hypot(b.x-sp[0],b.z-sp[1]);if(!bb||d<bb.d)bb={d,b};}if(bb)n._ry=Math.atan2(bb.b.x-sp[0],bb.b.z-sp[1]);claim(sp[0],sp[1],0.5);}
+  else if(n.sakura){let best=null;for(const b of blobs){if(!/^#f/.test(b.c))continue;for(let k=0;k<8;k++){const a=k*0.785,x=b.x+Math.cos(a)*1.7,z=b.z+Math.sin(a)*1.7;
+      if(Math.hypot(x+0.45,z-8.6)<3.5||Math.hypot(x+7.33,z-7.9)<1.3||!free(x,z,0.6)||Math.min(...ROADS.map(R=>polyDist(x,z,R)))<2.0||H(x,z)<SEA+0.3)continue;const sc=-H(x,z)+0.3*Math.hypot(x+4,z-9);if(!best||sc<best.sc)best={sc,x,z,bx:b.x,bz:b.z};}}
+    if(best){sp=[best.x,best.z];claim(best.x,best.z,0.5);n._ry=Math.atan2(best.bx-best.x,best.bz-best.z);}}
+  if(sp&&n.sieve){for(let k=0;k<48;k++){const a0=(k%16)*0.39,lax=k>=32?2:k>=16?1:0,f0x=sp[0]+Math.sin(a0)*0.65,f0z=sp[1]+Math.cos(a0)*0.65;if((lax===2||free(f0x,f0z,lax?0.12:0.35))&&!nearLines(f0x,f0z,lax===2?0.05:0.25)&&H(f0x,f0z)>SEA+0.1){const a=a0+(n.sieveTurn||0),fx=sp[0]+Math.sin(a)*0.65,fz=sp[1]+Math.cos(a)*0.65;n.ry=a;claim(fx,fz,0.4);
+      const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.34,0.32,0.05,16),0xc9a066,{y:0.1}));g.add(mesh(new THREE.TorusGeometry(0.34,0.02,5,16).rotateX(Math.PI/2),0x9a7350,{y:0.12}));
+      for(let i=0;i<16;i++){const aa=i*0.9,r=0.06+0.22*((i*37)%10)/10;g.add(mesh(new THREE.BoxGeometry(0.1,0.015,0.04),0xb8a07a,{x:Math.cos(aa)*r,y:0.135,z:Math.sin(aa)*r,ry:aa}));}
+      for(const sx of[-1,1])g.add(mesh(new THREE.BoxGeometry(0.06,0.1,0.06),0x8a6a4a,{x:0.22*sx,y:0.04}));place(g,fx,fz,0);break;}}}
+  if(sp&&n.fishBasket){const bx=sp[0]+Math.cos(n.ry)*0.45,bz=sp[1]-Math.sin(n.ry)*0.45;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.2,0.15,0.18,12),0xc9a066,{y:0.09}));
+    for(let i=0;i<5;i++)g.add(mesh(new THREE.CapsuleGeometry(0.03,0.1,3,6),[0x9fb6c4,0xb8c8d4][i%2],{x:-0.08+i*0.04,y:0.19,z:(i%2-0.5)*0.06,rz:Math.PI/2,ry:i*0.5}));place(g,bx,bz,0);}
+  if(n.prop===kiln)n.ry=Math.atan2(0.8,0.2);
+  if(sp&&n.roadside){let b=null;for(const r of ROADS){const P=makePathPts(r);for(let q=0;q<=P.L;q+=0.2){const [x,z]=pathAt(P,q);const d=Math.hypot(x-sp[0],z-sp[1]);if(!b||d<b.d)b={d,x,z};}}
+    if(b&&b.d>0.01){const ux=(sp[0]-b.x)/b.d,uz=(sp[1]-b.z)/b.d;const rd=(x,z)=>Math.min(...ROADS.map(R=>polyDist(x,z,R)));let got=null;
+      for(const sg of[-1,1])for(let r=n.roadside;r<n.roadside+1.2&&!got;r+=0.1){const x=b.x+ux*r*sg,z=b.z+uz*r*sg;if(rd(x,z)>=n.roadside-0.05&&free(x,z,0.75))got=[x,z];}if(!got){const x=b.x+ux*n.roadside,z=b.z+uz*n.roadside;got=[x,z];}sp=got;}}
+  n._sp=sp;if(!sp)return;const pp=person(n.st,n.o||{});if(n.noUmb)pp.userData.hasParasol=true;
   if(n.hold)hold(pp,n.hold,n.hc);if(n.pole)shoulderPole(pp,n.pole);if(n.back)backBasket(pp,n.back);if(n.bag)satchel(pp,n.bag);
   const info=I(n.nm,n.age,n.job,n.bio);
-  if(n.walk)addMover(pp,loopPts(sp[0],sp[1],n.walk),{speed:n.sp||0.35,loop:true,start:rng(),walkers:[[pp,n.anim||(n.hold==='cane'?'stroll':'walk')]]},info);
-  else addActor(pp,sp[0],sp[1],rng()*6.28,n.anim||'idle',info);
-  if(n.clear)pp.userData.clearR=n.clear;if(n.prop)n.prop(sp[0],sp[1]);});
-{ // 關渡渡船、撒網漁夫、割蘆葦
-  const b=boatM(0xe9d7b0);const f=person('fisher',{top:0x6f8fb3});f.position.set(0,0.2,0.75);b.add(f);const ps=person('twF',{top:0xd9a0a8});ps.scale.setScalar(0.85);ps.position.set(0,0.2,0.15);b.add(ps);
-  addMover(b,[[-86.2,46.4],[-82.4,45.9]],{speed:0.35,water:true,pause:3,walkers:[[f,'stand'],[ps,'ride']]},I('陳渡伯',57,'關渡渡船伕','在關渡撐渡船載人過淡水河，一趟收幾錢，颱風天就收工。'));
-  register(ps,I('林阿惜',33,'渡船乘客','提著一籃雞蛋，要過河到對岸的市集賣。'));
+  if(n.stroll)addMover(pp,offsetPath([[-9,93.35],[1,93.35]],n.stroll),{speed:0.3,start:0.3,pause:2.5},info);
+  else if(n.line)addMover(pp,n.line,{speed:0.35,pause:4,walkers:[[pp,n.anim||'walk']]},info);
+  else if(n.railRun)addMover(pp,[[-20.9,67.2],[-20.6,72],[-20.6,77]],{speed:0.75,pause:2.5,walkers:[[pp,'hawk']]},info);
+  else if(n.walk)addMover(pp,loopPts(sp[0],sp[1],n.walk),{speed:n.sp||0.35,loop:true,start:rng(),walkers:[[pp,n.anim||(n.hold==='cane'?'stroll':'walk')]]},info);
+  else{let ry=n.ry??n._ry??rng()*6.28;if(n.ryAdd)ry+=n.ryAdd;if(n.faceRoad){let b=null;for(const r of ROADS){const P=makePathPts(r);for(let q=0;q<=P.L;q+=0.3){const [x,z]=pathAt(P,q);const d=Math.hypot(x-sp[0],z-sp[1]);if(!b||d<b.d)b={d,x,z};}}if(b)ry=Math.atan2(b.x-sp[0],b.z-sp[1]);
+      if(n.anim==='busk'){const bl=[];for(let k=0;k<3;k++){const m=mesh(new THREE.SphereGeometry(0.045,8,6),[0xd9483b,0xf2d27a,0x3f63a6][k]);pp.userData.inner.add(m);bl.push(m);}pp.userData.balls=bl;
+        const st=new THREE.Group();st.add(mesh(PG.stick,0x8a6a4a,{sy:0.9}));st.add(mesh(new THREE.SphereGeometry(0.04,6,5),0xd9483b,{y:0.45}));st.add(mesh(new THREE.SphereGeometry(0.04,6,5),0xd9483b,{y:-0.45}));st.visible=false;pp.userData.inner.add(st);pp.userData.staff=st;}}
+    addActor(pp,sp[0],sp[1],ry,n.anim||'idle',info);
+    if(n.rick){const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(0.62,0.32,0.5),0x2f2a33,{y:0.55}));g.add(mesh(new THREE.BoxGeometry(0.66,0.05,0.56),0x2f2a33,{y:1.32,z:-0.05}));g.add(mesh(new THREE.BoxGeometry(0.66,0.8,0.05),0x2f2a33,{y:0.95,z:-0.32}));
+      for(const s2 of[-1,1]){g.add(mesh(new THREE.TorusGeometry(0.3,0.04,6,16),0x5a3a2a,{x:0.37*s2,y:0.3,ry:Math.PI/2}));g.add(mesh(new THREE.BoxGeometry(0.04,0.04,1),0x5a3a2a,{x:0.26*s2,y:0.42,z:0.6,rx:0.25}));}
+      const bx=sp[0]-Math.sin(ry)*1.05,bz=sp[1]-Math.cos(ry)*1.05;place(g,bx,bz,ry+Math.PI/2);claim(bx,bz,0.8);
+      pp.position.x-=Math.sin(ry)*0.25;pp.position.z-=Math.cos(ry)*0.25;pp.position.y=groundY(pp.position.x,pp.position.z);}}
+  if(n.clear)pp.userData.clearR=n.clear;if(n.keep||n.pos||n.posFn)pp.userData.keep=true;if(n.prop)n.prop(sp[0],sp[1]);});
+RCK('c5');{ // 關渡渡船、撒網漁夫、割蘆葦
+  const b=boatM(null);const f=person('fisher',{top:0x6f8fb3});f.position.set(0,0.2,0.75);b.add(f);const ps=person('twF',{top:0xd9a0a8});ps.scale.setScalar(0.85);ps.position.set(0,0.2,0.15);b.add(ps);hold(ps,'basket');
+  folk.add(b);register(f,I('陳渡伯',57,'關渡渡船伕','在關渡撐渡船載人過淡水河，一趟收幾錢，颱風天就收工。等客人上岸辦完事，他就把船靠在岸邊抽菸等著。'));
+  register(ps,I('林惜春',33,'八里的養雞婦人','住在淡水河對岸的八里，每天回家撿雞蛋，再坐渡船過河，到關渡宮旁擺個小攤賣雞蛋，賣完再搭船回家。'));
+  {const hh=house({w:1.4,d:0.9,h:0.6,wall:'tw',roof:'tw',rh:0.42,ridgeW:true,frontDoor:true});place(hh,-89.0,49.4,Math.atan2(-87.6+89.0,46.6-49.4));claim(-89,49.4,1.1);
+   [0xf5f1e8,0xb5652e,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,-89.6+k*0.45,48.2+(k%2)*0.3,rng()*6,'peck');});
+   GD_STALL=atLocal0(TEMPLE_GD,-1.7,3.0);claim(GD_STALL[0],GD_STALL[1],0.5);REED_CLEAR.push([GD_STALL[0],GD_STALL[1],1.8],[-89.2,48.4,1.6]);}
+  const wet=(p,c)=>{let [x,z]=p;const L0=Math.hypot(c[0]-x,c[1]-z),ux=(c[0]-x)/L0,uz=(c[1]-z)/L0;const RV=RIVERS.reduce((a,r)=>r.w>a.w?r:a,RIVERS[0]);for(let k=0;k<120&&polyDist(x,z,RV.pts)-RV.w>-0.55;k++){x+=ux*0.05;z+=uz*0.05;}return[x,z];};const fA=wet([-86.2,46.4],[-84.3,46.1]),fB=wet([-82.4,45.9],[-84.3,46.1]);
+  const gbk=mesh(PG.basket,0xc9a066);gbk.visible=false;folk.add(gbk);const hbk=ps.userData.arms[1].children[ps.userData.arms[1].children.length-1];
+  FERRY={b,f,ps,gbk,hbk,rot:null,A:fA,B:fB,shoreA:[-87.6,46.6],shoreB:[-81.6,45.7],u:0,state:'cross',to:1,t:0,route:null,ri:0,_dx:1,_dz:0,hold:false,onboard:true,obj:b};
   const nf=person('fisher',{top:0x5c7392});const nb=bankAt(TAM_PTS,1.9,-72,61,0.5,1);addActor(nf,nb.x,nb.z,nb.ry,'net',I('廖阿網',39,'撒網漁夫','站在淡水河岸邊撒網捕魚，漲潮時網裡常有烏魚和蝦子。'));
-  for(let k=0;k<2;k++){for(let i=0;i<60;i++){const x=-82+rng()*14,z=48+rng()*12;if(isMarsh(x,z)&&!nearLines(x,z,0.3)&&free(x,z,0.4)){claim(x,z,0.4);const w=person('farmerW',{top:[0x9bb2bf,0x8aa0a8][k]});hold(w,'sickle');
-    addActor(w,x,z,rng()*6.28,'sickle',I(['楊阿柳','李阿蘭'][k],[46,38][k],'割蘆葦的婦人','在關渡濕地割蘆葦，蘆葦曬乾後可以編草蓆、搭屋頂，也能當柴燒。'));break;}}}
+  for(let k=0;k<2;k++){for(let i=0;i<90;i++){const x=k===0?-74+rng()*6:-82+rng()*14,z=48+rng()*12;if(isMarsh(x,z)&&!nearLines(x,z,0.3)&&free(x,z,0.4)){claim(x,z,0.4);const w=person('farmerW',{top:[0x9bb2bf,0x8aa0a8][k]});hold(w,'sickle');
+    addActor(w,x,z,rng()*6.28,'sickle',I(['楊柳枝','李蘭英'][k],[46,38][k],'割蘆葦的婦人',['在關渡濕地割了二十年蘆葦，曬乾後編成草蓆，拿到大稻埕賣。','跟著楊柳枝學割蘆葦，打算多割一些回家修補漏水的屋頂。'][k]));break;}}}
   // 田裡追加的農事
-  const extra=[['plant','farmer','插秧的農夫'],['sickle','farmerW','割稻的農婦'],['thresh','farmer','打穀的農夫'],['hoe','farmer','翻田的農夫'],['plant','farmerW','插秧的農婦'],['sickle','farmer','割稻的農夫']];
+  RCK('c6');const extra=[['plant','farmer','插秧的農夫'],['sickle','farmerW','割稻的農婦'],['thresh','farmer','打穀的農夫'],['hoe','farmer','翻田的農夫'],['plant','farmerW','插秧的農婦'],['sickle','farmer','割稻的農夫']];
   extra.forEach(([anim,st,job],i)=>{const fd=takeField();if(!fd)return;const x=fd[0]+1+rng()*3,z=fd[1]+1+rng()*3;const pp=person(st,{top:[0x6f8fb3,0x9bb2bf,0x5c7392,0x8aa0a8][i%4]});
     if(anim==='hoe')hold(pp,'hoe');if(anim==='sickle')hold(pp,'sickle');if(anim==='thresh')hold(pp,'sheaf');
-    const nm=(st==='farmerW'?['陳阿滿','黃阿罔','鄭阿花']:['廖阿財','林阿發','蘇阿旺'])[i%3];const info=I(nm,25+Math.floor(rng()*35),job,'在北投、士林平原耕作的佃農家，和鄰居換工，一家一家輪流把田裡的工作做完。');
-    if(anim==='plant')addMover(pp,[[x,z],[x+2.2,z]],{speed:0.06,backward:true,walkers:[[pp,'plant']],pause:0.5},info);else addActor(pp,x,z,rng()*6.28,anim,info);});
+    const [nm,story]=farmPick(st==='farmerW');const info=I(nm,25+Math.floor(rng()*35),job,'在北投、士林平原耕作的佃農家，和鄰居換工輪流做田事。'+story);
+    if(anim==='thresh'){const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);pp.userData.keep=true;}
+    if(anim==='plant')addMover(pp,[[x,z],[x+2.2,z]],{speed:0.06,backward:true,walkers:[[pp,'plant']],pause:0.5},info);else addActor(pp,x,z,anim==='thresh'?0:rng()*6.28,anim,info);});
 }
 
 movers.forEach(m=>m.walkers.forEach(([p,a])=>{if(!p.userData||!p.userData.arms||p.userData.umb||p.userData.hasParasol||p.userData.hat==='kasa'||!['walk','stroll','herd'].includes(a))return;
   const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,[0xc9873f,0x2f2a33,0x9a4a3a,0x3f63a6][umbrellas.length%4],{y:0.76}));
   u.visible=false;p.userData.arms[0].add(u);p.userData.umb=u;umbrellas.push(u);}));
 /* 在聚落裡四處走動的貓狗 */
-const wanderers=[];
-function addWander(obj,cx,cz,r,speed,info){folk.add(obj);addHit(obj,info,obj.userData.isCat?0.25:0.35,0.2);const w={obj,cx,cz,r,speed,tx:cx,tz:cz,wait:rng()*3,ph:rng()*10};wanderers.push(w);obj.position.set(cx,G(cx,cz),cz);return w;}
+const wanderers=[],WARY={t:1,people:null};
+function addWander(obj,cx,cz,r,speed,info){const _w=addWander0(obj,cx,cz,r,speed,info);_w.wild=info===INFO.muntjac||info===INFO.boar||info===INFO.piglet;return _w;}
+function addWander0(obj,cx,cz,r,speed,info){folk.add(obj);addHit(obj,info,obj.userData.isCat?0.25:0.35,0.2);const w={obj,cx,cz,r,speed,tx:cx,tz:cz,wait:rng()*3,ph:rng()*10};wanderers.push(w);obj.position.set(cx,G(cx,cz),cz);return w;}
 function segClear(x0,z0,x1,z1,m){const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.ceil(L/0.2));for(let i=1;i<=n;i++){const t=i/n;if(obAt(x0+(x1-x0)*t,z0+(z1-z0)*t,m))return false;}return true;}
 function wanderTarget(w){const ox=w.obj.position.x,oz=w.obj.position.z;
   for(let k=0;k<30;k++){const a=rng()*Math.PI*2,d=Math.sqrt(rng())*w.r,x=w.cx+Math.cos(a)*d,z=w.cz+Math.sin(a)*d;
@@ -1470,8 +1646,116 @@ function inBoardXZ(x,z){return Math.min(x-X0,X0+W-x,z-Z0,Z0+D-z);}
 
 /* 山裡的野生動物：山羌、山豬（多半在林緣出沒） */
 [[-30,-20,3.5],[18,-41,3.5],[-6,-30,3],[-38,-30,3],[30,-31,3.5],[8,-52,3],[-16,-25,3],[41,-44,3],[-46,-19,3]].forEach(([x,z,r])=>addWander(muntjac(),x,z,r,0.6,INFO.muntjac));
-[[50,-24,3.5],[62,28,3.5],[45,8,3.5],[56,-40,3.5],[30,42,3],[66,2,3.5]].forEach(([x,z,r],i)=>{addWander(boar(1.15),x,z,r,0.45,INFO.boar);
+[[50,-24,3.5],null,[45,8,3.5],[56,-40,3.5],null,[66,2,3.5]].forEach((c,i)=>{if(!c)return;const [x,z,r]=c;addWander(boar(1.15),x,z,r,0.45,INFO.boar);
   if(i%2===0)for(let k=0;k<3;k++)addWander(boar(0.55,true),x+(k-1)*0.6,z+0.5,1.6,0.5,INFO.piglet);});
+
+/* 右側與西北山區：多一些山羌、山豬，加上獵人與山裡的職人 */
+const mtM=(x,z)=>H(x,z)/VS;
+function mtSpot(cx,cz,r,minM=150){for(let k=0;k<60;k++){const a=rng()*6.283,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
+  if(inBoardXZ(x,z)>3&&H(x,z)>SEA+0.2&&mtM(x,z)>=minM&&!RIVERS.some(rv=>polyDist(x,z,rv.pts)<rv.w+0.5)&&!nearLines(x,z,0.4)&&free(x,z,0.5)){claim(x,z,0.5);return[x,z];}}return null;}
+const EXTRA_MJ=[[-60,-10,3],[64,40,3],[45,-5,3.5],[62,-30,3],[-38,-32,3.5],[-50,-24,3],[-24,-40,3]].map(([x,z,r])=>addWander(muntjac(),x,z,r,0.6,INFO.muntjac));
+const EXTRA_BOAR=[[52,48,3.5],[60,-12,3],[-45,-35,3.5],[-30,-48,3]].map(([x,z,r],i)=>{const w=addWander(boar(1.15),x,z,r,0.45,INFO.boar);
+  if(i===1||i===2)for(let k=0;k<3;k++)addWander(boar(0.55,true),x+(k-1)*0.6,z+0.5,1.6,0.5,INFO.piglet);return w;});
+// 大崙頭山到五指山東南一帶
+[[45,60,3.5],[55,55,3]].forEach(([x,z,r])=>addWander(muntjac(),x,z,r,0.6,INFO.muntjac));
+const HUNTERS=[];
+{const mk=(st,o,w,info,withDog)=>{const p=person(st,o);hold(p,'rifle');satchel(p,0x6b4a34);const q=w.obj.position;p.position.set(q.x+3,groundY(q.x+3,q.z),q.z);folk.add(p);register(p,info);
+   let dg=null;if(withDog){dg=dog(COAT.black[0]);addHit(dg,petInfo('dog','阿勇','跟著主人上山打獵的獵犬','黑毛'),0.35,0.25);folk.add(dg);dg.position.copy(p.position);}
+   HUNTERS.push({p,w,dog:dg,state:'stalk',t:2,ph:rng()*10,mode:withDog?'boar':'muntjac',dogRy:0,flee:null});};
+  mk('coolie',{top:0x5a4f45,bottom:0x3d3446},EXTRA_BOAR[0],I('潘阿鐵',46,'山豬獵人','住在山腳的獵人，領有狩獵免狀，帶著土銃和獵犬阿勇上山。他說山豬最聰明，要順著牠翻土的痕跡慢慢跟，風向一錯，牠一下就跑得不見蹤影。'),true);
+  mk('farmer',{top:0x6b5a46,hat:'straw',hatC:0xd9c38c},EXTRA_MJ[4],I('高福來',38,'山羌獵人','在大屯山西北麓設陷阱、打山羌的獵人。山羌很膽小，一有動靜就「咔、咔」叫著跑掉，所以他總是放輕腳步，躲在樹後面慢慢靠近。'),false);}
+const EXPLORERS=[];
+function ridgeRoute(P){const out=[[P[0][0],P[0][1],true]];for(let i=0;i<P.length-1;i++){const [ax,az]=P[i],[bx,bz]=P[i+1],L=Math.hypot(bx-ax,bz-az),n=Math.max(1,Math.ceil(L/2.2));const ux=(bx-ax)/L,uz=(bz-az)/L,px=-uz,pz=ux;let offs=[];
+    for(let k=1;k<n;k++){const t=k/n,cx=ax+(bx-ax)*t,cz=az+(bz-az)*t,lim=Math.min(3.5,Math.min(t,1-t)*L*0.6);let bo=0,bh=-1e9;for(let o=-lim;o<=lim;o+=0.25){const h=H(cx+px*o,cz+pz*o)-0.04*Math.abs(o);if(h>bh){bh=h;bo=o;}}offs.push(bo);}
+    for(let it=0;it<2;it++)offs=offs.map((o,k)=>(o*2+(k?offs[k-1]:0)+(k<offs.length-1?offs[k+1]:0))/4);
+    offs.forEach((o,k)=>{const t=(k+1)/n;out.push([ax+(bx-ax)*t+px*o,az+(bz-az)*t+pz*o,false]);});out.push([bx,bz,true]);}return out;}
+{const ex=[['tech',{hat:'helmet',hatC:0xe8dcb4},'佐佐木 健',34,'臺灣山岳會會員','臺灣山岳會的會員，假日背著行囊在大屯火山群一座山接一座山地走，記錄登山路線和沿途的植物。'],
+   ['suit',{hat:'boater',hatC:0xf0e2b6,top:0x6b6a5a,bottom:0x6b6a5a},'陳清風',27,'植物採集者','臺北帝國大學理農學部的助手，背著壓花夾在山區採集植物標本，最想找到書上記載的稀有蕨類。'],
+   ['tech',{hat:'straw',hatC:0xead9a0,top:0xe8e0c8},'中村 一郎',41,'昆蟲採集家','拿著捕蟲網在山裡追蝴蝶的昆蟲迷，每年夏天都來大屯山，說這裡的蝴蝶種類多得驚人。']];
+  ex.forEach(([st,o,n,a,j,b],i)=>{const p=person(st,o);backBasket(p,0x8a6a4a);if(i===2)hold(p,'bugnet');else hold(p,'cane');
+    const sp=mtSpot([-20,30,-35][i],[-20,-25,-30][i],8,250)||[0,-10];p.position.set(sp[0],groundY(sp[0],sp[1]),sp[1]);folk.add(p);register(p,I(n,a,j,b));EXPLORERS.push({p,tx:sp[0],tz:sp[1],wait:2+i*3,ph:rng()*10,walk:i===2?'walk':'stroll',peaks:i===0?ridgeRoute([[8.5,-5.7],[-2.1,-23.8],[1.6,-11.2],[-22.8,-11.8],[-40,-9.3],[-42.3,-7.9]]):null,pi:0,pdir:1});});
+  {const p=person('twM',{top:0x6b5a46});backBasket(p,0x8fbf5a);const sp=mtSpot(-36,-26,4,40)||[-36,-26];p.position.set(sp[0],groundY(sp[0],sp[1]),sp[1]);folk.add(p);
+   register(p,I('吳青山',58,'採藥人','熟悉山裡每一種草藥的老人，背著竹簍在山坡上走走停停，彎腰採魚腥草、金線蓮，賣給士林街上的漢藥店。'));
+   EXPLORERS.push({p,tx:sp[0],tz:sp[1],wait:1,ph:rng()*10,cx:sp[0],cz:sp[1],r:6,minM:40,act:'pick',walk:'walk',speed:0.3});}
+  {const p=person('farmerW',{top:0x9bb2bf});backBasket(p,0x8a6a4a);const sp=mtSpot(40,70,4,30)||[40,70];p.position.set(sp[0],groundY(sp[0],sp[1]),sp[1]);folk.add(p);
+   register(p,I('張秀鑾',37,'撿柴的婦人','趁著農閒上山撿枯枝，背簍裝滿了就坐在樹下歇一會兒，回家可以燒好幾天的灶火。'));
+   EXPLORERS.push({p,tx:sp[0],tz:sp[1],wait:2,ph:rng()*10,cx:sp[0],cz:sp[1],r:5,minM:30,act:'pick',walk:'walk',speed:0.28});}}
+{const wk=[ // 山裡的職人
+  [50,42,4,'farmer','hoe',{top:0x8a7a5a},I('黃阿筍',44,'採筍人','清晨上山挖竹筍的山農，要趁筍尖還沒冒出土就挖起來才嫩。挖好的筍子一早就挑到士林市場賣。'),'basket'],
+  [23,23,2,'farmer','pick',{top:0x6f8fb3},I('張文德',51,'茶農','經營這片小茶園的茶農，一邊巡視茶樹一邊指揮採茶的婦人，傍晚要把茶菁送去茶寮炒製。'),'back'],
+  [61,18,2,'farmer','sickle',{top:0x5c7392},I('林全興',36,'茶農','在茶園修剪茶樹枝的茶農，剪下的枝葉堆在田邊，曬乾後可以當柴燒。'),'sickle'],
+  [56,8,4,'farmer','chop',{top:0x8a7a5a,hat:'kasa'},I('洪木村',49,'樵夫','在五指山一帶砍柴的樵夫，砍下的相思樹會燒成木炭，雜木就綁成一捆捆挑下山賣。'),'axe'],
+  [43,-40,2,'coolie','hoe',{top:0x8a7a5a},I('邱石安',40,'修路工','受庄役場雇用，修補魚路古道上被雨水沖壞的石階，好讓挑夫走得平穩一點。'),'hoe'],
+  [18.4,-49.1,1.2,'tech','photo',{hat:'helmet',hatC:0xe8dcb4},I('石川 正夫',33,'山林課技手','臺灣總督府殖產局的技手，架著測量儀在山上測繪地形，為國立公園的規劃做準備。'),'tripod']];
+  wk.forEach(([cx,cz,r,st,an,o,info,prop])=>{const sp=mtSpot(cx,cz,r,40);if(!sp)return;const p=person(st,o);
+    if(prop==='shrine'){hold(p,'broom');const ry=rng()*6.28;const tm=house({w:0.55,d:0.45,h:0.42,wall:'temple',roof:'orange',rh:0.28,base:0.4});place(tm,sp[0]+Math.sin(ry)*0.9,sp[1]+Math.cos(ry)*0.9,ry+Math.PI);addActor(p,sp[0],sp[1],ry,an,info);return;}
+    if(prop==='basket')backBasket(p,0xc9a066);else if(prop==='back')backBasket(p,0x8fbf5a);else if(prop==='tripod'){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.16,0.12,0.2),0xc9a066,{y:0.82}));for(let i=0;i<3;i++){const g=mesh(PG.stick,0x6b4a34,{y:0.4,sy:0.85});const w=new THREE.Group();w.rotation.y=i*2.094;g.rotation.x=0.22;w.add(g);e.add(w);}
+      let best=null;for(let k=0;k<400;k++){const a=rng()*6.283,d=Math.sqrt(rng())*1.6,px=cx+Math.cos(a)*d,pz=cz+Math.sin(a)*d,ry=rng()*6.283,qx=px+Math.sin(ry)*0.62,qz=pz+Math.cos(ry)*0.62;
+        const dh=Math.abs(G(px,pz)-G(qx,qz)),sc=dh-0.02*G(px,pz);if(!best||sc<best.sc)best={sc,px,pz,qx,qz,ry};}
+      place(e,best.qx,best.qz,best.ry+Math.PI);e.scale.setScalar(0.85);p.userData.keep=true;addActor(p,best.px,best.pz,best.ry,an,info);return;}else hold(p,prop);
+    let ry0=rng()*6.28;if(an==='chop'){for(let k=0;k<60;k++){const a=rng()*6.283,d=rng()*6,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;let mx=-1e9,mn=1e9;for(const [ox,oz] of[[0,0],[1.2,0],[-0.6,0],[0,0.6],[0,-0.6],[1.2,0.5],[1.2,-0.5]]){const g=G(x+ox,z+oz);mx=Math.max(mx,g);mn=Math.min(mn,g);}
+      if(mx-mn<0.25&&free(x,z,1.2)&&!nearLines(x,z,0.6)){sp[0]=x;sp[1]=z;claim(x,z,1.4);break;}}ry0=Math.PI/2;}
+    addActor(p,sp[0],sp[1],ry0,an,info);
+    if(an==='chop'){const tr=new THREE.Group();tr.add(mesh(new THREE.CylinderGeometry(0.1,0.14,1.0,7),0x8f6342,{y:0.5}));tr.add(mesh(lumpy,0x5a9a58,{y:1.3,sx:0.8,sy:0.75,sz:0.8}));
+      tr.userData.pass=1;place(tr,sp[0]+Math.sin(ry0)*0.78,sp[1]+Math.cos(ry0)*0.78,0);p.userData.keep=true;for(let i=0;i<4;i++)place(mesh(new THREE.CylinderGeometry(0.05,0.05,0.45,6),0x9a7a5a,{y:0.05,rz:Math.PI/2}),sp[0]-0.6+i*0.02,sp[1]-0.4+i*0.11,0.3*i);}
+    if(info.name==='邱石安'){let b=null;for(let i=0;i<TRAIL.length-1;i++)for(let k=0;k<=10;k++){const x=TRAIL[i][0]+(TRAIL[i+1][0]-TRAIL[i][0])*k/10,z=TRAIL[i][1]+(TRAIL[i+1][1]-TRAIL[i][1])*k/10,d=Math.hypot(x-sp[0],z-sp[1]);if(!b||d<b.d)b={d,x,z};}p.rotation.y=Math.atan2(b.x-sp[0],b.z-sp[1]);p.userData.keep=true;}
+    if(info.name==='黃阿筍'){const L=[];for(let i=0;i<6;i++){const a=ry0-0.75+i*0.3,d=1.3+(i%3)*0.35,x=sp[0]+Math.sin(a)*d,z=sp[1]+Math.cos(a)*d;L.push({x,z,h:G(x,z),s:0.85+rng()*0.3,tx:(rng()-0.5)*0.25,ry:rng()*6.28,tz:(rng()-0.5)*0.25});}
+      instanced(bambooStalk(2),bambooMat,L,(t,o)=>{o.position.set(t.x,t.h,t.z);o.scale.setScalar(t.s);o.rotation.set(t.tx,t.ry,t.tz,'YXZ');});
+      for(let i=0;i<3;i++){const a=ry0+i*0.8,x=sp[0]+Math.sin(a)*0.5,z=sp[1]+Math.cos(a)*0.5;place(mesh(new THREE.ConeGeometry(0.05,0.14,6),0xc9a066,{y:0.07}),x,z,0);}}});}
+{ // 大崙頭山到五指山東南麓的山居人家
+  {const p=person('farmerW',{top:0x9bb2bf});backBasket(p,0x8a6a4a);const sp=mtSpot(52,62,3,20)||[52,62];p.position.set(sp[0],groundY(sp[0],sp[1]),sp[1]);folk.add(p);
+   register(p,I('李桂英',39,'採野菜的婦人','背著竹簍在山坡上走走停停，採過貓、山芹菜和野莧菜，回家炒一盤，或是拿到士林市場換點零錢。'));EXPLORERS.push({p,tx:sp[0],tz:sp[1],wait:2,ph:rng()*10,cx:sp[0],cz:sp[1],r:5,minM:20,act:'pick',walk:'walk',speed:0.3});}}
+function okGround(x,z){return H(x,z)>SEA+0.2&&inBoardXZ(x,z)>2.5&&!RIVERS.some(rv=>rv.w>0.5&&polyDist(x,z,rv.pts)<rv.w+0.3);}
+function stepTo(o,tx,tz,sp,dt){const dx=tx-o.position.x,dz=tz-o.position.z,d=Math.hypot(dx,dz);if(d<0.02)return false;const st=Math.min(d,sp*dt);const nx=o.position.x+dx/d*st,nz=o.position.z+dz/d*st;
+  if(!okGround(nx,nz))return false;o.position.x=nx;o.position.z=nz;o.rotation.y=Math.atan2(dx,dz);return true;}
+function fleeFrom(w,fx,fz){const q=w.obj.position;const base=Math.atan2(q.z-fz,q.x-fx);for(let k=0;k<12;k++){const a=base+(k%2?1:-1)*Math.ceil(k/2)*0.35,x=q.x+Math.cos(a)*4,z=q.z+Math.sin(a)*4;if(okGround(x,z)&&Math.hypot(x-w.cx,z-w.cz)<w.r+5&&segClear(q.x,q.z,x,z,0.2)){w.tx=x;w.tz=z;w.wait=0;w.boostT=0.8;return true;}}return false;}
+function updateMountainFolk(dt,t,mot){dt*=mot;
+  for(const hu of HUNTERS){const p=hu.p,w=hu.w,tp=w.obj.position;const dx=tp.x-p.position.x,dz=tp.z-p.position.z,d=Math.hypot(dx,dz)||1;hu.t-=dt;let anim='stand',moving=false;
+    if(hu.state==='stalk'){const near=hu.mode==='boar'?3.2:5;if(d>near){moving=stepTo(p,tp.x,tp.z,hu.mode==='boar'?0.6:0.36,dt);anim='walk';}else{hu.state=hu.mode==='boar'?'aim':'chase';hu.t=hu.mode==='boar'?2.5:5+Math.random()*3;}}
+    else if(hu.state==='aim'){p.rotation.y=Math.atan2(dx,dz);anim='aim';if(hu.t<=0){if(Math.random()<0.5){hu.state='chase';hu.t=4+Math.random()*3;}else{hu.state='charged';hu.t=3.5+Math.random()*2;}}}
+    else if(hu.state==='chase'){anim='run';moving=stepTo(p,tp.x,tp.z,d>1.2?(hu.mode==='boar'?1.7:1.0):0.2,dt);hu.flee=(hu.flee||0)-dt;if(hu.flee<=0){fleeFrom(w,p.position.x,p.position.z);hu.flee=0.5;}if(hu.t<=0){hu.state='rest';hu.t=5+Math.random()*4;w.boostT=0;}}
+    else if(hu.state==='charged'){ // 山豬反過來衝向獵人，獵人轉身逃跑
+      w.tx=p.position.x;w.tz=p.position.z;w.wait=0;w.boostT=0.3;anim='run';
+      const ax=p.position.x-tp.x,az=p.position.z-tp.z,al=Math.hypot(ax,az)||1;let ok=false;for(let k=0;k<8&&!ok;k++){const a=Math.atan2(az,ax)+(k%2?1:-1)*Math.ceil(k/2)*0.4;ok=stepTo(p,p.position.x+Math.cos(a)*3,p.position.z+Math.sin(a)*3,1.7,dt);}moving=ok;
+      if(hu.t<=0){hu.state='rest';hu.t=5+Math.random()*4;w.boostT=0;w.wait=1;w.tx=tp.x;w.tz=tp.z;}}
+    else{anim='stand';p.rotation.y=Math.atan2(dx,dz);if(hu.t<=0)hu.state='stalk';}
+    pose(p,anim,t,hu.ph,moving);
+    {const [px,pz]=pushOut(p.position.x,p.position.z,0.2);p.position.x=px;p.position.z=pz;}p.position.y=groundY(p.position.x,p.position.z);
+    if(hu.dog){const dg=hu.dog;const bx=tp.x-dg.position.x,bz=tp.z-dg.position.z,bd=Math.hypot(bx,bz)||1;let mv=false;
+      if(hu.dogMv===undefined)hu.dogMv=true;if(hu.dogMv&&bd<1.0)hu.dogMv=false;else if(!hu.dogMv&&bd>1.6)hu.dogMv=true;
+      if(hu.dogMv){const sp=bd>3?1.5:1.1;const nx=dg.position.x+bx/bd*Math.min(bd-0.8,sp*dt),nz=dg.position.z+bz/bd*Math.min(bd-0.8,sp*dt);if(okGround(nx,nz)){dg.position.x=nx;dg.position.z=nz;mv=true;}}
+      const want=Math.atan2(bx,bz);let dr=want-hu.dogRy;dr=Math.atan2(Math.sin(dr),Math.cos(dr));hu.dogRy+=dr*Math.min(1,dt*6);dg.rotation.y=hu.dogRy;
+      dg.position.y=groundY(dg.position.x,dg.position.z);animalPose(dg,t*(mv?2.4:1),hu.ph,mv,'pet');
+      if(!mv){const L=dg.userData.legs,u=dg.userData;if(u.tail)u.tail.rotation.z=0.6*Math.sin(t*14);L[2].rotation.x=-0.7*Math.max(0,Math.sin(t*2.6));L[3].rotation.x=-0.7*Math.max(0,Math.sin(t*2.6+Math.PI));}else if(dg.userData.tail)dg.userData.tail.rotation.z=0;}}
+  for(const e of EXPLORERS){if(!e.peaks)continue;const p=e.p;let moving=false;e.gcd=(e.gcd||0)-dt;
+    if(e.greetT>0){e.greetT-=dt;pose(p,'wave',t,e.ph,false);p.userData.arms[1].rotation.set(-2.6,0,0.2);if(e.greetT<=0)HIKE_MV.forEach(m=>{m.hold=false;});}
+    else if(e.cheerT>0){e.cheerT-=dt;pose(p,'banzai',t,e.ph,false);if(e.cheerT<=0){if(e.pi+e.pdir<0||e.pi+e.pdir>=e.peaks.length)e.pdir=-e.pdir;e.pi+=e.pdir;e.stuck=0;}}
+    else{const [tx,tz]=e.peaks[e.pi],dx=tx-p.position.x,dz=tz-p.position.z,d=Math.hypot(dx,dz);
+      e.stuck=(e.stuck||0)+dt;if(d<0.25||e.stuck>30||(!e.peaks[e.pi][2]&&(d<0.6||e.stuck>12))){if(e.peaks[e.pi][2])e.cheerT=3.2;else{if(e.pi+e.pdir<0||e.pi+e.pdir>=e.peaks.length)e.pdir=-e.pdir;e.pi+=e.pdir;e.stuck=0;}}else{const st=Math.min(d,0.55*dt);p.position.x+=dx/d*st;p.position.z+=dz/d*st;p.rotation.y=Math.atan2(dx,dz);moving=true;}pose(p,e.walk,t,e.ph,moving);
+      if(e.gcd<=0&&HIKE_MV.length){const tm=HIKE_MV[0].obj.position;if(Math.hypot(tm.x-p.position.x,tm.z-p.position.z)<1.6){e.greetT=3;e.gcd=25;HIKE_MV.forEach(m=>{m.hold=true;m.greetT=3;m.greetAt=p;});p.rotation.y=Math.atan2(tm.x-p.position.x,tm.z-p.position.z);}}}
+    {const [px,pz]=pushOut(p.position.x,p.position.z,0.2);p.position.x=px;p.position.z=pz;}p.position.y=groundY(p.position.x,p.position.z)+(e.cheerT>0?(p.userData.hop||0):0);}
+  for(const e of EXPLORERS){if(e.peaks)continue;const p=e.p;let moving=false;
+    if(e.wait>0){e.wait-=dt;pose(p,e.act||'stand',t,e.ph,false);if(e.wait<=0){let ok=false;for(let k=0;k<40&&!ok;k++){const a=Math.random()*6.283,r=e.r?Math.random()*e.r:5+Math.random()*10,ox=e.r?e.cx:p.position.x,oz=e.r?e.cz:p.position.z,x=ox+Math.cos(a)*r,z=oz+Math.sin(a)*r;
+      if(inBoardXZ(x,z)>4&&mtM(x,z)>(e.minM??220)&&!RIVERS.some(rv=>polyDist(x,z,rv.pts)<rv.w+0.3)&&segClear(p.position.x,p.position.z,x,z,0.25)){e.tx=x;e.tz=z;ok=true;}}if(!ok)e.wait=2;}}
+    else{const dx=e.tx-p.position.x,dz=e.tz-p.position.z,d=Math.hypot(dx,dz);if(d<0.1){e.wait=e.act?2.5+Math.random()*3:3+Math.random()*5;}else{const st=Math.min(d,(e.speed||0.45)*dt);p.position.x+=dx/d*st;p.position.z+=dz/d*st;p.rotation.y=Math.atan2(dx,dz);moving=true;}pose(p,e.walk||'walk',t,e.ph,moving);}
+    p.position.y=groundY(p.position.x,p.position.z);}}
+
+/* 富貴角到金山之間的海面：偶爾有海豚躍出水面 */
+const DOLPH=[];
+if(false&&STRATA){const hitG=new THREE.Group();hitG.position.set(STRATA.x,STRATA.y,STRATA.z);scene.add(hitG);const hm=new THREE.Mesh(new THREE.BoxGeometry(0.4,STRATA.hh,STRATA.len),HITMAT);hitG.add(hm);hitG.userData.info=INFO.geology;hm.userData.person=hitG;CLICKABLE.push(hm);}
+{const mk=()=>{const g=new THREE.Group();const b=new THREE.Group();g.add(b);b.add(mesh(new THREE.CapsuleGeometry(0.18,0.7,4,10),0x7d8ea3,{rx:Math.PI/2,sy:0.9}));
+   b.add(mesh(new THREE.CapsuleGeometry(0.13,0.5,4,8),0xdfe6ee,{y:-0.06,rx:Math.PI/2,sx:0.9,sy:0.7}));b.add(mesh(new THREE.ConeGeometry(0.06,0.25,6),0x7d8ea3,{z:0.62,rx:Math.PI/2}));
+   b.add(mesh(new THREE.ConeGeometry(0.08,0.24,4),0x6b7c90,{y:0.2,z:-0.05,rx:-0.5,sz:0.3}));b.add(mesh(new THREE.BoxGeometry(0.42,0.03,0.14),0x6b7c90,{z:-0.58}));
+   for(const s of[-1,1])b.add(mesh(new THREE.SphereGeometry(0.025,6,5),0x1e1a22,{x:0.12*s,y:0.05,z:0.38}));g.visible=false;folk.add(g);addHit(g,INFO.dolphin,0.5,0);return g;};
+  for(let i=0;i<3;i++)DOLPH.push({g:mk(),t:0,dur:1.5,on:false});}
+const DOLPH_POD={wait:2+Math.random()*3,x:0,z:-71,dir:1,n:0,k:0};
+function updateDolphins(dt){const P=DOLPH_POD;P.wait-=dt;
+  if(P.wait<=0&&DOLPH.every(d=>!d.on)){for(let k=0;k<20;k++){P.x=-48+Math.random()*96;if(!bobbers.some(b=>Math.abs(b.position.x-P.x)<9&&Math.abs(b.position.z-P.z)<5))break;}P.dir=Math.random()<0.5?-1:1;P.n=3+Math.floor(Math.random()*4);P.k=0;P.wait=4+Math.random()*6;
+    DOLPH.forEach((d,i)=>{d.on=true;d.t=-i*0.35;d.jumps=P.n;d.dz=(i-1)*1.7;d.x=P.x-i*1.3*P.dir;});}
+  DOLPH.forEach(d=>{if(!d.on)return;d.t+=dt;const g=d.g;if(d.t<0){g.visible=false;return;}const u=d.t/d.dur;
+    if(u>=1){d.jumps--;d.t=-0.5-Math.random()*0.4;d.x+=P.dir*2.4;if(d.jumps<=0){d.on=false;g.visible=false;}return;}
+    const x=d.x+P.dir*2.4*u,z=P.z+d.dz+Math.min(0,coastZ(x)-4-P.z),y=SEA-0.25+Math.sin(Math.PI*u)*1.1;g.position.set(x,y,z);g.rotation.set(0,P.dir>0?Math.PI/2:-Math.PI/2,0);
+    g.children[0].rotation.x=-Math.cos(Math.PI*u)*0.9;g.visible=true;});}
 
 /* 飛鳥 */
 const WING_G=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.1);sh.quadraticCurveTo(0.32,0.12,0.6,-0.02);sh.quadraticCurveTo(0.3,-0.08,0,-0.1);sh.closePath();
@@ -1503,22 +1787,36 @@ const sOn=(P,x,z)=>{let best=0,bd=1e9;for(let s=0;s<=P.L;s+=0.25){const [px,pz]=
 const MAIN_PATH=[[-30,104],...RAIL_MAIN,[-98,24]];
 const trains=[
   {parts:trainParts(3),P:makePathPts(MAIN_PATH),s:0,dir:1,wait:3,speed:3.2,endWait:16,stopWait:4},
-  {parts:trainParts(1),P:makePathPts(RAIL_SPUR),s:1.75,min:1.75,fixed:true,dir:1,wait:2,speed:1.8,endWait:6,stopWait:0},
+  {parts:trainParts(1),P:makePathPts(RAIL_SPUR),s:2.65,spur:true,lay:1,dir:1,wait:8,speed:1.8,endWait:30,stopWait:0},
 ];
 trains[0].stops=[sOn(trains[0].P,-18.8,72.1),sOn(trains[0].P,-45,38.5)];trains[1].stops=[];
 trains.forEach((tr,i)=>tr.parts.forEach(p=>addHit(p,i?INFO.spurTrain:INFO.mainTrain,0.95,0.6,0.8)));
 const inBoard=(x,z)=>Math.min(x-X0,X0+W-x,z-Z0,Z0+D-z);
 /* 讓物件可以淡入淡出：第一次需要時才複製它自己的材質 */
 function setAlpha(obj,a){if(!obj.userData.fadeMats){const mats=[];obj.traverse(o=>{if(!o.isMesh||!o.material)return;const cl=m=>{if(m.visible===false)return m;const c=m.clone();c.transparent=true;mats.push(c);return c;};o.material=Array.isArray(o.material)?o.material.map(cl):cl(o.material);});obj.userData.fadeMats=mats;}
-  obj.userData.fadeMats.forEach(m=>m.opacity=a);obj.visible=a>0.01;}
-function updateTrain(tr,dt,mot){
+  obj.userData.fadeMats.forEach(m=>m.opacity=a);obj.visible=a>0.01;obj.userData.alpha=a;}
+function spurLayout(tr,lay,s){return tr.parts.map((p,k)=>{const off=k?1.65:0;const q=Math.min(tr.P.L,Math.max(0,s-lay*off));const [x,z,dx,dz]=pathAt(tr.P,q);return{x,z,ry:Math.atan2(dx,dz)+(lay<0?Math.PI:0)};});}
+function updateSpur(tr,dt,mot){const L=tr.P.L-1.05,OFF=1.65,S0=1.0;tr.blocked=false;
+  if(tr.wait>0){tr.wait-=dt;if(!tr.flipped&&tr.wait<=2){tr.flipped=true;tr.lay=tr.dir;tr.s=tr.dir>0?S0+OFF:L-OFF;tr.flip=null;}}
+  else if(junctionBusy(tr)){tr.blocked=true;}
+  else{const tgt=tr.dir>0?L:1,dist=Math.abs(tgt-tr.s);tr.s+=tr.dir*tr.speed*Math.min(1,0.18+dist/3)*mot*dt;
+    if(tr.dir>0&&tr.s>=L){tr.s=L;tr.dir=-1;tr.wait=tr.endWait;tr.flipped=false;}else if(tr.dir<0&&tr.s<=S0){tr.s=S0;tr.dir=1;tr.wait=tr.endWait;tr.flipped=false;}}
+  tr.moving=tr.wait<=0&&!tr.blocked;const lay=spurLayout(tr,tr.lay,tr.s);let f=null;if(tr.flip){tr.flip.t=Math.min(1,tr.flip.t+dt/1.5);f=tr.flip;if(f.t>=1)tr.flip=null;}
+  tr.parts.forEach((p,k)=>{let {x,z,ry}=lay[k];if(f){const e=sstep(0,1,f.t),A=f.from[k],B=f.to[k];x=lerp(A.x,B.x,e);z=lerp(A.z,B.z,e);let d=B.ry-A.ry;d=Math.atan2(Math.sin(d),Math.cos(d));ry=A.ry+d*e;}
+    p.position.set(x,G(x,z)+0.3,z);p.rotation.y=ry;const a=sstep(-1.5,2.5,inBoard(x,z));p.visible=a>0.01;p.userData.mats.forEach(m=>m.opacity=a);p.userData.alpha=a;});}
+const JX=-45,JZ=38.5;
+function trZoneDist(tr){return Math.min(...tr.parts.map(p=>Math.hypot(p.position.x-JX,p.position.z-JZ)));}
+function junctionBusy(tr){const o=trains.find(q=>q!==tr);if(!o)return false;const mine=trZoneDist(tr),theirs=trZoneDist(o);
+  if(tr.spur){return tr.dir<0&&tr.s<3.6&&theirs<5&&(o.moving||theirs<2.6);}
+  return mine>2.2&&mine<5.5&&theirs<2.4&&o.moving;}
+function updateTrain(tr,dt,mot){if(tr.spur)return updateSpur(tr,dt,mot);
   if(tr.wait>0){tr.wait-=dt;}else{
     const mn=tr.min||0;const ahead=[...tr.stops,mn,tr.P.L].filter(v=>(v-tr.s)*tr.dir>0.01).map(v=>Math.abs(v-tr.s));const dist=ahead.length?Math.min(...ahead):0;
-    const v=tr.speed*Math.min(1,0.18+dist/5)*mot,prev=tr.s;tr.s+=tr.dir*v*dt;
-    for(const st of tr.stops)if((prev-st)*(tr.s-st)<0){tr.s=st;tr.wait=tr.stopWait;break;}
+    tr.blocked=false;if(junctionBusy(tr)){tr.blocked=true;}else{const v=tr.speed*Math.min(1,0.18+dist/5)*mot,prev=tr.s;tr.s+=tr.dir*v*dt;
+    for(const st of tr.stops)if((prev-st)*(tr.s-st)<0){tr.s=st;tr.wait=tr.stopWait;break;}}
     if(tr.s>=tr.P.L){tr.s=tr.P.L;tr.dir=-1;tr.wait=tr.endWait;}else if(tr.s<=mn){tr.s=mn;tr.dir=1;tr.wait=tr.endWait;}
   }
-  tr.moving=tr.wait<=0;
+  tr.moving=tr.wait<=0&&!tr.blocked;
   tr.parts.forEach((p,k)=>{const off=k?1.65+(k-1)*1.7:0;const s=Math.min(tr.P.L,Math.max(0,tr.s-(tr.fixed?1:tr.dir)*off));const [x,z,dx,dz]=pathAt(tr.P,s);
     p.position.set(x,G(x,z)+0.3,z);p.rotation.y=Math.atan2(dx,dz)+(!tr.fixed&&tr.dir<0?Math.PI:0);
     const a=sstep(-1.5,2.5,inBoard(x,z));p.visible=a>0.01;p.userData.mats.forEach(m=>m.opacity=a);p.userData.alpha=a;});
@@ -1528,7 +1826,7 @@ function updateTrain(tr,dt,mot){
 const puffGeo=new THREE.SphereGeometry(0.5,12,10);const vents=[];
 function vent(x,z,scale,count=6,speed=0.18,yOff=0.3){const y0=H(x,z)+yOff;
   for(let i=0;i<count;i++){const m=new THREE.Mesh(puffGeo,toon(0xffffff,{transparent:true,opacity:0.9,depthWrite:false}));m.userData={x,z,y0,scale,phase:i/count,speed,dx:(rng()-0.5)*0.6};scene.add(m);vents.push(m);}}
-vent(1.3,-11.7,1.3,8,0.16);vent(20,-14,1.2,7,0.17);vent(-35,27.5,0.9,6,0.2);vent(22,-18,0.8,5,0.2);vent(-5,10.4,0.55,4,0.22);vent(-37,25.4,0.5,4,0.22,2.2);vent(17.3,-0.6,0.45,4,0.24);
+PENDING_VENTS.forEach(a=>vent(...a));vent(1.3,-11.7,1.3,8,0.16);vent(20,-14,1.2,7,0.17);vent(-35,27.5,0.9,6,0.2);vent(22,-18,0.8,5,0.2);vent(-5,10.4,0.55,4,0.22);vent(-37,25.4,0.5,4,0.22,2.2);vent(17.3,-0.6,0.45,4,0.24);
 const trainSmoke=[];for(let i=0;i<10;i++){const m=new THREE.Mesh(puffGeo,toon(0xf2f0f4,{transparent:true,opacity:0.85,depthWrite:false}));m.userData={k:i/10,tr:i<6?0:1};scene.add(m);trainSmoke.push(m);}
 const cloudGroup=new THREE.Group();scene.add(cloudGroup);const cloudMat=toon(0xffffff,{transparent:true,opacity:0.96});
 function cloud(x,y,z,s){const g=new THREE.Group();
@@ -1574,8 +1872,8 @@ function updateWeather(dt,t){
   for(const g of stormGroup.children){g.position.x+=g.userData.speed*dt*(reduceMotion?0.3:1);if(g.position.x>80)g.position.x=-80;}
   const mi=f('mist');mistMat.opacity=mi*0.6;mistGroup.visible=mi>0.02;
   mistGroup.children.forEach(g=>{g.position.x=g.userData.x+Math.sin(t*0.08+g.userData.ph)*3;});
-  const rn=f('rain');rainMat.opacity=rn*0.32;rainLines.visible=rn>0.02;
-  umbrellas.forEach(u=>u.visible=rn>0.35);
+  const rn=window.__RAIN??f('rain');rainMat.opacity=rn*0.32;rainLines.visible=rn>0.02;
+  umbrellas.forEach(u=>u.visible=rn>0.35&&!u.userData.fold);
   if(rainLines.visible){const c=controls.target,sp=34*(reduceMotion?0.4:1);
     for(let i=0;i<RAIN_N;i++){let y=rainOff[i*3+1]-sp*dt;if(y<-8)y+=45;rainOff[i*3+1]=y;
       const x=c.x+rainOff[i*3],z=c.z+rainOff[i*3+2],yy=c.y+y,j=i*6;
@@ -1634,55 +1932,111 @@ function updateDayNight(dt,t){
   NIGHT.beams.forEach(b=>{b.m.opacity=night*0.16;b.g.visible=night>0.02;b.g.rotation.y=t*0.6;});
 }
 
+
+function updateFerry(dt,t){const F=FERRY;if(!F)return;const b=F.b,ps=F.ps;
+  const end=F.to>0?F.B:F.A,start=F.to>0?F.A:F.B;
+  if(F.state==='cross'){if(!F.hold)F.u=Math.min(1,F.u+dt*0.35/Math.hypot(F.B[0]-F.A[0],F.B[1]-F.A[1]));
+    if(F.u>=1){F.state='land';F.t=0.6;}}
+  else if(F.state==='land'){F.t-=dt;if(F.t<=0){const wp=new THREE.Vector3();ps.getWorldPosition(wp);folk.add(ps);ps.position.copy(wp);ps.scale.setScalar(0.85);
+      F.route=F.to>0?[F.shoreB,[GD_STALL[0],GD_STALL[1]]]:[F.shoreA,[-88.35,47.35]];F.ri=0;F.back=false;F.state='walk';}}
+  else if(F.state==='walk'){const tg=F.route[F.ri];const dx=tg[0]-ps.position.x,dz=tg[1]-ps.position.z,d=Math.hypot(dx,dz);
+    if(d<0.05){if(F.back){F.ri--;if(F.ri<0){b.add(ps);ps.position.set(0,0.2,0.15);ps.rotation.set(0,0,0);F.state='cross';F.to=-F.to;F.u=0;}}else{F.ri++;if(F.ri>=F.route.length){F.ri=F.route.length-1;F.state='task';F.t=F.to>0?60:8;F.T0=F.t;}}}
+    else{const st=Math.min(d,0.42*dt);ps.position.x+=dx/d*st;ps.position.z+=dz/d*st;ps.rotation.y=Math.atan2(dx,dz);}
+    if(F.state==='walk'||F.state==='task'){ps.position.y=groundY(ps.position.x,ps.position.z);pose(ps,'walk',t,1,true);}}
+  else if(F.state==='task'){F.t-=dt;
+    if(F.to>0){const T=F.T0||60;const el=T-F.t;ps.rotation.y=Math.atan2(TEMPLE_GD.position.x-ps.position.x,TEMPLE_GD.position.z-ps.position.z);
+      const bend=el<1.2||F.t<1.2;pose(ps,bend?'pick':'idle',t,1,false);
+      if(el>=0.8&&F.t>0.8&&!F.gbk.visible){F.hbk.visible=false;const fx=Math.sin(ps.rotation.y),fz=Math.cos(ps.rotation.y);const bx=ps.position.x+fx*0.42,bz=ps.position.z+fz*0.42;F.gbk.position.set(bx,groundY(bx,bz)+0.08,bz);F.gbk.visible=true;}
+      if(F.t<=0.8&&F.gbk.visible){F.gbk.visible=false;F.hbk.visible=true;}}
+    else{pose(ps,'pick',t,1,false);ps.rotation.y=Math.atan2(-89.15-ps.position.x,48.35-ps.position.z);}
+    if(F.t<=0){F.hbk.visible=true;F.gbk.visible=false;F.state='walk';F.back=true;F.ri=F.route.length-1;
+      F.route=[[ (F.to>0?F.B:F.A)[0],(F.to>0?F.B:F.A)[1] ],...F.route];F.ri=F.route.length-1;}}
+  if(F.state==='walk'&&F.back&&F.ri===0){/* walking onto the boat */}
+  const u=F.state==='cross'?F.u:1,ax=start[0],az=start[1],bx=end[0],bz=end[1];
+  const x=F.state==='cross'?ax+(bx-ax)*u:(F.to>0?F.B:F.A)[0],z=F.state==='cross'?az+(bz-az)*u:(F.to>0?F.B:F.A)[1];
+  b.position.set(x,SEA+0.25+Math.sin(t*1.4)*0.05,z);const dx=(F.to>0?1:-1)*(F.B[0]-F.A[0]),dz=(F.to>0?1:-1)*(F.B[1]-F.A[1]);{const hd=Math.atan2(dx,dz);if(!F.dock){const R=RIVERS.reduce((a,r)=>r.w>a.w?r:a,RIVERS[0]).pts;const dk=(px,pz)=>{let b=null;for(let i=0;i<R.length-1;i++){const d=polyDist(px,pz,[R[i],R[i+1]]);if(!b||d<b.d)b={d,a:Math.atan2(R[i+1][0]-R[i][0],R[i+1][1]-R[i][1])};}return b.a;};F.dock={A:dk(...F.A),B:dk(...F.B)};}
+    const near=F.state==='cross'?(F.u<0.5?start:end):end,isB=near===F.B;let ta=isB?F.dock.B:F.dock.A;let df=Math.atan2(Math.sin(ta-hd),Math.cos(ta-hd));if(Math.abs(df)>Math.PI/2){ta+=Math.PI;df=Math.atan2(Math.sin(ta-hd),Math.cos(ta-hd));}
+    const k=F.state==='cross'?Math.max(1-sstep(0,0.18,F.u),sstep(0.82,1,F.u)):1;b.rotation.y=hd+df*k;}
+  const l=Math.hypot(dx,dz);F._dx=dx/l;F._dz=dz/l;F.obj=b;F.moving=F.state==='cross';
+  pose(F.f,'stand',t,0,false);if(ps.parent===b)pose(ps,'ride',t,1,false);}
+/* 船隻互相避讓、挑夫相遇打招呼、魚販前排隊 */
+const greetCD=new Map();var TRAIN_PTS=[];
+function onRail(x,z){return (Math.abs(x+40)<60)&&(polyDist(x,z,RAIL_MAIN)<0.75||polyDist(x,z,RAIL_SPUR)<0.75);}
+function trainNear(x,z,r,noSpur){for(const p of TRAIN_PTS){if(noSpur&&p.spur)continue;const R=Math.min(r,p.r);if(Math.abs(p.x-x)<R&&Math.abs(p.z-z)<R&&Math.hypot(p.x-x,p.z-z)<R)return true;}return false;}
+function updateMoverRules(dt,t){
+  const boats=movers.filter(m=>m.water&&m.obj.visible);if(FERRY)boats.push(FERRY);
+  boats.forEach(m=>{m.hold=false;m.dodgeT=m.dodgeT||0;});
+  for(let i=0;i<boats.length;i++)for(let j=i+1;j<boats.length;j++){const a=boats[i],b=boats[j];const pa=a.obj.position,pb=b.obj.position;const vx=pb.x-pa.x,vz=pb.z-pa.z,d=Math.hypot(vx,vz);if(d>2.4||d<1e-4)continue;
+    const latA=Math.abs(a._dx*vz-a._dz*vx),latB=Math.abs(b._dx*vz-b._dz*vx);const aAhead=(a._dx*vx+a._dz*vz)/d>0.3&&(b!==FERRY||FERRY.moving||latA<0.85),bAhead=(b._dx*-vx+b._dz*-vz)/d>0.3&&(a!==FERRY||FERRY.moving||latB<0.85);
+    if(aAhead&&bAhead){if(a===FERRY||b!==FERRY&&i<j){a.hold=true;b.dodge=1;}else{b.hold=true;a.dodge=1;}}else if(aAhead)a.hold=true;else if(bAhead)b.hold=true;}
+  boats.forEach(m=>{const tg=m.dodge?0.6:0;m.lat=(m.lat||0)+(tg-(m.lat||0))*Math.min(1,dt*1.2);m.dodge=0;});
+  const por=movers.filter(m=>m.greet);
+  greetCD.forEach((v,k)=>{if(v-dt<=0)greetCD.delete(k);else greetCD.set(k,v-dt);});
+  for(let i=0;i<por.length;i++)for(let j=i+1;j<por.length;j++){const a=por[i],b=por[j];if(a.wait>0||b.wait>0||a.qhold||b.qhold)continue;const pa=a.obj.position,pb=b.obj.position;
+    if(Math.hypot(pa.x-pb.x,pa.z-pb.z)>1.0||a.dir===b.dir||Math.hypot(pa.x-60,pa.z+58.5)<7)continue;const k=i+'-'+j;if(greetCD.has(k))continue;greetCD.set(k,14);a.wait=b.wait=1.8;a.greetT=b.greetT=1.8;}
+  if(HIKE_MV.length>1){const L=HIKE_MV[0],fr=m=>m.s/m.P.L;const lf=fr(L);let maxLag=0;
+    HIKE_MV.slice(1).forEach((m,k)=>{const want=lf-(k+1)*0.035*L.dir;const diff=(fr(m)-want)*L.dir;m.speed=0.3;if(m.dir===L.dir){if(diff>0.02)m.hold=true;else if(diff<-0.02)m.speed=0.42;}maxLag=Math.max(maxLag,-diff);});
+    if(maxLag>0.09&&!HIKE_MV[0].greetT)L.hold=true;}
+  const fq=movers.filter(m=>m.fishQ);fq.forEach(m=>{m.qhold=false;if(m.dir!==-1||m.s>4||m.wait>0)return;
+    const slot=fq.filter(q=>q!==m&&((q.dir===-1&&q.s<m.s)||(q.dir===1&&q.s<0.05&&q.wait>0))).length;if(slot>0&&m.s-m.speed*dt<slot*0.75){m.s=Math.max(m.s,slot*0.75);m.qhold=true;}});}
+/* 神社參拜：神前最多兩人，其餘在參道上依序排隊 */
+function updateShrineQueue(dt){const E=[];
+  movers.forEach(m=>{if(!m.shrine)return;m.qhold=false;const atEnd=m.s>=m.P.L-0.02&&m.wait>0&&m.dir<0;const coming=m.dir>0&&m.s>m.P.L-7;if(atEnd||coming)E.push({m,atEnd,d:atEnd?0:m.P.L-m.s,size:m.size||1});});
+  CAMEOS.forEach(c=>{if(!c.shrine)return;c.qhold=false;[c.p,...c.aideP].forEach(q=>{if(q.userData.umb)q.userData.umb.userData.fold=c.phase==='act';});const atEnd=c.phase==='act';const coming=c.phase==='in'&&c.s>c.P.L-7;if(atEnd||coming)E.push({c,atEnd,d:atEnd?0:c.P.L-c.s,size:1});});
+  E.sort((a,b)=>(b.atEnd-a.atEnd)||(a.d-b.d));let used=0,k=0;
+  for(const e of E){if(used+e.size<=2&&(e.atEnd||k===0)){used+=e.size;continue;}k++;const stop=0.9*k+0.3;if(e.d<=stop+0.02){if(e.m){e.m.qhold=true;}else e.c.qhold=true;}}}
+
 /* -------------------- 名人入場 -------------------- */
 const CAMEOS=[
-  {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.6]],act:'bow',actT:7,speed:0.5,
+  {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,shrine:true,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.2]],act:'bow',actT:7,speed:0.5,
    info:{chip:'名人',kind:'person',title:'中川健藏',tag:'第 16 任臺灣總督（任期 1932–1936）',body:'內務官僚出身的文官總督，昭和 7 年就任。任內推動地方自治制度改革，昭和 10 年（1935）舉辦「始政四十周年記念臺灣博覽會」，並實施臺灣第一次州、市、街庄協議會員選舉。這天他帶著隨員，從臺北經明治橋前往臺灣神社參拜。'}},
-  {style:'tech',opts:{hat:'helmet',hatC:0xe8dcb4},hold:'board',path:[[-11,-10],[-10.4,-8.4],[-9,-6.6],[-7.8,-8.2]],act:'write',actT:16,speed:0.45,
-   info:{chip:'名人',kind:'person',title:'磯永吉',tag:'農學家・蓬萊米之父（1886–1972）',body:'臺北帝國大學教授，與末永仁一起投入稻種改良，育成適合臺灣種植、又符合日本人口味的蓬萊米，被稱為「蓬萊米之父」。他正上山巡視竹子湖原種田的稻子。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a4f45,bottom:0x5a4f45},hold:'brush',easel:true,path:[[-95,30],[-86,32.6],[-80.5,34.2]],act:'paint',actT:12,speed:0.5,
-   info:{chip:'名人',kind:'person',title:'陳澄波',tag:'油畫家（1895–1947）',body:'嘉義出身的油畫家，東京美術學校畢業，昭和元年以〈嘉義街外〉入選帝展，是第一位入選帝展的臺灣畫家。1930 年代他常到淡水寫生，這天在關渡的河岸支起畫架。'}},
-  {style:'yukataM',opts:{top:0x2f3346,robe:0x2f3346,obi:0xd9c38c},hold:'board',path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.4,27.2]],act:'write',actT:10,speed:0.8,
+  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a4f45,bottom:0x5a4f45},hold:'brush',easel:true,path:[[-95,31.8],[-89.5,32.6],[-84.6,36.2],[-82,39.2],[-80.4,42],[-77.3,44.2],[-77.4,47.2],[-78.9,48.4]],act:'paint',actT:300,clearReeds:true,speed:0.55,
+   info:{chip:'名人',kind:'person',title:'陳澄波',tag:'油畫家（1895–1947）',body:'嘉義出身的油畫家，東京美術學校畢業，昭和元年以〈嘉義街外〉入選帝展，是第一位入選帝展的臺灣畫家。1930 年代他常到淡水寫生，這天他從淡水沿著鐵道南側走來，在關渡宮東邊的河岸空地支起畫架，一畫就是好一陣子。'}},
+  {style:'yukataM',opts:{top:0x2f3346,robe:0x2f3346,obi:0xd9c38c},hold:'board',umb:true,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-46.5,33.8],[-45.8,31.0],[-44.4,30.0],[-41.6,29.7],[-38.3,29.7],[-38.4,27.2]],act:'write',actT:10,speed:0.8,
    info:{chip:'名人',kind:'person',title:'西川滿',tag:'作家（1908–1999）',body:'在臺北長大的日本作家，主編《媽祖》等文藝刊物，作品充滿臺灣民俗與異國浪漫的色彩。他穿著浴衣在北投溫泉街找一處安靜的角落寫稿。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f2f3a,bottom:0x2f2f3a},path:[[-3,100],[-2,95.5],[0,92.6],[-8,92.6]],act:'chat',actT:8,speed:0.6,
+  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f2f3a,bottom:0x2f2f3a},path:[[-3,100],[-2,95.5],[0,92.6],[-8,92.6],[-7.6,91.2],[-7.0,90.2]],act:'idle',actT:60,speed:0.6,
    info:{chip:'名人',kind:'person',title:'蔣渭水',tag:'醫師・社會運動者（1890–1931）',body:'在大稻埕開設大安醫院的醫師，創立臺灣文化協會、臺灣民眾黨，被稱為「臺灣的孫中山」。他在 1931 年已經過世，這裡是穿越時空的彩蛋客串。'}},
-  {style:'coolie',opts:{top:0x2f2a33,bottom:0x2f2a33},path:[[-95,62],[-84,66],[-72,72],[-62,78],[-52,84],[-44,88],[-45,93],[-45.5,101]],act:null,actT:0,speed:2.6,run:true,
+  {style:'coolie',opts:{top:0x2f2a33,bottom:0x2f2a33},path:[[-95,62],[-90,69.5],[-61,69.8],[-60,80.5],[-50,80.8],[-44,82.5],[-44,88],[-45,93],[-45.5,101]],act:null,actT:0,speed:2.6,run:true,
    info:{chip:'名人',kind:'person',title:'廖添丁',tag:'傳說中的義賊（1883–1909）',body:'流傳在臺北一帶的傳奇人物，民間故事說他劫富濟貧、屢次戲弄日本警察。他在 1909 年死於八里，這裡是傳說彩蛋：他飛快地從淡水河西岸一路跑過田野。'}},
 ];
 CAMEOS.push(
-  {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'board',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8]],act:'write',actT:10,speed:0.5,
+  {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'doc',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8],[-2,92.6],[-8,92.7],[-11.5,92.8],[-13.8,92.6],[-14.3,92.1]],act:'idle',actT:40,speed:0.5,
    info:{chip:'名人',kind:'person',title:'井手薰',tag:'建築家・總督府營繕課長（1879–1944）',body:'長年主持臺灣總督府營繕課，參與總督府廳舍等官廳建築，晚年力倡適合臺灣氣候的建築風格。他領導的營繕課設計的臺北公會堂正在興建中，預定明年（1936）落成。他拿著圖板，正在城北的街上勘查。'}},
   {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4]],act:'write',actT:12,speed:0.9,
    info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他從臺北城東南邊沿著基隆河南岸往西走，過明治橋（戰後改名中山橋）再一路往北，經士林、草山走到冷水坑，在溫泉邊的本子上記下腦中浮現的旋律。'}},
-  {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-41.6,34.6],[-39.5,31.6],[-38.8,29.5]],act:'wave',actT:8,speed:0.8,
+  {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-46.5,33.8],[-45.8,31.0],[-44.4,30.0],[-41.6,29.7],[-38.3,29.7],[-38.8,29.5]],act:'wave',actT:8,speed:0.8,
    info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她從淡水方向沿著河岸路走到北投，撐著陽傘逛溫泉街，和認出她的歌迷揮手。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.55,
    info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從臺北過明治橋，往士林街去拜訪朋友。'}},
   {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.8,
    info:{chip:'名人',kind:'person',title:'陳天來',tag:'茶商（1872–1939）',body:'大稻埕錦記茶行的老闆，經營烏龍茶、包種茶外銷，是臺北首屈一指的茶商，還出資興建了戲院「第一劇場」。他從臺北出發，經士林沿著草山道路上山，親自看看今年的茶園。'}},
-  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-44.8,34.6],[-42,32]],act:'chat',actT:8,speed:0.75,
-   info:{chip:'名人',kind:'person',title:'辜顯榮',tag:'商人・貴族院議員（1866–1937）',body:'鹿港出身的商人，經營製糖、鹽業與土地開發，是日本時代臺灣最有影響力的商人之一，昭和 9 年（1934）成為第一位獲敕選為貴族院議員的臺灣人。他帶著隨從到北投泡湯。'}},
+  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[-3.4,11.6]],act:'chat',actT:25,enter:true,speed:0.95,
+   info:{chip:'名人',kind:'person',title:'辜顯榮',tag:'商人・貴族院議員（1866–1937）',body:'鹿港出身的商人，經營製糖、鹽業與土地開發，是日本時代臺灣最有影響力的商人之一，昭和 9 年（1934）成為第一位獲敕選為貴族院議員的臺灣人。他帶著隨從從臺北過明治橋，一路步行上草山，走進眾樂園泡湯，過一陣子才神清氣爽地從門口出來，循原路回去。'},aideInfo:[I('王順德',34,'辜家的隨從','跟著辜顯榮多年的隨從，手裡提著主人的換洗衣物和毛巾，主人一停下來他就趕緊遞上扇子。')]},
   {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.55,
    info:{chip:'名人',kind:'person',title:'林獻堂',tag:'霧峰林家・社會運動領袖（1881–1956）',body:'臺中霧峰林家的領袖，長年領導「臺灣議會設置請願運動」，也是臺灣文化協會的重要支持者，被稱為臺灣議會之父。他到士林拜訪老友，在街上和人聊了起來。'}},
   {style:'twM',opts:{top:0x6b5a46,bottom:0x3d3446},hold:'board',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-21.5,69],[-26,61],[-31,53],[-35,50]],act:'write',actT:10,speed:0.6,
    info:{chip:'名人',kind:'person',title:'楊逵',tag:'作家（1906–1985）',body:'臺南新化出身的作家，昭和 9 年（1934）以〈送報伕〉入選東京《文學評論》徵文，是第一位登上日本中央文壇的臺灣作家。他走在鄉間小路上，邊走邊構思描寫農民的新小說。'}},
-  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x4a4458},hold:'brush',easel:true,path:[[-36,100],[-35,96],[-35.5,92]],act:'paint',actT:12,speed:0.45,
+  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x4a4458},hold:'brush',easel:true,path:[[-36,100],[-35,96],[-35.5,92],[-35.6,88],[-36.2,86.5],[-37.6,83.5]],act:'paint',actT:60,speed:0.45,
    info:{chip:'名人',kind:'person',title:'郭雪湖',tag:'膠彩畫家（1908–2012）',body:'大稻埕長大的畫家，和陳進、林玉山同在第一回臺展入選，被稱為「臺展三少年」。昭和 5 年（1930）以描繪大稻埕霞海城隍廟前熱鬧街景的〈南街殷賑〉入選臺展。他在淡水河邊支起畫架寫生。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4],[17.6,-1.6]],act:'photo',actT:10,speed:0.9,
    info:{chip:'名人',kind:'person',title:'鄧南光',tag:'攝影家（1907–1971）',body:'新竹北埔出身，在日本法政大學求學時迷上攝影，昭和 10 年（1935）回臺在臺北開設「南光寫真機店」，用萊卡相機記錄臺灣的街頭與庶民生活。他從臺北出發，扛著三腳架經士林、草山一路往北走到冷水坑，拍攝山間的溫泉與芒草原。'}},
-  {style:'student',opts:{hat:'none',top:0xfbfbf6,bottom:0xfbfbf6},path:offsetPath(MAIN_PATH,0.45),act:null,actT:0,speed:2.2,run:true,
+  {style:'athlete',opts:{},path:offsetPath(MAIN_PATH,0.45),act:null,actT:0,speed:2.2,run:true,
    info:{chip:'名人',kind:'person',title:'張星賢',tag:'田徑選手（1910–1989）',body:'臺中出身的田徑選手，早稻田大學在學期間入選日本代表隊，參加昭和 7 年（1932）洛杉磯奧運的四百公尺跨欄等項目，是第一位參加奧運的臺灣人。他正從臺北出發，沿著淡水線的鐵道旁一路往淡水方向練跑。'}},
 );
+CAMEOS.forEach(c=>{if(['林獻堂','蔣渭水','井手薰','鄧雨賢','杜聰明','陳天來','鄧南光'].includes(c.info.title))c.umb=true;if(['中川健藏','辜顯榮'].includes(c.info.title))c.aideUmb=true;});
 CAMEOS.forEach(c=>{c.p=person(c.style,c.opts);if(c.hold)hold(c.p,c.hold,c.holdC);c.p.userData.info=c.info;CLICKABLE.push(c.p.userData.hit);c.p.userData.hit.userData.person=c.p;
   c.p.visible=false;folk.add(c.p);c.P=makePathPts(c.path);c.aideP=[];c.phase='wait';c.wait=4+Math.random()*41;
-  for(let k=0;k<(c.aides||0);k++){const a=c.aideStyle?person(c.aideStyle,{top:0x5c7392}):person('police',{top:0xf3f1ea,hatC:0x2a2d3a});a.visible=false;folk.add(a);c.aideP.push(a);}
+  for(let k=0;k<(c.aides||0);k++){const a=c.aideStyle?person(c.aideStyle,{top:0x5c7392}):person('police',{top:0xf3f1ea,hatC:0x2a2d3a});a.visible=false;folk.add(a);c.aideP.push(a);
+    const ai=(c.aideInfo&&c.aideInfo[k])||I(['松井 武','佐野 一郎'][k%2],[36,29][k%2],'總督府警衛',['負責總督出巡警衛的巡查部長，腰佩長刀，一路注意四周的動靜，參拜時站在總督身後兩步遠。','剛調到總督府不久的年輕巡查，第一次擔任總督的隨行警衛，緊張得連帽子都戴得特別端正。'][k%2]);if(k===0&&c.aideUmb){a.userData.bigUmb=true;const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.55,sy:1.15}));u.add(mesh(PG.parasol,0x2f2a33,{y:1.16,sx:1.45,sz:1.45}));u.visible=false;a.userData.arms[0].add(u);a.userData.umb=u;umbrellas.push(u);}register(a,ai);}
+  if(c.umb){const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.76}));u.visible=false;c.p.userData.arms[0].add(u);c.p.userData.umb=u;umbrellas.push(u);}
   if(c.easel){const e=easelM();e.visible=false;folk.add(e);c.propObj=e;}
   if(c.tripod){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.22,0.16,0.18),0x2a2530,{y:0.82}));e.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.08,8),0x55505c,{y:0.82,z:0.12,rx:Math.PI/2}));
     for(let i=0;i<3;i++){const g=mesh(PG.stick,0x8a6a4a,{y:0.4,sy:0.85});const w=new THREE.Group();w.rotation.y=i*2.094;g.rotation.x=0.22;w.add(g);e.add(w);}e.visible=false;folk.add(e);c.propObj=e;c.propD=0.45;}});
 function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
   if(c.phase==='wait'){c.wait-=dt;if(c.wait>0)return;c.s=0;c.phase='in';c.timer=0;c.fadeOut=undefined;}
   let moving=true;
-  if(c.phase==='in'){c.s+=c.speed*dt*mot;if(c.s>=c.P.L){c.s=c.P.L;if(c.act){c.phase='act';c.timer=c.actT;}else{c.phase='gone';}}}
+  let ch=false;if(c.phase==='in'||c.phase==='out'){const ns=Math.min(c.P.L,Math.max(0,c.s+(c.phase==='out'?-0.5:0.5)));const [nx,nz]=pathAt(c.P,ns),[qx,qz]=pathAt(c.P,c.s);ch=onRail(nx,nz)&&!onRail(qx,qz)&&trainNear(nx,nz,7);}
+  if(ch||c.qhold){}else if(c.phase==='in'){c.s+=c.speed*dt*mot;if(c.s>=c.P.L){c.s=c.P.L;if(c.act){c.phase='act';c.timer=c.actT;}else{c.phase='gone';}}}
   else if(c.phase==='act'){moving=false;c.timer-=dt;if(c.timer<=0)c.phase='out';}
   else if(c.phase==='out'){c.s-=c.speed*dt*mot;if(c.s<=0){c.s=0;c.phase='gone';}}
   const [x,z,dx,dz]=pathAt(c.P,c.s);const dir=c.phase==='out'?-1:1;
@@ -1690,14 +2044,18 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
   const edgeA=sstep(-0.8,1.6,inBoard(x,z));const along=c.phase==='in'?Math.min(1,c.s/1.2):(c.phase==='out'?Math.min(1,c.s/1.2):1);
   const startOn=inBoard(c.path[0][0],c.path[0][1])>0;let a=edgeA*(startOn?along:1);
   if(c.phase==='gone'){c.fadeOut=(c.fadeOut??1)-dt;a=Math.max(0,c.fadeOut);}
+  let ent=1;if(c.enter&&c.phase==='act'){const el=c.actT-c.timer;ent=Math.max(0,1-el/1.2,1-c.timer/1.2);a*=ent;}
   setAlpha(c.p,a);
   if(c.phase==='act')pose(c.p,c.act,t,0,false);else pose(c.p,c.run?'run':(c.hold==='cane'?'stroll':'walk'),t,0,moving);
-  c.aideP.forEach((ap,k)=>{const s2=Math.max(0,c.s-dir*(0.9+k*0.8));const [ax,az,adx,adz]=pathAt(c.P,s2);ap.position.set(ax+(k?0.45:-0.45),groundY(ax+(k?0.45:-0.45),az),az);ap.rotation.y=Math.atan2(adx*dir,adz*dir);
-    setAlpha(ap,sstep(-0.8,1.6,inBoard(ax,az))*(c.phase==='gone'?a:1));pose(ap,c.phase==='act'?'stand':'walk',t,k+1,c.phase!=='act');});
+  c.aideP.forEach((ap,k)=>{const s2=Math.max(0,c.s-dir*(0.9+k*0.8));const [ax,az,adx,adz]=pathAt(c.P,s2);
+    if(k===0&&ap.userData.umb&&ap.userData.umb.visible){const ry=c.p.rotation.y,fx=Math.sin(ry),fz=Math.cos(ry),px=c.p.position.x+Math.cos(ry)*0.72-fx*0.25,pz=c.p.position.z-Math.sin(ry)*0.72-fz*0.25;ap.position.set(px,groundY(px,pz),pz);ap.rotation.y=ry;}
+    else{ap.position.set(ax+(k?0.45:-0.45),groundY(ax+(k?0.45:-0.45),az),az);ap.rotation.y=Math.atan2(adx*dir,adz*dir);}
+    setAlpha(ap,sstep(-0.8,1.6,inBoard(ax,az))*(c.phase==='gone'?a:1)*ent);pose(ap,c.phase==='act'?'stand':'walk',t,k+1,c.phase!=='act');});
   if(c.propObj){const show=c.phase==='act';c.propObj.visible=show;if(show){const d=c.propD||0.7;c.propObj.position.set(x+Math.sin(c.p.rotation.y)*d,G(x,z),z+Math.cos(c.p.rotation.y)*d);c.propObj.rotation.y=c.p.rotation.y+Math.PI;}}
   if(c.phase==='gone'&&a<=0){c.p.visible=false;c.aideP.forEach(ap=>ap.visible=false);if(selectedPerson===c.p)deselect();c.phase='wait';c.wait=20+Math.random()*25;}
 });}
 
+placeBags();
 /* -------------------- 建築整地：房子底下的地面整平成一塊，房子坐在平地上，不再懸空或埋進坡裡 -------------------- */
 {const v=new THREE.Vector3(),ws=new THREE.Vector3(),wx=new THREE.Vector3();const flats=[];
   OCCLUDERS.forEach(obj=>{if(obj.isInstancedMesh)return;obj.updateMatrixWorld(true);const bl=[],yd=[];
@@ -1739,7 +2097,7 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
     let lift=0;info.forEach(b=>{if(!b.m.userData.block.upper)lift=Math.max(lift,b.gmax-b.fy+0.02);});
     if(lift>0){obj.position.y+=lift;obj.updateMatrixWorld(true);}
     info.forEach(b=>{const fy=b.fy+lift;if(b.m.userData.block.upper)return;b.m.parent.getWorldScale(ws);const need=(fy-b.gmin+0.15)/ws.y;if(need<=b.m.userData.block.base)return;
-      const top=b.m.position.y+b.Hh/2,bot=b.fl-need;b.m.geometry=new THREE.BoxGeometry(b.P.width,top-bot,b.P.depth);b.m.position.y=(top+bot)/2;});
+      const top=b.m.position.y+b.Hh/2,bot=b.fl-need;b.m.geometry=new THREE.BoxGeometry(b.P.width,top-bot,b.P.depth);b.m.position.y=(top+bot)/2;if(b.m.userData.block.h&&!b.m.parent.userData.noWallUV)wallUV(b.m.geometry,b.m.userData.block.h,top-bot-b.m.userData.block.h);});
     yards.forEach(y=>{y.updateMatrixWorld(true);const geo=new THREE.PlaneGeometry(1.2,1.2,8,8),pa=geo.attributes.position;
       for(let i=0;i<pa.count;i++){wp.set(pa.getX(i),pa.getY(i),0).applyMatrix4(y.matrixWorld);pa.setXYZ(i,wp.x,G(wp.x,wp.z)+0.035,wp.z);}
       geo.computeVertexNormals();const nm=new THREE.Mesh(geo,y.material);nm.receiveShadow=true;scene.add(nm);y.parent.remove(y);});});}
@@ -1803,7 +2161,7 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
   movers.forEach(mv=>{if(!mv.water)addPath(mv.P);});CAMEOS.forEach(c=>addPath(c.P));
   const nearPath=(x,z,r)=>{for(let ix=Math.floor(x)-1;ix<=Math.floor(x)+1;ix++)for(let iz=Math.floor(z)-1;iz<=Math.floor(z)+1;iz++){const L=PG2.get(ix+','+iz);if(L)for(const [px,pz] of L)if(Math.hypot(px-x,pz-z)<r)return true;}return false;};
   actors.forEach(a=>{const o=a.obj;if(o.parent!==folk)return;
-    let x=o.position.x,z=o.position.z;const g0=groundY(x,z);for(let k=0;k<4;k++){if(!obAt(x,z,0.3))break;[x,z]=pushOut(x,z,0.38);}
+    let x=o.position.x,z=o.position.z;const g0=groundY(x,z);for(let k=0;k<4;k++){if(!obAt(x,z,0.42))break;[x,z]=pushOut(x,z,0.5);}
     if(obAt(x,z,0.2)){const x0=x,z0=z;outer:for(let r=0.4;r<3;r+=0.3)for(let a=0;a<6.28;a+=0.5){const xx=x0+Math.cos(a)*r,zz=z0+Math.sin(a)*r;if(!obAt(xx,zz,0.3)&&H(xx,zz)>SEA){x=xx;z=zz;break outer;}}}
     if(x!==o.position.x||z!==o.position.z){o.position.x=x;o.position.z=z;o.position.y+=groundY(x,z)-g0;}
     if(o.userData.arms&&!o.userData.keep&&nearPath(o.position.x,o.position.z,0.38)){const x0=o.position.x,z0=o.position.z,g0=groundY(x0,z0);
@@ -1818,6 +2176,37 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
     const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
     for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
     if(!hit&&obAt(pos.x,pos.z,0.25))hit=true;if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
+RCK('c7');/* 鳥居前整地：東側墊高到和西側同高 */
+{const f={x:-14.6,z:83.75,c:1,s:0,hx:1.75,hz:0.8,y:G(-15.48,83.3),m:0.9};const R=Math.hypot(f.hx,f.hz)+f.m;
+  const inR=(x,z)=>Math.abs(x-f.x)<f.hx+f.m+0.1&&Math.abs(z-f.z)<f.hz+f.m+0.1;
+  const tp=tgeo.attributes.position,tI=[];for(let i=0;i<tp.count;i++)if(inR(tp.getX(i),tp.getZ(i)))tI.push(i);
+  const rb=[];RIBBONS.forEach(r=>{const a=r.geometry.attributes.position;for(let i=0;i<a.count;i++)if(inR(a.getX(i),a.getZ(i)))rb.push([a,i,G(a.getX(i),a.getZ(i))]);});
+  const fo=[];folk.children.forEach(o=>{if(inR(o.position.x,o.position.z))fo.push([o,G(o.position.x,o.position.z)]);});
+  const m4=new THREE.Matrix4(),pv=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),ins=[];scene.traverse(o=>{if(!o.isInstancedMesh)return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,m4);pv.setFromMatrixPosition(m4);if(inR(pv.x,pv.z))ins.push([o,i,G(pv.x,pv.z)]);}});
+  LATE_FLATS.push(f);for(let gx=Math.floor((f.x-R)/4);gx<=Math.floor((f.x+R)/4);gx++)for(let gz=Math.floor((f.z-R)/4);gz<=Math.floor((f.z+R)/4);gz++){const k=gx+','+gz;if(!LATE_G.has(k))LATE_G.set(k,[]);LATE_G.get(k).push(f);}
+  tI.forEach(i=>tp.setY(i,H(tp.getX(i),tp.getZ(i))));tp.needsUpdate=true;tgeo.computeVertexNormals();
+  const ra=new Set();rb.forEach(([a,i,g0])=>{a.setY(i,a.getY(i)+G(a.getX(i),a.getZ(i))-g0);ra.add(a);});ra.forEach(a=>a.needsUpdate=true);
+  fo.forEach(([o,g0])=>{o.position.y+=G(o.position.x,o.position.z)-g0;});
+  const tc=new Set();ins.forEach(([o,i,g0])=>{o.getMatrixAt(i,m4);m4.decompose(pv,q,sc);if(sc.x===0)return;pv.y+=G(pv.x,pv.z)-g0;m4.compose(pv,q,sc);o.setMatrixAt(i,m4);tc.add(o);});tc.forEach(o=>o.instanceMatrix.needsUpdate=true);}
+/* 鳥居、石燈籠貼回整地後的地面 */
+SHRINE_FIX.forEach(([o,hw,dy=0])=>{const x=o.position.x,z=o.position.z;if(dy){o.position.y=Math.min(G(x-hw,z),G(x+hw,z),G(x,z))+dy;return;}
+  const gl=G(x-hw,z),gr=G(x+hw,z),base=Math.max(gl,gr);o.position.y=base;
+  [[-1,gl],[1,gr]].forEach(([sg,g])=>{const L=(base-g)/o.scale.y+0.05;if(L>0.06)o.add(mesh(new THREE.CylinderGeometry(0.09,0.09,L,8),0xd9483b,{x:0.55*sg,y:-L/2+0.02}));});});
+/* 洪德興下田 */
+for(const nmF of['洪德興','陳罔市']){const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name===nmF);if(a){const o=a.obj;let best=null;for(let k=0;k<300;k++){const r=0.8+rng()*7,an=rng()*6.283,x=o.position.x+Math.cos(an)*r,z=o.position.z+Math.sin(an)*r;
+  const fc=(px,pz)=>MASK_L.full(Math.floor(px/2.5),Math.floor(pz/2.5));if(fc(x-0.5,z-0.5)&&fc(x+0.5,z-0.5)&&fc(x-0.5,z+0.5)&&fc(x+0.5,z+0.5)&&!nearLines(x,z,0.6)&&!obAt(x,z,0.4)&&(!best||r<best.r))best={r,x,z};}if(best){o.position.set(best.x,groundY(best.x,best.z),best.z);}}}
+/* 陳澄波寫生的河岸：清掉擋住他的蘆葦 */
+if(REED_IM){const m4b=new THREE.Matrix4(),pvb=new THREE.Vector3(),z0b=new THREE.Matrix4().makeScale(0,0,0);for(let i=0;i<REED_IM.count;i++){REED_IM.getMatrixAt(i,m4b);pvb.setFromMatrixPosition(m4b);if(REED_CLEAR.some(([x,z,r])=>Math.hypot(pvb.x-x,pvb.z-z)<r))REED_IM.setMatrixAt(i,z0b);}REED_IM.instanceMatrix.needsUpdate=true;
+  const c=CAMEOS.find(q=>q.clearReeds);if(c){const m4=new THREE.Matrix4(),pv=new THREE.Vector3(),z0=new THREE.Matrix4().makeScale(0,0,0);const pts=[];for(let q=Math.max(0,c.P.L-6);q<=c.P.L;q+=0.3)pts.push(pathAt(c.P,q));
+  for(let i=0;i<REED_IM.count;i++){REED_IM.getMatrixAt(i,m4);pv.setFromMatrixPosition(m4);if(pts.some(([x,z])=>Math.hypot(pv.x-x,pv.z-z)<1.3))REED_IM.setMatrixAt(i,z0);}REED_IM.instanceMatrix.needsUpdate=true;}}
+/* 最後一道：行走路線避開站著的人和建築 */
+{const st=actors.filter(a=>a.obj.parent===folk&&a.obj.userData.arms).map(a=>a.obj);
+  const fix=pts=>{let ch=false;const out=pts.map(([x,z])=>{for(let it=0;it<4;it++){let moved=false;if(obAt(x,z,0.05)){[x,z]=pushOut(x,z,0.15);moved=true;}
+      for(const o of st){const dx=x-o.position.x,dz=z-o.position.z,d=Math.hypot(dx,dz);if(d<0.45){const k=(0.55/(d||0.01));x=o.position.x+dx*k;z=o.position.z+dz*k;moved=true;}}if(!moved)break;ch=true;}if(obAt(x,z,0.05)){[x,z]=pushOut(x,z,0.3);ch=true;}return[x,z];});return ch?out:null;};
+  const samp=P=>{const a=[];for(let q=0;q<=P.L;q+=0.25)a.push(pathAt(P,q).slice(0,2));a.push(pathAt(P,P.L).slice(0,2));return a;};
+  movers.forEach(mv=>{if(mv.water)return;const np=fix(samp(mv.P));if(np){const f=mv.s/mv.P.L;mv.P=makePathPts(np);mv.s=f*mv.P.L;}});
+  CAMEOS.forEach(c=>{const np=fix(samp(c.P));if(np){c.P=makePathPts(np);c.path=np;}});
+  actors.forEach(a=>{const o=a.obj;if(o.parent!==folk)return;const ib=inBoardXZ(o.position.x,o.position.z);if(ib<0.6){const cx=X0+W/2,cz=Z0+D/2,dx=cx-o.position.x,dz=cz-o.position.z,l=Math.hypot(dx,dz);o.position.x+=dx/l*(0.8-ib);o.position.z+=dz/l*(0.8-ib);o.position.y=groundY(o.position.x,o.position.z);}});}
 
 /* -------------------- 大冠鷲 -------------------- */
 const EWING=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.15);sh.quadraticCurveTo(0.55,0.22,1.05,0.08);sh.lineTo(1.12,-0.02);sh.lineTo(1.0,-0.06);sh.lineTo(1.06,-0.12);sh.quadraticCurveTo(0.5,-0.22,0,-0.14);sh.closePath();
@@ -1845,9 +2234,9 @@ function eagleUpdate(e,dt,t){e.timer-=dt;if(e.timer<=0){e.mode=1-e.mode;e.timer=
 /* 夜裡會亮的溫泉街燈籠、臺北街燈 */
 {const nightProps=new THREE.Group();scene.add(nightProps);
   const along=(way,s0,s1,step,off,fn)=>{const P=makePathPts(way);for(let s=s0;s<=Math.min(s1,P.L);s+=step){const [x,z,dx,dz]=pathAt(P,s);const l=Math.hypot(dx,dz)||1,sd=(Math.round(s/step)%2?1:-1);fn(x-dz/l*off*sd,z+dx/l*off*sd);}};
-  const chochin=(x,z)=>{if(obAt(x,z,0.1))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.022,0.026,0.95,5),0x5a4638,{y:0.47}));g.add(mesh(new THREE.BoxGeometry(0.22,0.03,0.03),0x5a4638,{y:0.95,x:0.08}));
+  const nearRail=(x,z)=>polyDist(x,z,RAIL_MAIN)<1.0||polyDist(x,z,RAIL_SPUR)<1.0;const chochin=(x,z)=>{if(obAt(x,z,0.1)||nearRail(x,z))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.022,0.026,0.95,5),0x5a4638,{y:0.47}));g.add(mesh(new THREE.BoxGeometry(0.22,0.03,0.03),0x5a4638,{y:0.95,x:0.08}));
     g.add(mesh(new THREE.SphereGeometry(0.085,10,8),LANTERN_MAT,{x:0.17,y:0.82,sy:1.35}));g.position.set(x,G(x,z),z);g.rotation.y=rng()*6.28;nightProps.add(g);glowAnchor(g,0.17,0.82,0,0.85,true);};
-  const lamp=(x,z)=>{if(obAt(x,z,0.1)||DECKS.some(d=>Math.hypot(x-d.x,z-d.z)<d.len/2+0.9))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.025,0.035,1.3,6),0x3f4a46,{y:0.65}));g.add(mesh(new THREE.SphereGeometry(0.08,10,8),LAMP_MAT,{y:1.34}));
+  const lamp=(x,z)=>{if(obAt(x,z,0.1)||nearRail(x,z)||DECKS.some(d=>Math.hypot(x-d.x,z-d.z)<d.len/2+0.9))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.025,0.035,1.3,6),0x3f4a46,{y:0.65}));g.add(mesh(new THREE.SphereGeometry(0.08,10,8),LAMP_MAT,{y:1.34}));
     g.position.set(x,G(x,z),z);nightProps.add(g);glowAnchor(g,0,1.34,0,0.7,false);};
   along(ROADS[0],0.5,15.5,1.9,0.62,chochin);              // 北投溫泉街
   along(ROADS[0],48,62,2.0,0.62,chochin);                 // 草山溫泉
@@ -1895,6 +2284,8 @@ const PLACES=[
    body:'清代起就是山下農家在農閒時寄養耕牛的草原，舊稱大嶺。臺北州在這裡設立牧場，接受大臺北農民的水牛寄養，也從日本運來但馬牛，盛時放牧上千頭牛，範圍延伸到磺嘴山一帶。'},
   {key:'gyoro',name:'金包里大路',glyph:'道',kind:'place',x:41,z:-28,dy:2.4,chip:'古道',title:'金包里大路（魚路）',tag:'金山庄—士林的挑魚路',
    body:'北海岸的漁民與挑夫挑著漁獲翻過大嶺，到士林、北投販售。日本時代這條路也是採樟與造林的分界。'},
+  {key:'kinzanmisaki',name:'金山岬',glyph:'岬',kind:'place',x:65.6,z:-68.2,dy:2.2,chip:'地景',title:'金山岬',tag:'金包里北邊的海岬・燭台雙嶼',
+   body:'金山庄北邊伸進海裡的小岬角，由火山熔岩和砂岩構成，岬角外海有兩座並立的海蝕柱，形狀像一對燭台，人稱「燭台雙嶼」。漁船出入磺港都以它為記號，岬上可以眺望整片金包里海灣。'},
   {key:'kinyama',name:'金山庄',glyph:'庄',kind:'town',x:60,z:-58.5,dy:2.8,chip:'聚落',title:'金山庄',tag:'大正 9 年（1920）由金包里改稱',
    body:'北海岸的漁村，海面上漁船來往。漁獲由挑夫沿金包里大路翻山挑往臺北。'},
   {key:'sanchi',name:'三芝庄',glyph:'庄',kind:'town',x:-45,z:-56,dy:2.8,chip:'聚落',title:'三芝庄',tag:'大正 9 年（1920）由小基隆改稱',
@@ -2019,7 +2410,7 @@ $('zk-list').onclick=e=>{const b=e.target.closest('button.zk-item');if(!b)return
   if(it.place){selectPlace(it.place.key);flyTo(it.place.x,it.place.z);return;}
   let o=it.obj;if(o&&!(o.visible&&shownAll(o))){const alt=CLICKABLE.map(h=>h.userData.person).find(q=>q&&q.userData.info&&zkKey(q.userData.info)===it.key&&q.visible&&shownAll(q));if(alt)o=alt;}
   if(o&&o.visible&&shownAll(o)){selectPerson(o);focusOn(o,true);}
-  else{selectedPerson=null;ring.visible=false;const d=it.info;$('info').hidden=false;$('info-photo').hidden=true;
+  else{selectedPerson=null;ring.visible=false;const d=it.info;$('info').hidden=false;toast('角色趕路中，請稍等',2600);$('info-photo').hidden=true;
     if(d.title){$('info-chip').textContent=d.chip;$('info-chip').dataset.kind=d.kind;$('info-title').textContent=d.title;$('info-tag').textContent=d.tag;$('info-body').textContent=d.body+(it.cat==='famous'?'（目前不在場上，過一陣子會再出現。）':'');}
     else{$('info-chip').textContent='人物';$('info-chip').dataset.kind='person';$('info-title').textContent=d.name;$('info-tag').textContent=`${d.job}・${d.age} 歲`;$('info-body').textContent=d.bio;}}};
 function shownAll(o){for(let q=o;q;q=q.parent)if(!q.visible)return false;return true;}
@@ -2106,46 +2497,70 @@ function tick(){
   for(const c of cloudGroup.children){if(c.userData.mist){c.position.y=16.5+Math.sin(t*0.4)*0.4;c.position.x=-10+Math.sin(t*0.15)*1.5;continue;}c.position.x+=c.userData.speed*dt*mot;if(c.position.x>85)c.position.x=-85;}
   wheel.rotation.x-=dt*1.2*mot;
   ripples.forEach((r,i)=>{r.s=(r.s+r.sp*dt*mot)%r.P.L;const [x,z,dx,dz]=pathAt(r.P,r.s);const l=Math.hypot(dx,dz)||1;
-    dummy.position.set(x-dz/l*r.off,G(x,z)+0.14,z+dx/l*r.off);dummy.rotation.set(0,Math.atan2(dx,dz)+Math.PI/2,0);dummy.scale.set(r.len*(0.7+0.3*Math.sin(t*2+i)),1,1);dummy.updateMatrix();rippleMesh.setMatrixAt(i,dummy.matrix);});
+    dummy.position.set(x-dz/l*r.off,G(x,z)+0.14,z+dx/l*r.off);dummy.rotation.set(0,Math.atan2(dx,dz)+Math.PI/2,0);{const ib=inBoard(dummy.position.x,dummy.position.z);const k=ib<0.4?0:1;dummy.scale.set(r.len*(0.7+0.3*Math.sin(t*2+i))*k,k,k);}dummy.updateMatrix();rippleMesh.setMatrixAt(i,dummy.matrix);});
   rippleMesh.instanceMatrix.needsUpdate=true;
   trains.forEach((tr,i)=>{updateTrain(tr,dt,mot);const lo=tr.parts[0],ry=lo.rotation.y,al=lo.userData.alpha;
     trainSmoke.filter(m=>m.userData.tr===i).forEach(m=>{const k=(t*0.8+m.userData.k*1.7)%1;
       m.position.set(lo.position.x+Math.sin(ry)*0.75+Math.sin(t+k*9)*0.15,lo.position.y+1.2+k*1.8,lo.position.z+Math.cos(ry)*0.75);m.scale.setScalar(0.2+k*0.6);
       m.visible=al>0.01;m.material.opacity=al*(tr.moving?0.85:0.3)*(1-k);});});
+  updateMoverRules(dt,t);updateShrineQueue(dt);updateFerry(dt*mot,t);TRAIN_PTS=trains.flatMap(tr=>{const R=tr.spur?(tr.moving?5:1.5):99;return tr.parts.filter(p=>p.visible).map(p=>({x:p.position.x,z:p.position.z,r:R,spur:!!tr.spur}));});
   for(const mv of movers){
-    if(mv.wait>0)mv.wait-=dt;else{mv.s+=mv.dir*mv.speed*dt*mot;
-      if(mv.s>mv.P.L){if(mv.loop)mv.s-=mv.P.L;else{mv.s=mv.P.L;mv.dir=-1;const [ex,ez]=pathAt(mv.P,mv.P.L);mv.wait=inBoard(ex,ez)<0?4+Math.random()*16:mv.pause;}}
+    if(!mv.water&&mv.wait<=0&&!mv.hold&&!mv.qhold&&TRAIN_PTS.length){const LA=mv.look||(mv.walkers.some(w=>w[1]==='animal')?1.9:(mv.followers?0.9:0.5));const ns=Math.min(mv.P.L,Math.max(0,mv.s+mv.dir*LA));const [nx,nz]=pathAt(mv.P,ns),[cx,cz]=pathAt(mv.P,mv.s);if(onRail(nx,nz)&&!onRail(cx,cz)&&trainNear(nx,nz,7,mv.noSpur)){mv.trainHold=true;}else mv.trainHold=false;}else mv.trainHold=false;
+    if(mv.wait>0)mv.wait-=dt;else if(mv.hold||mv.qhold||mv.trainHold){}else{mv.s+=mv.dir*mv.speed*dt*mot;
+      if(mv.s>mv.P.L){if(mv.loop)mv.s-=mv.P.L;else{mv.s=mv.P.L;mv.dir=-1;const [ex,ez]=pathAt(mv.P,mv.P.L);mv.wait=inBoard(ex,ez)<0?4+Math.random()*16:(mv.pauseEnd??mv.pause);
+        if(mv.pauseEnd){for(const o of movers)if(o!==mv&&o.pauseEnd&&o.dir<0&&o.s>=o.P.L-0.01&&o.wait>0){o.wait=Math.min(o.wait,1.8);o.greetT=1.8;mv.greetT=1.8;}}}}
       if(mv.s<0){mv.s=0;mv.dir=1;const [ex,ez]=pathAt(mv.P,0);mv.wait=inBoard(ex,ez)<0?4+Math.random()*16:mv.pause;}}
-    const [x,z,dx,dz]=pathAt(mv.P,mv.s);
+    let [x,z,dx,dz]=pathAt(mv.P,mv.s);{const l=Math.hypot(dx,dz)||1;mv._dx=dx*mv.dir/l;mv._dz=dz*mv.dir/l;if(mv.lat){x+=mv._dz*mv.lat;z-=mv._dx*mv.lat;}}
     const y=mv.water?G(x,z)+0.25+Math.sin(t*1.4+mv.ph)*0.05:groundY(x,z)+mv.lift;
     mv.obj.position.set(x,y,z);{const ib=inBoard(x,z);if(ib<2||mv.faded){const a=sstep(-0.8,1.6,ib);setAlpha(mv.obj,a);mv.faded=a<0.999;}}let ry=Math.atan2(dx*mv.dir,dz*mv.dir);if(mv.backward)ry+=Math.PI;mv.obj.rotation.y=ry;
-    const moving=mv.wait<=0;
-    mv.walkers.forEach(([w,a])=>{if(a==='animal')animalPose(w,t,mv.ph,moving,a);else pose(w,a,t,mv.ph,moving);});
+    const worship=mv.shrine&&mv.dir<0&&mv.wait>0&&mv.s>=mv.P.L-0.02;if(worship)mv.obj.rotation.y+=Math.PI;
+    if(mv.shrine)mv.walkers.forEach(([w])=>{if(w.userData.umb)w.userData.umb.userData.fold=worship;});
+    const moving=mv.wait<=0&&!mv.hold&&!mv.qhold;
+    mv.walkers.forEach(([w,a])=>{if(a==='animal')animalPose(w,t,mv.ph,moving,a);else pose(w,worship?'bow':a,t,mv.ph,moving);});
+    if(mv.greetT>0){mv.greetT-=dt;const w=mv.walkers[0][0];if(w.userData.arms){w.userData.arms[0].rotation.set(-2.5+0.3*Math.sin(t*9),0,-0.25);w.userData.head.rotation.x=0.2*Math.max(0,Math.sin(t*3));}
+      if(mv.greetAt){mv.obj.rotation.y=Math.atan2(mv.greetAt.position.x-x,mv.greetAt.position.z-z);if(mv.greetT<=0)mv.greetAt=null;}else{const o=movers.filter(q=>q.greet&&q!==mv).sort((a,b)=>a.obj.position.distanceTo(mv.obj.position)-b.obj.position.distanceTo(mv.obj.position))[0];if(o)mv.obj.rotation.y=Math.atan2(o.obj.position.x-x,o.obj.position.z-z);}}
+    if(mv.fishQ&&mv.s<0.05&&mv.wait>0)mv.obj.rotation.y=Math.atan2(SELLER.x-x,SELLER.z-z);
+    if(mv.faceEnds&&mv.wait>0){const e=mv.s<0.05?mv.faceEnds[0]:(mv.s>mv.P.L-0.05?mv.faceEnds[1]:null);if(e)mv.obj.rotation.y=Math.atan2(e[0]-x,e[1]-z);}
+    if(mv.pauseEnd&&mv.s>=mv.P.L-0.01&&mv.wait>0&&!(mv.greetT>0)){if(mv.endRy===undefined){let b=null;for(const r of ROADS){const P=makePathPts(r);for(let q=0;q<=P.L;q+=0.3){const [rx,rz]=pathAt(P,q);const d=Math.hypot(rx-x,rz-z);if(d>0.6&&(!b||d<b.d))b={d,rx,rz};}}mv.endRy=b?Math.atan2(b.rx-x,b.rz-z):mv.obj.rotation.y;}mv.obj.rotation.y=mv.endRy;}
     if(mv.followers)mv.followers.forEach((f,j)=>{let s=mv.s-f.lag;if(mv.loop)s=((s%mv.P.L)+mv.P.L)%mv.P.L;else s=Math.max(0,s);const [fx,fz,fdx,fdz]=pathAt(mv.P,s);const l=Math.hypot(fdx,fdz)||1;
       f.obj.position.set(fx-fdz/l*f.side+Math.sin(t*2+j)*0.1,groundY(fx,fz)+0.02,fz+fdx/l*f.side);f.obj.rotation.y=Math.atan2(fdx,fdz)+0.3*Math.sin(t*3+j);});
     const kd=mv.obj.userData.kite;if(kd){const kx=x-Math.sin(ry)*5,kz=z-Math.cos(ry)*5;kd.kite.position.set(kx+Math.sin(t*0.9)*0.6,G(x,z)+5.5+Math.sin(t*1.3)*0.5,kz);kd.kite.rotation.y=ry;
-      const hand=new THREE.Vector3();mv.obj.userData.arms[1].getWorldPosition(hand);kd.line.geometry.setFromPoints([hand,kd.kite.position]);}
+      const hand=new THREE.Vector3(0,-0.32,0.02);mv.obj.userData.arms[1].localToWorld(hand);kd.line.geometry.setFromPoints([hand,kd.kite.position]);}
   }
   for(const a of actors){const o=a.obj;
     if(a.anim==='egret'){const nk=o.userData.neck;if(nk)nk.rotation.x=Math.sin(t*0.6+a.ph)>0.7?0.9:0;continue;}
     if(a.anim==='peck'){o.userData.body.rotation.x=Math.max(0,Math.sin(t*4+a.ph))*0.7;continue;}
     if(a.anim==='dogrest'){animalPose(o,t,a.ph,false,'dogrest');continue;}
     pose(o,a.anim,tt,a.ph,true);}
-  for(const c of cows){const d=c.userData.wander;const walking=Math.sin(t*0.3+d.phase)>0.2;d.a+=d.speed*dt*mot*(walking?1:0);
+  for(const c of cows){const d=c.userData.wander;const walking=Math.sin(t*0.3+d.phase)>0.2;const cw=(aa)=>obAt(29+Math.cos(aa)*d.r,-1+Math.sin(aa)*d.r,0.75);
+    if(!d.ok){for(let k=0;k<40&&cw(d.a);k++)d.a+=0.16;d.ok=true;}
+    {const na=d.a+d.speed*dt*mot*(walking?1:0);const fw=na+Math.sign(d.speed)*0.12;if(walking&&cw(fw))d.speed=-d.speed;else d.a=na;}
     const x=29+Math.cos(d.a)*d.r,z=-1+Math.sin(d.a)*d.r;c.position.set(x,H(x,z),z);c.rotation.y=Math.atan2(-Math.sin(d.a)*Math.sign(d.speed),Math.cos(d.a)*Math.sign(d.speed));
     animalPose(c,t,d.phase,walking,'cow');}
   flocks.forEach(f=>f.birds.forEach((b,i)=>{const a=tt*f.sp+i*0.12;const r=f.r+Math.sin(i*2.3)*1.2;b.position.set(f.cx+Math.cos(a)*r,f.y+Math.sin(t*0.7+i)*0.6,f.cz+Math.sin(a)*r);b.rotation.y=-a;
     const fl=Math.sin(t*7+i)*0.6;b.userData.wl.rotation.z=fl;b.userData.wr.rotation.z=-fl;}));
   {const LD=MOBILE?42:55;sprites.forEach(sp=>{const f=Math.min(1,camera.position.distanceTo(sp.position)/LD);const sc=sp.userData.base*sp.userData.k*f;sp.scale.set(sc*sp.userData.aspect,sc,1);});}
   eagles.forEach(e=>eagleUpdate(e,dt,t));
-  bobbers.forEach((b,i)=>{b.position.y=SEA+0.15+Math.sin(t*1.4+i)*0.08;b.rotation.z=Math.sin(t*1.1+i)*0.05;});
+  updateDolphins(dt);
+  bobbers.forEach((b,i)=>{const u=b.userData.mv||(b.userData.mv={hx:b.position.x,hz:b.position.z,wait:5+i*7,tx:null});
+    if(u.tx===null){u.wait-=dt;if(u.wait<=0){for(let k=0;k<20;k++){const a=Math.random()*6.283,r=1.5+Math.random()*4,x=u.hx+Math.cos(a)*r,z=u.hz+Math.sin(a)*r;if(H(x,z)<SEA-0.5&&inBoard(x,z)>3&&!bobbers.some(o=>o!==b&&(Math.hypot(o.position.x-x,o.position.z-z)<3.2||(o.userData.mv&&o.userData.mv.tx!==null&&Math.hypot(o.userData.mv.tx-x,o.userData.mv.tz-z)<3.2)))){u.tx=x;u.tz=z;u.blk=0;break;}}if(u.tx===null)u.wait=5;}}
+    else{const dx=u.tx-b.position.x,dz=u.tz-b.position.z,d=Math.hypot(dx,dz);if(d<0.1){u.tx=null;u.wait=15+Math.random()*20;}else{const want=Math.atan2(dx,dz);let dr=want-b.rotation.y;dr=Math.atan2(Math.sin(dr),Math.cos(dr));b.rotation.y+=dr*Math.min(1,dt*1.2);const blk=bobbers.some(o=>o!==b&&o.position.distanceTo(b.position)<1.8&&((o.position.x-b.position.x)*Math.sin(b.rotation.y)+(o.position.z-b.position.z)*Math.cos(b.rotation.y))>0.3);if(blk){u.blk=(u.blk||0)+dt;if(u.blk>3){u.tx=null;u.wait=1+Math.random()*2;}}else u.blk=0;if(Math.abs(dr)<0.6&&!blk){const st=Math.min(d,0.45*dt*mot);b.position.x+=Math.sin(b.rotation.y)*st;b.position.z+=Math.cos(b.rotation.y)*st;}}}
+    for(const o of bobbers){if(o===b)continue;const ex=b.position.x-o.position.x,ez=b.position.z-o.position.z,ed=Math.hypot(ex,ez)||0.01;if(ed<2.2){const st=(2.2-ed)*0.6*dt;const nx=b.position.x+ex/ed*st,nz=b.position.z+ez/ed*st;if(H(nx,nz)<SEA-0.3){b.position.x=nx;b.position.z=nz;}}}
+    b.position.y=SEA+0.15+Math.sin(t*1.4+i)*0.08;b.rotation.z=Math.sin(t*1.1+i)*0.05;});
+  if(selectedPerson){selectedPerson.getWorldPosition(tv);const sa=selectedPerson.userData.alpha;if(!shownAll(selectedPerson)||inBoard(tv.x,tv.z)<-0.3||(sa!==undefined&&sa<0.08))deselect();}
   if(selectedPerson){selectedPerson.getWorldPosition(tv);ring.position.set(tv.x,G(tv.x,tv.z)+0.08,tv.z);ring.scale.setScalar(1+0.12*Math.sin(t*4));}
   cameoUpdate(dt,t,mot);
-  for(const w of wanderers){const o=w.obj;
+  WARY.t-=dt;if(WARY.t<=0){WARY.t=0.5;if(!WARY.people){WARY.people=[];folk.traverse(o=>{if(o.userData&&o.userData.arms&&o.userData.inner)WARY.people.push(o);});WARY.hunted=new Set(HUNTERS.map(h=>h.w));}
+    const wp=new THREE.Vector3();for(const w of wanderers){if(!w.wild||WARY.hunted.has(w))continue;const q=w.obj.position;let near=null,nd=4.5;
+      for(const o of WARY.people){if(!o.visible)continue;o.getWorldPosition(wp);const d=Math.hypot(wp.x-q.x,wp.z-q.z);if(d<nd){nd=d;near=[wp.x,wp.z];}}
+      if(near&&!(w.boostT>0))fleeFrom(w,near[0],near[1]);}}
+  for(const w of wanderers){const o=w.obj;if(w.boostT>0)w.boostT-=dt;
     if(w.wait>0){w.wait-=dt;animalPose(o,t,w.ph,false,'pet');if(w.wait<=0)wanderTarget(w);}
+    else if(TRAIN_PTS.length&&!onRail(o.position.x,o.position.z)&&onRail(o.position.x+(w.tx-o.position.x)*0.15,o.position.z+(w.tz-o.position.z)*0.15)&&trainNear(o.position.x,o.position.z,7)){animalPose(o,t,w.ph,false,'pet');}
     else{const dx=w.tx-o.position.x,dz=w.tz-o.position.z,d=Math.hypot(dx,dz);
-      if(d<0.08){w.wait=1+Math.random()*4;}else{const st=Math.min(d,w.speed*dt*mot);o.position.x+=dx/d*st;o.position.z+=dz/d*st;o.rotation.y=Math.atan2(dx,dz);animalPose(o,t*1.4,w.ph,true,'pet');}}
+      if(d<0.08){w.wait=1+Math.random()*4;}else{const st=Math.min(d,w.speed*(w.boostT>0?3.2:1)*dt*mot);o.position.x+=dx/d*st;o.position.z+=dz/d*st;o.rotation.y=Math.atan2(dx,dz);animalPose(o,t*(w.boostT>0?2.6:1.4),w.ph,true,'pet');}}
     {const [px,pz]=pushOut(o.position.x,o.position.z,0.15);if(Math.abs(px-o.position.x)+Math.abs(pz-o.position.z)>1e-4&&w.wait<=0){w.wait=0.4+Math.random()*1.5;w.tx=px;w.tz=pz;}o.position.x=px;o.position.z=pz;}o.position.y=groundY(o.position.x,o.position.z);}
+  updateMountainFolk(dt,t,mot);
   if(userBusy>0&&userBusy<1e8)userBusy-=dt;
   if(selectedPerson&&!fly&&selectedPerson.visible&&userBusy<=0&&!noFollow){viewCheck-=dt;if(viewCheck<=0){viewCheck=1.5;if(!clearView(focusTarget(selectedPerson),camera.position))focusOn(selectedPerson,false);}}
   if(selectedPerson&&!fly&&selectedPerson.visible&&!noFollow&&userBusy<1e8){selectedPerson.getWorldPosition(tv);const ty=selectedPerson.userData.info&&selectedPerson.userData.info.noRing?tv.y:G(tv.x,tv.z)+0.6;
