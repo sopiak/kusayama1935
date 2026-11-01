@@ -257,7 +257,10 @@ function H0(x,z){
   return h;
 }
 /* 鐵道路基：沿線高度以一列火車以上的長度平滑，坡度連續 */
-function H(x,z){let h=H0(x,z);if(!RAIL_PROF)return h;let best=null;
+var LATE_FLATS=[],LATE_G=new Map();
+function H(x,z){let h=Hr(x,z);if(LATE_FLATS.length){const L=LATE_G.get(Math.floor(x/4)+','+Math.floor(z/4));if(L)for(const f of L){const dx=x-f.x,dz=z-f.z;
+  const u=Math.abs(f.c*dx-f.s*dz)-f.hx,v=Math.abs(f.s*dx+f.c*dz)-f.hz,e=Math.hypot(Math.max(u,0),Math.max(v,0));if(e<f.m)h=lerp(h,f.y,sstep(f.m,0,e));}}return h;}
+function Hr(x,z){let h=H0(x,z);if(!RAIL_PROF)return h;let best=null;
   for(const L of RAIL_PROF){if(x<L.x0||x>L.x1||z<L.z0||z>L.z1)continue;
     for(const g of L.segs){const t=Math.min(1,Math.max(0,((x-g.ax)*g.vx+(z-g.az)*g.vz)/(g.l*g.l)));const d=Math.hypot(x-g.ax-g.vx*t,z-g.az-g.vz*t);
       if(d<1.9&&(!best||d<best.d))best={d,L,s:g.s0+g.l*t};}}
@@ -603,6 +606,7 @@ function trace(way,step=0.5){
   const out=[];for(let i=0;i<way.length-1;i++){const [ax,az]=way[i],[bx,bz]=way[i+1];const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/step));for(let k=0;k<n;k++){const t=k/n;out.push([lerp(ax,bx,t),lerp(az,bz,t)]);}}
   out.push(way[way.length-1]);return out;
 }
+const RIBBONS=[];
 function ribbon(way,width,edge,center,lift=0.12){
   const pts=trace(way,0.5).map(([x,z])=>new THREE.Vector3(x,0,z));const curve=new THREE.CatmullRomCurve3(pts);const N=pts.length*2;
   const ce=C(edge),cc=C(center);const P=[],Cc=[],I=[];
@@ -610,7 +614,7 @@ function ribbon(way,width,edge,center,lift=0.12){
     for(const s of[-1,0,1]){const ww=width*(1+0.12*Math.sin(i*0.7+s));const x=Math.min(X0+W,Math.max(X0,p.x+nx*ww*s)),z=Math.min(Z0+D,Math.max(Z0,p.z+nz*ww*s));P.push(x,G(x,z)+lift,z);const c=s?ce:cc;Cc.push(c.r,c.g,c.b);}
     if(i<N){const a=i*3;I.push(a,a+3,a+1,a+1,a+3,a+4,a+1,a+4,a+2,a+2,a+4,a+5);}}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(Cc,3));g.setIndex(I);g.computeVertexNormals();
-  const m=new THREE.Mesh(g,new THREE.MeshToonMaterial({vertexColors:true,gradientMap:grad,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2}));m.receiveShadow=true;scene.add(m);return m;
+  const m=new THREE.Mesh(g,new THREE.MeshToonMaterial({vertexColors:true,gradientMap:grad,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2}));m.receiveShadow=true;scene.add(m);RIBBONS.push(m);return m;
 }
 RIVERS.forEach(r=>ribbon(r.pts,r.w,'#c4ebf3',r.w>1?'#5fb0d8':'#78c3e2',0.1));
 ROADS.forEach(r=>ribbon(r,0.32,'#d9c08a','#f2e0b2',0.14));
@@ -695,8 +699,15 @@ function house({w=1.4,d=1,h=0.8,wall='jp',roof='kawara',hip=false,rh=0.6,over=0.
 }
 function place(obj,x,z,ry=0,dy=0){obj.position.set(x,G(x,z)+dy,z);obj.rotation.y=ry;scene.add(obj);OCCLUDERS.push(obj);return obj;}
 const signRedraws=[];
+function easelM(){const e=new THREE.Group();const fr=new THREE.Group();fr.position.set(0,0.75,0);fr.rotation.x=-0.2;e.add(fr);
+  fr.add(mesh(new THREE.BoxGeometry(0.52,0.42,0.03),0x9a7350));
+  const c=document.createElement('canvas');c.width=128;c.height=100;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,0,100);g.addColorStop(0,'#bfe3ee');g.addColorStop(1,'#fbf2dc');x.fillStyle=g;x.fillRect(0,0,128,100);
+  x.fillStyle='#6f9a6a';x.beginPath();x.moveTo(0,70);x.lineTo(40,30);x.lineTo(70,55);x.lineTo(95,25);x.lineTo(128,60);x.lineTo(128,100);x.lineTo(0,100);x.fill();x.fillStyle='#e8a3b8';for(let i=0;i<9;i++){x.beginPath();x.arc(10+i*13,80+((i*7)%10),6,0,7);x.fill();}
+  const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;fr.add(mesh(new THREE.PlaneGeometry(0.46,0.36),new THREE.MeshToonMaterial({map:tx,gradientMap:grad}),{z:0.017,shadow:false}));
+  for(const s of[-1,1])e.add(mesh(PG.stick,0x8a6a4a,{x:0.2*s,y:0.45,z:0.03,sy:0.92,rx:-0.12}));e.add(mesh(PG.stick,0x8a6a4a,{y:0.45,z:-0.16,sy:0.92,rx:0.3}));
+  e.add(mesh(new THREE.BoxGeometry(0.5,0.03,0.05),0x8a6a4a,{y:0.53,z:0.06}));return e;}
 function signboard(lines,x,z,ry){
-  const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.06,0.06,1.4,6),0x8a6a4a,{y:0.7}));
+  const g=new THREE.Group();for(const sx of[-0.75,0.75])g.add(mesh(new THREE.CylinderGeometry(0.05,0.055,1.75,6),0x8a6a4a,{x:sx,y:0.875,z:-0.1}));
   const c=document.createElement('canvas');c.width=512;c.height=180;const cx=c.getContext('2d');
   const draw=()=>{cx.fillStyle='#fffdf6';cx.fillRect(0,0,512,180);cx.strokeStyle='#3d3446';cx.lineWidth=8;cx.strokeRect(6,6,500,168);cx.fillStyle='#3d3446';cx.textAlign='center';cx.textBaseline='middle';
     cx.font='900 64px "Zen Maru Gothic","Noto Sans TC",sans-serif';cx.fillText(lines[0],256,lines[1]?66:90);
@@ -743,7 +754,7 @@ function fillTown(cx,cz,r,n){
 {
   const bath=new THREE.Group();
   const low=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.8,2.1),texMat('wall','brick'));low.position.y=0.1;low.castShadow=true;low.userData.block={h:1.0,base:0.8};bath.add(low);
-  const up=house({w:3.0,d:1.94,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.3,base:0.02});up.position.y=1.0;bath.add(up);
+  const up=house({w:3.0,d:1.94,h:0.9,wall:'jp',roof:'kawara2',rh:1,over:0.3,base:0.02});up.position.y=1.0;up.children[0].userData.block.upper=true;bath.add(up);
   place(bath,-37,24.6,0.3);claim(-37,24.6,2.2);
   [[-42,23.5,0.2],[-44.5,26,0.6],[-38.5,21.3,-0.2],[-34,23,0.4],[-41.5,20.8,0],[-46,23,0.1],[-36,31.5,-0.2]].forEach(([x,z,r],i)=>{
     place(house({w:1.7,d:1.1,h:0.8,wall:'jp',roof:i%2?'kawara':'kawara2',rh:0.55,lantern:true}),x,z,r);claim(x,z,1);});
@@ -789,7 +800,7 @@ for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inT
 /* 軍艦岩 */
 {const rk=new THREE.Group();const rm=toon(0xbcb29c);
   [[0,0.35,0,1.9,0.55,0.7],[0.7,0.75,0.05,0.9,0.35,0.5],[-0.9,0.25,0.15,0.8,0.3,0.55]].forEach(([x,y,z,sx,sy,sz])=>{const m=new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),rm);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;rk.add(m);});
-  place(rk,-26.8,38.2,0.5);claim(-26.8,38.2,1.8);}
+  rk.userData.rock=true;place(rk,-26.8,38.2,0.5);claim(-26.8,38.2,1.8);}
 /* 關渡宮 */
 {const g=new THREE.Group();g.add(house({w:2.2,d:1.4,h:0.8,wall:'temple',roof:'orange',rh:0.6,eaves:true}));
   const f=house({w:1.6,d:0.9,h:0.6,wall:'temple',roof:'orange',rh:0.5,eaves:true});f.position.z=1.2;g.add(f);place(g,-79,45.5,-1.48);claim(-79,45.5,2);}
@@ -1072,12 +1083,14 @@ function hold(p,kind,col){
     case 'hoe':a(PG.stick,0x8a6a4a,0,0,0.38,Math.PI/2,0,0).scale.y=0.95;a(PG.blade,0x8d8d96,0,-0.07,0.84,0.2);break;
     case 'sickle':a(PG.stick,0x8a6a4a,0,0,0.08,Math.PI/2,0,0).scale.y=0.18;a(PG.sickle,0xa8a8b2,0,0.02,0.24,0,Math.PI/2,0);break;
     case 'sheaf':a(PG.sheaf,0xe2c771,0,0.12,0.06,0.3);break;
-    case 'broom':a(PG.stick,0xb79a6a,0,-0.3,0.15,0.4).scale.y=0.9;a(PG.broom,0xd9bd7a,0,-0.72,0.33,0.4+Math.PI);break;
-    case 'cane':a(PG.stick,0x4a3a30,0,-0.26,0.05,0.15).scale.y=0.55;break;
+    case 'broom':{const bg=new THREE.Group();bg.rotation.x=-0.85;h.add(bg);bg.add(mesh(PG.stick,0xb79a6a,{y:-0.12,sy:0.72}));
+      const br=new THREE.Group();br.position.y=-0.46;bg.add(br);br.add(mesh(new THREE.ConeGeometry(0.15,0.32,10,1,true),0xd9bd7a,{y:-0.1,sz:0.4,rx:Math.PI}));br.add(mesh(new THREE.CylinderGeometry(0.035,0.04,0.06,8),0x8a6a4a,{y:0.04}));
+      for(const xx of[-0.08,0,0.08])br.add(mesh(new THREE.BoxGeometry(0.012,0.3,0.012),0xc4a460,{x:xx,y:-0.12,rz:-xx*1.6}));break;}
+    case 'cane':a(PG.stick,0x4a3a30,0,-0.16,0.03,0.08).scale.y=0.36;a(new THREE.TorusGeometry(0.035,0.012,5,8,Math.PI),0x4a3a30,0,0.02,0.035,0,Math.PI/2,0);break;
     case 'rod':{const r=new THREE.Group();r.rotation.x=1.92;h.add(r);r.add(mesh(PG.stick,0x9a8a5a,{y:0.9,sy:1.8}));
       const ln=new THREE.Group();ln.position.y=1.8;ln.rotation.x=2.18;r.add(ln);ln.add(mesh(new THREE.CylinderGeometry(0.004,0.004,1,3),0xf2efe6,{y:0.75,sy:1.5,shadow:false}));
       ln.add(mesh(new THREE.SphereGeometry(0.04,6,5),0xd9483b,{y:1.5}));break;}
-    case 'flag':a(PG.stick,0x6b4a34,0,0.35,0,0).scale.y=0.9;h.add(mesh(PG.flag,new THREE.MeshToonMaterial({color:col||0xfffdf6,side:THREE.DoubleSide,gradientMap:grad}),{x:0,y:0.68,z:0.17,ry:Math.PI/2}));break;
+    case 'flag':p.userData.parasolG=h;a(PG.stick,0x6b4a34,0,0.42,0,0).scale.y=0.95;h.add(mesh(PG.flag,new THREE.MeshToonMaterial({color:col||0xfffdf6,side:THREE.DoubleSide,gradientMap:grad}),{x:0,y:0.75,z:0.17,ry:Math.PI/2}));break;
     case 'parasol':p.userData.hasParasol=true;p.userData.parasolG=h;a(PG.stick,0x6b4a34,0,0.42,0,0).scale.y=0.95;a(PG.parasol,col||0xd9483b,0,0.9,0);break;
     case 'basket':a(PG.basket,0xc9a066,0,-0.1,0.06);break;
     case 'brush':a(PG.stick,0x6b4a34,0,0.05,0.08,1.2).scale.y=0.25;break;
@@ -1198,9 +1211,9 @@ const onsenLoop=[[-38.5,27],[-36,25.8],[-34.5,24],[-36.2,22.6],[-39.5,23.4],[-41
   const b=person('yukataM',{top:0x3f63a6});b.userData.head.add(mesh(PG.towel,0xffffff,{y:0.21}));
   addMover(b,[[-6,11],[-3.6,12],[-1.5,11]],{speed:0.3,start:0.4},I('郭再興',33,'公學校訓導','臺灣人教員，剛在眾樂園泡完湯，頭上頂著毛巾，打算再走去御賓館附近看看風景。'));
   const painter=person('suit',{top:0x6b5a46,bottom:0x6b5a46,hat:'fedora',hatC:0x5a4a3a});hold(painter,'brush');
-  const easel=new THREE.Group();easel.add(mesh(new THREE.BoxGeometry(0.5,0.4,0.03),0xfbf6e8,{y:0.75,rx:-0.2}));for(const s of[-1,1])easel.add(mesh(PG.stick,0x8a6a4a,{x:0.2*s,y:0.45,sy:0.9,rx:-0.15}));
-  place(easel,-1.6,7.2,-2.2);const stool=mesh(new THREE.CylinderGeometry(0.16,0.16,0.22,8),0x8a6a4a);place(stool,-1.15,7.9,0);
-  addActor(painter,-1.15,7.9,-2.4,'paint',I('藍文彬',29,'洋畫家','從東京美術學校畢業回臺的年輕畫家，正坐在草山的櫻花樹下寫生七星山，準備把這幅畫送去參加臺展。'),0.14);
+  const easel=easelM();
+  place(easel,-0.9,7.9,-2.2+Math.PI);const stool=mesh(new THREE.CylinderGeometry(0.16,0.16,0.22,8),0x8a6a4a);place(stool,-0.45,8.6,0);painter.userData.keep=true;
+  addActor(painter,-0.45,8.6,-2.4,'paint',I('藍文彬',29,'洋畫家','從東京美術學校畢業回臺的年輕畫家，正坐在草山的櫻花樹下寫生七星山，準備把這幅畫送去參加臺展。'),0.14);
   const care=person('twOld',{top:0x2f2a33});hold(care,'broom');addActor(care,1.9,3.7,0.4,'sweep',I('吳阿惜',61,'御賓館雜役','在草山御賓館打掃了十幾年，最得意的是曾經遠遠看過皇太子行啟的車隊。'));
 }
 /* ---------- 冷水坑、大嶺、硫磺 ---------- */
@@ -1227,6 +1240,9 @@ const cows=[];
     const s=person('student');satchel(s,0x7a5a3a);addMover(s,hike,{speed:0.3,start:0.25-i*0.06},I(...d));});
 }
 /* ---------- 平原農事 ---------- */
+const SANZHI_BIO=['三芝庄的山坡田，水全靠山泉一格一格往下引。他今天在修田埂，免得下大雨時被沖垮。','剛從小基隆的市場賣完菜回來，順手到田裡割一把番薯葉回去餵豬。',
+  '家裡世代在三芝種田，最近聽說庄役場要推廣蓬萊米，正在考慮明年要不要改種。','趁著好天氣在田邊割草，割下來的草曬乾後可以當牛的飼料，也能鋪在豬舍裡。',
+  '一邊翻土一邊抱怨今年的東北季風特別強，田邊的竹圍被吹倒了好幾叢。','嫁到三芝十年了，除了下田，還要照顧四個孩子和公婆，忙到天黑才能休息。'];
 const NAMES_M=['林阿土','陳水木','張阿福','吳添福','李萬枝','劉金水','黃阿樹','楊再發','周阿財','鄭清標'];
 const NAMES_F=['陳罔市','李阿嬌','黃秀英','張碧珠','吳阿梅','劉春花','郭寶珠','許阿招','楊月娥','蔡阿惜'];
 const JOBS=[
@@ -1239,14 +1255,14 @@ const JOBS=[
 farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
   const [anim,style,job,bio]=JOBS[i%JOBS.length];
   const a=f.r+Math.PI*0.5+rng(),d=2.4+rng()*0.8;let x=f.x+Math.cos(a)*d,z=f.z+Math.sin(a)*d;
-  if(anim==='feed'){x=f.x+Math.sin(f.r)*1.0;z=f.z+Math.cos(f.r)*1.0;}
+  if(anim==='feed'){x=f.x+Math.sin(f.r)*1.25;z=f.z+Math.cos(f.r)*1.25;}
   if(H(x,z)>1.4||nearLines(x,z,0.4))return;
   const female=style==='farmerW';const p=person(style,{top:female?[0x9bb2bf,0xd9a0a8,0x7aa6c9][i%3]:[0x6f8fb3,0x5c7392,0x8aa0a8][i%3]});
   const age=22+Math.floor(rng()*40),name=female?NAMES_F[i%NAMES_F.length]:NAMES_M[i%NAMES_M.length];
   const where=f.z<60?'北投、唭哩岸一帶':(f.z<80?'士林街外':'圓山附近');
   const info=I(name,age,job,`在${where}耕作的佃農家。${bio}`);
   if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));place(tb,x,z+0.8,0);}
-  if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.9,z+Math.sin(k*1.6)*0.9,rng()*6,'peck');});}
+  if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.5,z+Math.sin(k*1.6)*0.5,rng()*6,'peck');});}
   if(anim==='plant'){const dx=Math.cos(a),dz=Math.sin(a);addMover(p,[[x,z],[x+dx*2.4,z+dz*2.4]],{speed:0.06,backward:true,walkers:[[p,'plant']],pause:0.5},info);}
   else addActor(p,x,z,a+Math.PI,anim,info);
   if(i%4===0){const e=egret();addActor(e,x+0.8,z-0.6,rng()*6,'egret');}
@@ -1296,8 +1312,8 @@ function bankAt(pts,w,px,pz,off,side=1){let best=null;
   const old=person('changpao');hold(old,'cane');
   addMover(old,[[-23,71.5],[-22.4,68.5],[-21.2,66.4]],{speed:0.22,walkers:[[old,'stroll']]},I('潘清和',66,'漢醫','在士林街開漢藥鋪的老先生，穿長袍馬褂、戴瓜皮帽，每天傍晚拄著手杖到廟埕和老朋友下棋。'));
   const sh=[[-16.8,69.0],[-13.8,68.6],[-13.2,71.0],[-14.6,73.2],[-16.8,69.0]];
-  const w1=person('twF',{top:0xd9a0a8});hold(w1,'basket');addMover(w1,sh,{speed:0.3,loop:true,start:0.1},I('劉春花',31,'主婦','穿著淡紅色的臺灣衫，到市場買豬肉準備拜拜。'));
-  const sm=person('suit',{hat:'fedora',hatC:0x3d3446});addMover(sm,sh,{speed:0.35,loop:true,start:0.55},I('何松年',37,'庄役場書記','在士林街役場上班的臺灣人書記，穿西裝戴帽子，中午走到市場吃一碗米粉湯。'));
+  const w1=person('twF',{top:0xd9a0a8});hold(w1,'basket');addMover(w1,offsetPath([[-19,70],[-17.5,66.5]],0.25),{speed:0.3,start:0.1,pause:3},I('劉春花',31,'主婦','穿著淡紅色的臺灣衫，到市場買豬肉準備拜拜。'));
+  const sm=person('suit',{hat:'fedora',hatC:0x3d3446});addMover(sm,offsetPath([[-19.4,74.8],[-18.6,78]],-0.25),{speed:0.35,start:0.55,pause:3},I('何松年',37,'庄役場書記','在士林街役場上班的臺灣人書記，穿西裝戴帽子，中午走到市場吃一碗米粉湯。'));
   const pm=person('rail',{top:0x3a4a3a,bottom:0x3a4a3a,hatC:0x3a4a3a});satchel(pm,0x6b4a34);
   addMover(pm,offsetPath(ROADS[4],-0.3),{speed:0.45,start:0.3},I('楊再發',32,'郵便配達夫','士林郵便局的送信員，背著皮製郵袋，每天走路把信送到北投、唭哩岸一帶的人家。'));
   [[-26.5,86.0,'黃秀英',28],[-29.0,84.0,'許阿招',45]].forEach(([x,z,n,a])=>{const p=person('twF',{top:n==='許阿招'?0x2f2a33:0x9bb2bf});hold(p,'beater');
@@ -1333,9 +1349,9 @@ const bobbers=[];
 {const p=person('twOld',{top:0x5a4a3a});addActor(p,61.5,-62.5,2.4,'mend',I('林阿罔',60,'補網婦','林阿成的母親，坐在海邊的石頭上補漁網，手上的梭子一刻也沒停過。'));}
 {const g=boatM(0xe9d7b0);const p=person('coolie');p.position.set(0,0.2,0.55);g.add(p);
   addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],0.4),{speed:0.45,water:true,start:0.2,walkers:[[p,'stand']]},I('張進財',50,'帆船船夫','駕著載米的帆船在淡水河上往來，從大稻埕順流而下到淡水，再載回鹽和雜貨。'));}
-{const g=boatM(0xf2e6c8);addMover(g,offsetPath([[76,91.4],...KEE_PTS],-0.3),{speed:0.35,water:true,start:0.5,walkers:[]});}
+{const g=boatM(0xf2e6c8);addMover(g,offsetPath([[76,91.4],...KEE_PTS.filter(p=>p[0]>-10.5)],-0.3),{speed:0.35,water:true,start:0.5,walkers:[],pause:4});}
 for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;if(!isTerrace(x,z,m)||!free(x,z,0.6))continue;
-  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I((c%2?NAMES_F:NAMES_M)[c+3],30+c*7,'梯田農家','三芝庄的山坡上開了一層層梯田，田小、水靠山泉，一年只收得到一季，收成全靠老天。'));c++;}
+  const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I((c%2?NAMES_F:NAMES_M)[c+3],30+c*7,'三芝庄農家',SANZHI_BIO[c%SANZHI_BIO.length]));c++;}
 {const p=person('rail',{top:0x3d4a6b,bottom:0x3d4a6b});addActor(p,-60.6,-67,0.4,'stand',I('森田 勇',44,'燈台守','在富貴角燈塔值勤的燈台守，每天傍晚爬上塔頂點燈、擦拭透鏡，夜裡每隔幾小時就要檢查一次。'));}
 {const p=person('twF',{top:0x7aa6c9});addActor(p,-77.6,44.4,-1.0,'bow',I('洪阿珍',52,'香客','從關渡附近來拜媽祖的婦人，祈求出海捕魚的丈夫平安。'));}
 
@@ -1407,7 +1423,7 @@ const NPCS=[
  {at:'TP',st:'coolie',o:{top:0xd9483b},anim:'wave',nm:'江湖郎',age:40,job:'走江湖的藝人',bio:'在街頭耍刀弄槍、表演功夫，表演完再賣他自製的跌打膏藥。'},
  {at:'KJ',st:'twF',o:{top:0x8aa0a8},hold:'broom',anim:'sweep',nm:'李阿珠',age:44,job:'曬魚乾的漁婦',bio:'在海邊把魚剖開、抹鹽、攤在竹篩上曬乾，曬好的魚乾可以放很久。'},
  {at:'KJ',st:'twM',o:{top:0x3f63a6},anim:'chat',nm:'陳魚頭',age:50,job:'魚販',bio:'在磺港邊收購漁獲的魚販，挑好的魚交給挑夫，連夜翻山送去士林市場。'},
- {at:'SC',st:'farmer',o:{top:0x6f8fb3,old:true},hold:'stick',walk:1.2,sp:0.25,nm:'吳老丁',age:68,job:'老農',bio:'種了一輩子田的老農，現在把田交給兒子，每天還是要去田邊巡一巡才安心。'},
+ {at:'SC',st:'farmer',o:{top:0x6f8fb3,old:true},hold:'cane',walk:1.2,sp:0.25,nm:'吳老丁',age:68,job:'老農',bio:'種了一輩子田的老農，現在把田交給兒子，每天還是要去田邊巡一巡才安心。'},
  {at:'YB',st:'coolie',o:{top:0x8a7a5a},hold:'beater',anim:'hoe',prop:stonePile,nm:'周阿石',age:43,job:'石匠',bio:'在唭哩岸山腳開採唭哩岸石的石匠。這種石材堅硬耐用，臺北許多建築的牆腳都用它砌成。'},
  {at:'YB',st:'coolie',back:0x9a8f7a,walk:1.3,nm:'周阿土',age:22,job:'搬石工',bio:'周阿石的兒子，把切好的石塊背到路邊，等牛車載去北投驛。'},
  {at:'SH',st:'farmerW',o:{top:0x7aa6c9},hold:'basket',anim:'feed',nm:'潘阿綿',age:36,job:'養鴨婦人',bio:'在石牌田邊養了一群鴨，每天撒穀子餵鴨，鴨蛋拿去做鹹蛋賣。'},
@@ -1416,7 +1432,7 @@ const NPCS=[
 NPCS.forEach(n=>{const sp=spotNear(n.at);if(!sp)return;const pp=person(n.st,n.o||{});
   if(n.hold)hold(pp,n.hold,n.hc);if(n.pole)shoulderPole(pp,n.pole);if(n.back)backBasket(pp,n.back);if(n.bag)satchel(pp,n.bag);
   const info=I(n.nm,n.age,n.job,n.bio);
-  if(n.walk)addMover(pp,loopPts(sp[0],sp[1],n.walk),{speed:n.sp||0.35,loop:true,start:rng(),walkers:[[pp,n.anim||'walk']]},info);
+  if(n.walk)addMover(pp,loopPts(sp[0],sp[1],n.walk),{speed:n.sp||0.35,loop:true,start:rng(),walkers:[[pp,n.anim||(n.hold==='cane'?'stroll':'walk')]]},info);
   else addActor(pp,sp[0],sp[1],rng()*6.28,n.anim||'idle',info);
   if(n.clear)pp.userData.clearR=n.clear;if(n.prop)n.prop(sp[0],sp[1]);});
 { // 關渡渡船、撒網漁夫、割蘆葦
@@ -1660,7 +1676,7 @@ CAMEOS.push(
 CAMEOS.forEach(c=>{c.p=person(c.style,c.opts);if(c.hold)hold(c.p,c.hold,c.holdC);c.p.userData.info=c.info;CLICKABLE.push(c.p.userData.hit);c.p.userData.hit.userData.person=c.p;
   c.p.visible=false;folk.add(c.p);c.P=makePathPts(c.path);c.aideP=[];c.phase='wait';c.wait=4+Math.random()*41;
   for(let k=0;k<(c.aides||0);k++){const a=c.aideStyle?person(c.aideStyle,{top:0x5c7392}):person('police',{top:0xf3f1ea,hatC:0x2a2d3a});a.visible=false;folk.add(a);c.aideP.push(a);}
-  if(c.easel){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.5,0.4,0.03),0xfbf6e8,{y:0.75,rx:-0.2}));for(const s of[-1,1])e.add(mesh(PG.stick,0x8a6a4a,{x:0.2*s,y:0.45,sy:0.9,rx:-0.15}));e.visible=false;folk.add(e);c.propObj=e;}
+  if(c.easel){const e=easelM();e.visible=false;folk.add(e);c.propObj=e;}
   if(c.tripod){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.22,0.16,0.18),0x2a2530,{y:0.82}));e.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.08,8),0x55505c,{y:0.82,z:0.12,rx:Math.PI/2}));
     for(let i=0;i<3;i++){const g=mesh(PG.stick,0x8a6a4a,{y:0.4,sy:0.85});const w=new THREE.Group();w.rotation.y=i*2.094;g.rotation.x=0.22;w.add(g);e.add(w);}e.visible=false;folk.add(e);c.propObj=e;c.propD=0.45;}});
 function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
@@ -1675,12 +1691,42 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
   const startOn=inBoard(c.path[0][0],c.path[0][1])>0;let a=edgeA*(startOn?along:1);
   if(c.phase==='gone'){c.fadeOut=(c.fadeOut??1)-dt;a=Math.max(0,c.fadeOut);}
   setAlpha(c.p,a);
-  if(c.phase==='act')pose(c.p,c.act,t,0,false);else pose(c.p,c.run?'run':'walk',t,0,moving);
+  if(c.phase==='act')pose(c.p,c.act,t,0,false);else pose(c.p,c.run?'run':(c.hold==='cane'?'stroll':'walk'),t,0,moving);
   c.aideP.forEach((ap,k)=>{const s2=Math.max(0,c.s-dir*(0.9+k*0.8));const [ax,az,adx,adz]=pathAt(c.P,s2);ap.position.set(ax+(k?0.45:-0.45),groundY(ax+(k?0.45:-0.45),az),az);ap.rotation.y=Math.atan2(adx*dir,adz*dir);
     setAlpha(ap,sstep(-0.8,1.6,inBoard(ax,az))*(c.phase==='gone'?a:1));pose(ap,c.phase==='act'?'stand':'walk',t,k+1,c.phase!=='act');});
   if(c.propObj){const show=c.phase==='act';c.propObj.visible=show;if(show){const d=c.propD||0.7;c.propObj.position.set(x+Math.sin(c.p.rotation.y)*d,G(x,z),z+Math.cos(c.p.rotation.y)*d);c.propObj.rotation.y=c.p.rotation.y+Math.PI;}}
   if(c.phase==='gone'&&a<=0){c.p.visible=false;c.aideP.forEach(ap=>ap.visible=false);if(selectedPerson===c.p)deselect();c.phase='wait';c.wait=20+Math.random()*25;}
 });}
+
+/* -------------------- 建築整地：房子底下的地面整平成一塊，房子坐在平地上，不再懸空或埋進坡裡 -------------------- */
+{const v=new THREE.Vector3(),ws=new THREE.Vector3(),wx=new THREE.Vector3();const flats=[];
+  OCCLUDERS.forEach(obj=>{if(obj.isInstancedMesh)return;obj.updateMatrixWorld(true);const bl=[],yd=[];
+    obj.traverse(o=>{if(o.isMesh&&o.userData.block&&!o.userData.block.upper&&o.geometry.parameters)bl.push(o);if(o.isMesh&&o.userData.yard)yd.push(o);});
+    if(!bl.length)return;let gmin=1e9,gmax=-1e9;
+    bl.forEach(m=>{const P=m.geometry.parameters;for(const u of[-0.5,0,0.5])for(const w of[-0.5,0,0.5]){v.set(m.position.x+u*P.width,0,m.position.z+w*P.depth);m.parent.localToWorld(v);const g=G(v.x,v.z);gmin=Math.min(gmin,g);gmax=Math.max(gmax,g);}});
+    if(gmin<SEA+0.05)return;
+    const m0=bl[0],P0=m0.geometry.parameters;v.set(m0.position.x,m0.position.y-P0.height/2+m0.userData.block.base,m0.position.z);m0.parent.localToWorld(v);
+    const target=gmax-gmin<0.06?gmax:(gmin+gmax)/2;obj.position.y+=target-v.y;obj.updateMatrixWorld(true);
+    const add=(m,w,d)=>{m.getWorldPosition(v);m.getWorldScale(ws);wx.set(1,0,0).transformDirection(m.matrixWorld);const a=Math.atan2(-wx.z,wx.x);
+      flats.push({x:v.x,z:v.z,c:Math.cos(a),s:Math.sin(a),hx:w/2*ws.x+0.12,hz:d/2*ws.z+0.12,y:target-0.01,m:0.9});};
+    bl.forEach(m=>add(m,m.geometry.parameters.width,m.geometry.parameters.depth));
+    yd.forEach(y=>{y.getWorldPosition(v);obj.getWorldScale(ws);wx.set(1,0,0).transformDirection(obj.matrixWorld);const a=Math.atan2(-wx.z,wx.x);flats.push({x:v.x,z:v.z,c:Math.cos(a),s:Math.sin(a),hx:0.62*ws.x,hz:0.62*ws.z,y:target-0.01,m:0.9});});});
+  const grid=new Map();flats.forEach(f=>{const R=Math.hypot(f.hx,f.hz)+f.m;for(let gx=Math.floor((f.x-R)/4);gx<=Math.floor((f.x+R)/4);gx++)for(let gz=Math.floor((f.z-R)/4);gz<=Math.floor((f.z+R)/4);gz++){const k=gx+','+gz;if(!grid.has(k))grid.set(k,[]);grid.get(k).push(f);}});
+  const infl=(x,z)=>{const L=grid.get(Math.floor(x/4)+','+Math.floor(z/4));if(!L)return false;for(const f of L){const dx=x-f.x,dz=z-f.z;const u=Math.abs(f.c*dx-f.s*dz)-f.hx,w=Math.abs(f.s*dx+f.c*dz)-f.hz;if(Math.hypot(Math.max(u,0),Math.max(w,0))<f.m)return true;}return false;};
+  // 整地前先記下會受影響的東西原本的地面高度
+  const tp=tgeo.attributes.position,tIdx=[];for(let i=0;i<tp.count;i++)if(infl(tp.getX(i),tp.getZ(i)))tIdx.push(i);
+  const actS=[];folk.children.forEach(o=>{if(infl(o.position.x,o.position.z))actS.push([o,G(o.position.x,o.position.z)]);});
+  const propS=[];OCCLUDERS.forEach(o=>{if(o.isInstancedMesh)return;let has=false;o.traverse(m=>{if(m.userData&&m.userData.block)has=true;});if(!has&&infl(o.position.x,o.position.z))propS.push([o,G(o.position.x,o.position.z)]);});
+  const m4=new THREE.Matrix4(),pv=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3();const instS=[];
+  scene.traverse(o=>{if(!o.isInstancedMesh)return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,m4);pv.setFromMatrixPosition(m4);if(infl(pv.x,pv.z))instS.push([o,i,G(pv.x,pv.z)]);}});
+  const ribS=[];RIBBONS.forEach(r=>{const a=r.geometry.attributes.position;for(let i=0;i<a.count;i++)if(infl(a.getX(i),a.getZ(i)))ribS.push([a,i,G(a.getX(i),a.getZ(i))]);});
+  // 啟用整地
+  LATE_FLATS=flats;LATE_G=grid;
+  tIdx.forEach(i=>tp.setY(i,H(tp.getX(i),tp.getZ(i))));tp.needsUpdate=true;tgeo.computeVertexNormals();
+  actS.forEach(([o,g0])=>{o.position.y+=G(o.position.x,o.position.z)-g0;});
+  propS.forEach(([o,g0])=>{o.position.y+=G(o.position.x,o.position.z)-g0;});
+  const touched=new Set();instS.forEach(([o,i,g0])=>{o.getMatrixAt(i,m4);m4.decompose(pv,q,sc);if(sc.x===0)return;pv.y+=G(pv.x,pv.z)-g0;m4.compose(pv,q,sc);o.setMatrixAt(i,m4);touched.add(o);});touched.forEach(o=>o.instanceMatrix.needsUpdate=true);
+  const ra=new Set();ribS.forEach(([a,i,g0])=>{a.setY(i,a.getY(i)+G(a.getX(i),a.getZ(i))-g0);ra.add(a);});ra.forEach(a=>a.needsUpdate=true);}
 
 /* -------------------- 建築貼地：不陷進土裡，下坡那側把牆基往下延伸，三合院禾埕貼著地面 -------------------- */
 {const v=new THREE.Vector3(),wp=new THREE.Vector3(),ws=new THREE.Vector3();
@@ -1690,22 +1736,33 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
     const info=blocks.map(m=>{const P=m.geometry.parameters,Hh=P.height,fl=m.position.y-Hh/2+m.userData.block.base;let gmin=1e9,gmax=-1e9;
       for(const u of[-0.5,0,0.5])for(const w of[-0.5,0,0.5]){v.set(m.position.x+u*P.width,fl,m.position.z+w*P.depth);m.parent.localToWorld(v);const g=G(v.x,v.z);gmin=Math.min(gmin,g);gmax=Math.max(gmax,g);}
       v.set(m.position.x,fl,m.position.z);m.parent.localToWorld(v);return{m,P,Hh,fl,gmin,gmax,fy:v.y};});
-    let lift=0;info.forEach(b=>{if(b.fy-b.gmax<0.5)lift=Math.max(lift,b.gmax-b.fy+0.02);});
+    let lift=0;info.forEach(b=>{if(!b.m.userData.block.upper)lift=Math.max(lift,b.gmax-b.fy+0.02);});
     if(lift>0){obj.position.y+=lift;obj.updateMatrixWorld(true);}
-    info.forEach(b=>{const fy=b.fy+lift;if(fy-b.gmax>=0.5)return;b.m.parent.getWorldScale(ws);const need=(fy-b.gmin+0.15)/ws.y;if(need<=b.m.userData.block.base)return;
+    info.forEach(b=>{const fy=b.fy+lift;if(b.m.userData.block.upper)return;b.m.parent.getWorldScale(ws);const need=(fy-b.gmin+0.15)/ws.y;if(need<=b.m.userData.block.base)return;
       const top=b.m.position.y+b.Hh/2,bot=b.fl-need;b.m.geometry=new THREE.BoxGeometry(b.P.width,top-bot,b.P.depth);b.m.position.y=(top+bot)/2;});
     yards.forEach(y=>{y.updateMatrixWorld(true);const geo=new THREE.PlaneGeometry(1.2,1.2,8,8),pa=geo.attributes.position;
       for(let i=0;i<pa.count;i++){wp.set(pa.getX(i),pa.getY(i),0).applyMatrix4(y.matrixWorld);pa.setXYZ(i,wp.x,G(wp.x,wp.z)+0.035,wp.z);}
       geo.computeVertexNormals();const nm=new THREE.Mesh(geo,y.material);nm.receiveShadow=true;scene.add(nm);y.parent.remove(y);});});}
 
+/* 小型擺設（鳥居、告示牌、岩石、溫泉池等）在斜坡上不懸空：往下沉到最低的地面 */
+{const bb=new THREE.Box3();OCCLUDERS.forEach(o=>{if(o.isInstancedMesh)return;let has=false;o.traverse(m=>{if(m.userData&&(m.userData.block||m.userData.yard))has=true;});if(has)return;
+  o.updateMatrixWorld(true);bb.setFromObject(o);if(bb.isEmpty())return;let gmin=1e9;
+  for(const u of[0,0.25,0.5,0.75,1])for(const w of[0,0.25,0.5,0.75,1])gmin=Math.min(gmin,G(bb.min.x+(bb.max.x-bb.min.x)*u,bb.min.z+(bb.max.z-bb.min.z)*w));
+  const gap=bb.min.y-gmin;if(gap>0.04&&gap<2.5){if(o.userData.rock){o.position.y-=gap*0.6;o.scale.y*=1.5;}else o.position.y-=gap+0.02;o.updateMatrixWorld(true);}});}
+
 /* -------------------- 行人避開建築與鐵軌 -------------------- */
 const OBST=[],OB_GRID=new Map(),OBC=3;
 {const bb=new THREE.Box3(),c=new THREE.Vector3(),sz=new THREE.Vector3();
-  OCCLUDERS.forEach(o=>{if(o.isInstancedMesh||o.userData.pass)return;const P=o.position.clone(),ry=o.rotation.y;o.position.set(0,0,0);o.rotation.y=0;o.updateMatrixWorld(true);
+  const addOb=ob=>{OBST.push(ob);const R=Math.hypot(ob.hx,ob.hz)+0.5;for(let gx=Math.floor((ob.x-R)/OBC);gx<=Math.floor((ob.x+R)/OBC);gx++)for(let gz=Math.floor((ob.z-R)/OBC);gz<=Math.floor((ob.z+R)/OBC);gz++){const k=gx+','+gz;if(!OB_GRID.has(k))OB_GRID.set(k,[]);OB_GRID.get(k).push(ob);}};
+  const wv=new THREE.Vector3(),wx=new THREE.Vector3(),ws2=new THREE.Vector3();
+  OCCLUDERS.forEach(o=>{if(o.isInstancedMesh||o.userData.pass)return;
+    const bl=[];o.updateMatrixWorld(true);o.traverse(m=>{if(m.isMesh&&m.userData.block&&!m.userData.block.upper&&m.geometry.parameters)bl.push(m);});
+    if(bl.length){bl.forEach(m=>{const Pm=m.geometry.parameters;m.getWorldPosition(wv);m.getWorldScale(ws2);wx.set(1,0,0).transformDirection(m.matrixWorld);
+      const ang=Math.atan2(-wx.z,wx.x);addOb({x:wv.x,z:wv.z,c:Math.cos(ang),s:Math.sin(ang),hx:Pm.width/2*ws2.x+0.05,hz:Pm.depth/2*ws2.z+0.05});});return;}
+    const P=o.position.clone(),ry=o.rotation.y;o.position.set(0,0,0);o.rotation.y=0;o.updateMatrixWorld(true);
     bb.setFromObject(o);o.position.copy(P);o.rotation.y=ry;o.updateMatrixWorld(true);if(bb.isEmpty())return;bb.getCenter(c);bb.getSize(sz);
     if(bb.max.y<0.35||sz.x>5.2||sz.z>5.2)return;const co=Math.cos(ry),si=Math.sin(ry);
-    const ob={x:P.x+co*c.x+si*c.z,z:P.z-si*c.x+co*c.z,c:co,s:si,hx:sz.x/2,hz:sz.z/2};OBST.push(ob);
-    const R=Math.hypot(ob.hx,ob.hz)+0.5;for(let gx=Math.floor((ob.x-R)/OBC);gx<=Math.floor((ob.x+R)/OBC);gx++)for(let gz=Math.floor((ob.z-R)/OBC);gz<=Math.floor((ob.z+R)/OBC);gz++){const k=gx+','+gz;if(!OB_GRID.has(k))OB_GRID.set(k,[]);OB_GRID.get(k).push(ob);}});}
+    addOb({x:P.x+co*c.x+si*c.z,z:P.z-si*c.x+co*c.z,c:co,s:si,hx:sz.x/2,hz:sz.z/2});});}
 const obLocal=(ob,x,z)=>{const dx=x-ob.x,dz=z-ob.z;return[ob.c*dx-ob.s*dz,ob.s*dx+ob.c*dz];};
 const obWorld=(ob,u,v)=>[ob.x+ob.c*u+ob.s*v,ob.z-ob.s*u+ob.c*v];
 function obAt(x,z,m){const L=OB_GRID.get(Math.floor(x/OBC)+','+Math.floor(z/OBC));if(!L)return null;for(const ob of L){const [u,v]=obLocal(ob,x,z);if(Math.abs(u)<ob.hx+m&&Math.abs(v)<ob.hz+m)return ob;}return null;}
@@ -1727,6 +1784,10 @@ function detour(pts,m=0.28){let cur=pts;
   return cur;}
 movers.forEach(mv=>{if(mv.water||!mv.pts||mv.pts.length<2)return;const np=detour(mv.pts);if(np!==mv.pts&&np.length>1){const f=mv.s/mv.P.L;mv.P=makePathPts(np);mv.s=f*mv.P.L;}});
 CAMEOS.forEach(c=>{const np=detour(c.path);if(np.length>1){c.P=makePathPts(np);c.path=np;}});
+{const clean=pts=>{let a=trace(pts,0.2);if(!a.some(([x,z])=>obAt(x,z,0.05)))return null;for(let k=0;k<3;k++)a=a.map(([x,z])=>pushOut(x,z,0.28));return a;};
+  movers.forEach(mv=>{if(mv.water)return;const pts=[];for(let s=0;s<=mv.P.L;s+=0.25)pts.push(pathAt(mv.P,s).slice(0,2));pts.push(pathAt(mv.P,mv.P.L).slice(0,2));
+    const np=clean(pts);if(np){const f=mv.s/mv.P.L;mv.P=makePathPts(np);mv.s=f*mv.P.L;}});
+  CAMEOS.forEach(c=>{const pts=[];for(let s=0;s<=c.P.L;s+=0.25)pts.push(pathAt(c.P,s).slice(0,2));const np=clean(pts);if(np){c.P=makePathPts(np);c.path=np;}});}
 function railLift(x,z){return(Math.abs(x+40)<55&&(polyDist(x,z,RAIL_MAIN)<0.7||polyDist(x,z,RAIL_SPUR)<0.7))?0.13:0;}
 /* 道路、古道的色帶比地面高一點，走在上面的人和動物要踩在路面上 */
 var ROAD_BB=null;
@@ -1737,9 +1798,17 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
 /* 人物不被房子、樹木擋住：站著的人移出建築，人物站位與走動路線旁的樹砍掉 */
 {const prot=new Map(),PC=2,addP=(x,z,r)=>{const k=Math.floor(x/PC)+','+Math.floor(z/PC);if(!prot.has(k))prot.set(k,[]);prot.get(k).push([x,z,r]);};
   const wp=new THREE.Vector3();
-  actors.forEach(a=>{const o=a.obj;if(o.parent!==folk||!o.userData.arms&&!o.userData.animal)return;
-    let x=o.position.x,z=o.position.z;const g0=groundY(x,z);for(let k=0;k<3;k++){if(!obAt(x,z,0.3))break;[x,z]=pushOut(x,z,0.38);}
+  const PG2=new Map(),pk=(x,z)=>Math.floor(x)+','+Math.floor(z);
+  const addPath=(P)=>{for(let s=0;s<=P.L;s+=0.3){const [x,z]=pathAt(P,s);const k=pk(x,z);if(!PG2.has(k))PG2.set(k,[]);PG2.get(k).push([x,z]);}};
+  movers.forEach(mv=>{if(!mv.water)addPath(mv.P);});CAMEOS.forEach(c=>addPath(c.P));
+  const nearPath=(x,z,r)=>{for(let ix=Math.floor(x)-1;ix<=Math.floor(x)+1;ix++)for(let iz=Math.floor(z)-1;iz<=Math.floor(z)+1;iz++){const L=PG2.get(ix+','+iz);if(L)for(const [px,pz] of L)if(Math.hypot(px-x,pz-z)<r)return true;}return false;};
+  actors.forEach(a=>{const o=a.obj;if(o.parent!==folk)return;
+    let x=o.position.x,z=o.position.z;const g0=groundY(x,z);for(let k=0;k<4;k++){if(!obAt(x,z,0.3))break;[x,z]=pushOut(x,z,0.38);}
+    if(obAt(x,z,0.2)){const x0=x,z0=z;outer:for(let r=0.4;r<3;r+=0.3)for(let a=0;a<6.28;a+=0.5){const xx=x0+Math.cos(a)*r,zz=z0+Math.sin(a)*r;if(!obAt(xx,zz,0.3)&&H(xx,zz)>SEA){x=xx;z=zz;break outer;}}}
     if(x!==o.position.x||z!==o.position.z){o.position.x=x;o.position.z=z;o.position.y+=groundY(x,z)-g0;}
+    if(o.userData.arms&&!o.userData.keep&&nearPath(o.position.x,o.position.z,0.38)){const x0=o.position.x,z0=o.position.z,g0=groundY(x0,z0);
+      outer2:for(const cl of[0.45,0.33])for(let r=0.3;r<3;r+=0.2)for(let an=0;an<6.28;an+=0.45){const xx=x0+Math.cos(an)*r,zz=z0+Math.sin(an)*r;if(!nearPath(xx,zz,cl)&&!obAt(xx,zz,0.3)&&H(xx,zz)>SEA){o.position.x=xx;o.position.z=zz;o.position.y+=groundY(xx,zz)-g0;break outer2;}}}
+
     addP(x,z,o.userData.clearR||(o.userData.arms?1.5:0.6));});
   movers.forEach(mv=>{if(mv.water)return;const w=mv.walkers&&mv.walkers.some(([p])=>p.userData&&p.userData.arms);if(!w)return;
     for(let s=0;s<=mv.P.L;s+=0.7){const [x,z]=pathAt(mv.P,s);addP(x,z,0.75);}});
@@ -1748,7 +1817,7 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
   TREE_IMS.forEach(im=>{let ch=false;for(let i=0;i<im.count;i++){im.getMatrixAt(i,m4);m4.decompose(pos,q,sc);if(sc.x===0)continue;const R=im.userData.rb*sc.x;
     const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
     for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
-    if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
+    if(!hit&&obAt(pos.x,pos.z,0.25))hit=true;if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
 
 /* -------------------- 大冠鷲 -------------------- */
 const EWING=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.15);sh.quadraticCurveTo(0.55,0.22,1.05,0.08);sh.lineTo(1.12,-0.02);sh.lineTo(1.0,-0.06);sh.lineTo(1.06,-0.12);sh.quadraticCurveTo(0.5,-0.22,0,-0.14);sh.closePath();
@@ -1778,13 +1847,13 @@ function eagleUpdate(e,dt,t){e.timer-=dt;if(e.timer<=0){e.mode=1-e.mode;e.timer=
   const along=(way,s0,s1,step,off,fn)=>{const P=makePathPts(way);for(let s=s0;s<=Math.min(s1,P.L);s+=step){const [x,z,dx,dz]=pathAt(P,s);const l=Math.hypot(dx,dz)||1,sd=(Math.round(s/step)%2?1:-1);fn(x-dz/l*off*sd,z+dx/l*off*sd);}};
   const chochin=(x,z)=>{if(obAt(x,z,0.1))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.022,0.026,0.95,5),0x5a4638,{y:0.47}));g.add(mesh(new THREE.BoxGeometry(0.22,0.03,0.03),0x5a4638,{y:0.95,x:0.08}));
     g.add(mesh(new THREE.SphereGeometry(0.085,10,8),LANTERN_MAT,{x:0.17,y:0.82,sy:1.35}));g.position.set(x,G(x,z),z);g.rotation.y=rng()*6.28;nightProps.add(g);glowAnchor(g,0.17,0.82,0,0.85,true);};
-  const lamp=(x,z)=>{if(obAt(x,z,0.1))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.025,0.035,1.3,6),0x3f4a46,{y:0.65}));g.add(mesh(new THREE.SphereGeometry(0.08,10,8),LAMP_MAT,{y:1.34}));
+  const lamp=(x,z)=>{if(obAt(x,z,0.1)||DECKS.some(d=>Math.hypot(x-d.x,z-d.z)<d.len/2+0.9))return;const g=new THREE.Group();g.add(mesh(new THREE.CylinderGeometry(0.025,0.035,1.3,6),0x3f4a46,{y:0.65}));g.add(mesh(new THREE.SphereGeometry(0.08,10,8),LAMP_MAT,{y:1.34}));
     g.position.set(x,G(x,z),z);nightProps.add(g);glowAnchor(g,0,1.34,0,0.7,false);};
   along(ROADS[0],0.5,15.5,1.9,0.62,chochin);              // 北投溫泉街
   along(ROADS[0],48,62,2.0,0.62,chochin);                 // 草山溫泉
   along(ROADS[3],0,6,2.0,0.62,chochin);                   // 士林街
   along(ROADS[8],2,60,3.6,0.6,lamp);                      // 臺北城北的街燈
-  along(ROADS[5],1,9,3.0,0.6,lamp);}
+}
 
 /* -------------------- 地名牌 -------------------- */
 const PLACES=[
