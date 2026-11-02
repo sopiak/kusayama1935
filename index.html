@@ -134,8 +134,8 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 .zk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .zk-tabs button{font:700 12px/1 var(--font-body);padding:7px 10px;border-radius:999px;border:2px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
 .zk-tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
-.zk-list{overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 2px 4px;min-height:0}
-.zk-item{text-align:left;font:inherit;color:var(--ink);background:#fffdf7;border:2px solid var(--line);border-radius:10px;padding:8px 9px;cursor:pointer;min-height:52px}
+.zk-list{overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:max-content;align-content:start;gap:8px;padding:2px 2px 4px;min-height:0}
+.zk-item{text-align:left;font:inherit;color:var(--ink);background:#fffdf7;border:2px solid var(--line);border-radius:10px;padding:8px 9px;cursor:pointer;min-height:52px;min-width:0;max-width:100%;box-sizing:border-box;height:auto;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
 .zk-item b{display:block;font-family:var(--font-display);font-size:14px;line-height:1.3}
 .zk-item span{display:block;font-size:11px;color:var(--ink-soft);margin-top:2px;line-height:1.35}
 .zk-item.new{box-shadow:0 0 0 3px var(--sulfur)}
@@ -1026,7 +1026,8 @@ function cat(col=0xe0a050,o={}){const g=new THREE.Group();coatMarks(g,0.075,0.17
   g.userData={legs,tail,head,animal:true};return g;}
 const PET_BODY={dog:'臺灣農村和街庄常見的土狗，立耳、短毛、尾巴向上捲，看家很盡責，陌生人一靠近就叫個不停，主人下田時也會跟前跟後。',
   cat:'在街屋屋簷和米倉之間來去自如的貓。白天在門口曬太陽，晚上抓老鼠，店家和農家都很歡迎牠。'};
-const petInfo=(k,name,where,coat)=>({chip:'動物',kind:'animal',title:name,tag:(k==='dog'?'臺灣土狗':'貓')+(coat?'・'+coat:'')+'・'+where,body:PET_BODY[k]});
+const PET_BIO={"dog:阿黃": "最愛跑在牛車前面帶路，到了士林街口一定先停下來等主人，從來沒走丟過。", "dog:小黑": "每天在草山的上坡路來回巡邏，看到挑夫就搖著尾巴跟一段，好像在幫忙押貨。", "dog:來福": "曬穀的時候專門負責趕麻雀，一隻也不放過，主人說牠比稻草人還管用。", "dog:旺來": "一聽到遠處有牛車鈴聲就豎起耳朵，總是第一個衝到路口迎接回家的人。", "dog:阿花": "身上的花斑像潑了墨，喜歡趴在灶腳門口，等阿嬤煮飯時偷偷丟一塊番薯給牠。", "dog:虎仔": "虎斑毛色看起來很兇，其實最怕雞，被母雞一追就躲到稻草堆後面。", "dog:阿福": "年紀最大的看門狗，白天幾乎都在睡覺，但半夜只要有一點聲響，叫聲全庄都聽得到。", "dog:小白": "白毛最容易弄髒，每次下田回來都變成泥巴色，被主人拎去溪邊洗澡時一臉委屈。", "dog:黑皮": "喜歡在曬穀場上打滾，常被主人罵把穀子弄得亂七八糟，但一下就又忘了。", "dog:阿財": "名字取「財」是希望家裡有財運，牠倒是很盡責，每天早上都會叼回一隻拖鞋。", "dog:ポチ": "日本人家庭養的狗，聽得懂「おすわり」和臺灣話的「坐落來」，在街上很受孩子歡迎。", "dog:阿虎": "北投庄最有名的看門狗，聞到溫泉的硫磺味就打噴嚏，所以從來不靠近地獄谷。", "dog:旺旺": "在眾樂園前等著泡完湯的客人，誰手上拿著饅頭，牠就跟誰走。", "dog:小黃": "沒有主人的流浪狗，晚上就睡在明治橋的燈柱下，橋邊的攤販都會留點剩飯給牠。", "dog:阿土": "竹子湖霧大的時候，牠會沿著田埂一路叫，帶著迷路的人走回聚落。", "dog:黑仔": "三芝的海風很大，牠總是蹲在石牆背風的那一側，眼睛卻一直盯著來往的路人。", "dog:阿勇": "鼻子特別靈，能在草叢裡找到山羌留下的蹤跡，主人說打獵一半的功勞是牠的。", "cat:タマ": "市場收攤前一定會出現，坐在魚販攤子旁邊一動也不動，直到有人丟一尾小魚給牠。", "cat:ミケ": "溫泉旅館的招財貓，客人一來就躺在玄關的木地板上，讓大家摸個夠。", "cat:咪咪": "最喜歡地獄谷旁邊溫溫的石頭，冬天整個下午都窩在上面，被蒸氣燻得暖呼呼。", "cat:阿虎": "在臺北街屋的屋頂上跳來跳去，從這條街走到那條街都不用下地。", "cat:小花": "漁船一靠港就第一個跑到碼頭，漁夫們都說牠比魚販還早知道今天的漁獲。"};
+const petInfo=(k,name,where,coat)=>({chip:'動物',kind:'animal',title:name,tag:(k==='dog'?'臺灣土狗':'貓')+(coat?'・'+coat:''),body:(where?where+'。':'')+(PET_BIO[k+':'+name]||PET_BODY[k])});
 const COAT={yellow:[{c:0xd9a85a},'黃毛'],tan:[{c:0xc9a066},'土黃毛'],brown:[{c:0x9a6a42},'棕毛'],black:[{c:0x2f2a33},'黑毛'],white:[{c:0xf2efe6},'白毛'],spot:[{c:0xf2efe6,spots:[0x2f2a33,0x2f2a33,0x6b4a34]},'黑白花斑'],brindle:[{c:0x9a6a42,stripe:0x3d2c22},'虎斑'],whitebrown:[{c:0xf2efe6,spots:[0xb07a4a,0xb07a4a]},'白底棕斑']};
 const CCOAT={orangeTabby:[0xe0a050,{stripe:0xb0652a},'橘虎斑'],calico:[0xf2efe6,{spots:[0xe0a050,0x2f2a33,0xe0a050,0x2f2a33]},'三花'],white:[0xf2efe6,{},'白貓'],gray:[0x9a8a7a,{stripe:0x6b5e52},'灰虎斑'],black:[0x2f2a33,{},'黑貓'],patch:[0xf2efe6,{spots:[0xe0a050,0xe0a050,0x9a8a7a]},'白底橘斑']};
 function dog(o={}){const g=new THREE.Group();const c=o.c||0xc9a066;coatMarks(g,0.1,0.25,0.26,o);g.add(mesh(new THREE.CapsuleGeometry(0.1,0.25,4,8),c,{y:0.25,rx:Math.PI/2}));
@@ -1756,13 +1757,15 @@ function updateMountainFolk(dt,t,mot){dt*=mot;
     p.position.y=groundY(p.position.x,p.position.z);}}
 
 /* 富貴角到金山之間的海面：偶爾有海豚躍出水面 */
-const DOLPH=[];
+const DOLPH=[];var POD_OBJ=null;
 if(false&&STRATA){const hitG=new THREE.Group();hitG.position.set(STRATA.x,STRATA.y,STRATA.z);scene.add(hitG);const hm=new THREE.Mesh(new THREE.BoxGeometry(0.4,STRATA.hh,STRATA.len),HITMAT);hitG.add(hm);hitG.userData.info=INFO.geology;hm.userData.person=hitG;CLICKABLE.push(hm);}
 {const mk=()=>{const g=new THREE.Group();const b=new THREE.Group();g.add(b);b.add(mesh(new THREE.CapsuleGeometry(0.18,0.7,4,10),0x7d8ea3,{rx:Math.PI/2,sy:0.9}));
    b.add(mesh(new THREE.CapsuleGeometry(0.13,0.5,4,8),0xdfe6ee,{y:-0.06,rx:Math.PI/2,sx:0.9,sy:0.7}));b.add(mesh(new THREE.ConeGeometry(0.06,0.25,6),0x7d8ea3,{z:0.62,rx:Math.PI/2}));
    b.add(mesh(new THREE.ConeGeometry(0.08,0.24,4),0x6b7c90,{y:0.2,z:-0.05,rx:-0.5,sz:0.3}));b.add(mesh(new THREE.BoxGeometry(0.42,0.03,0.14),0x6b7c90,{z:-0.58}));
    for(const s of[-1,1])b.add(mesh(new THREE.SphereGeometry(0.025,6,5),0x1e1a22,{x:0.12*s,y:0.05,z:0.38}));g.visible=false;folk.add(g);addHit(g,INFO.dolphin,0.5,0);return g;};
-  for(let i=0;i<3;i++)DOLPH.push({g:mk(),t:0,dur:1.5,on:false});}
+  for(let i=0;i<3;i++)DOLPH.push({g:mk(),t:0,dur:1.5,on:false});
+  /* 整群一起選取：點任何一隻都選到這群，這一輪跳完之前不會被取消 */
+  POD_OBJ=new THREE.Group();POD_OBJ.visible=false;POD_OBJ.userData.info=INFO.dolphin;POD_OBJ.userData.noRing=false;folk.add(POD_OBJ);{const ph=new THREE.Mesh(new THREE.BoxGeometry(7,1.6,5),HITMAT);ph.position.y=0.4;POD_OBJ.add(ph);ph.userData.person=POD_OBJ;CLICKABLE.push(ph);}DOLPH.forEach(d=>{d.g.traverse(m=>{if(m.userData&&m.userData.person===d.g)m.userData.person=POD_OBJ;});});}
 const DOLPH_POD={wait:2+Math.random()*3,x:0,z:-71,dir:1,n:0,k:0};
 function updateDolphins(dt){const P=DOLPH_POD;P.wait-=dt;
   if(P.wait<=0&&DOLPH.every(d=>!d.on)){for(let k=0;k<20;k++){P.x=-48+Math.random()*96;if(!bobbers.some(b=>Math.abs(b.position.x-P.x)<9&&Math.abs(b.position.z-P.z)<5))break;}P.dir=Math.random()<0.5?-1:1;P.n=3+Math.floor(Math.random()*4);P.k=0;P.wait=4+Math.random()*6;
@@ -1770,7 +1773,8 @@ function updateDolphins(dt){const P=DOLPH_POD;P.wait-=dt;
   DOLPH.forEach(d=>{if(!d.on)return;d.t+=dt;const g=d.g;if(d.t<0){g.visible=false;return;}const u=d.t/d.dur;
     if(u>=1){d.jumps--;d.t=-0.5-Math.random()*0.4;d.x+=P.dir*2.4;if(d.jumps<=0){d.on=false;g.visible=false;}return;}
     const x=d.x+P.dir*2.4*u,z=P.z+d.dz+Math.min(0,coastZ(x)-4-P.z),y=SEA-0.25+Math.sin(Math.PI*u)*1.1;g.position.set(x,y,z);g.rotation.set(0,P.dir>0?Math.PI/2:-Math.PI/2,0);
-    g.children[0].rotation.x=-Math.cos(Math.PI*u)*0.9;g.visible=true;});}
+    g.children[0].rotation.x=-Math.cos(Math.PI*u)*0.9;g.visible=true;});
+  if(POD_OBJ){const on=DOLPH.filter(d=>d.on);POD_OBJ.visible=on.length>0;if(on.length){let sx=0,sz=0;on.forEach(d=>{sx+=d.g.position.x;sz+=d.g.position.z;});const tx=sx/on.length,tz=sz/on.length;if(POD_OBJ.position.lengthSq()===0)POD_OBJ.position.set(tx,SEA,tz);else{POD_OBJ.position.x+=(tx-POD_OBJ.position.x)*Math.min(1,dt*3);POD_OBJ.position.z+=(tz-POD_OBJ.position.z)*Math.min(1,dt*3);}POD_OBJ.position.y=SEA;}}}
 
 /* 飛鳥 */
 const WING_G=[-1,1].map(sg=>{const sh=new THREE.Shape();sh.moveTo(0,0.1);sh.quadraticCurveTo(0.32,0.12,0.6,-0.02);sh.quadraticCurveTo(0.3,-0.08,0,-0.1);sh.closePath();
@@ -2191,6 +2195,10 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
     const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
     for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
     if(!hit&&obAt(pos.x,pos.z,0.25))hit=true;if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
+/* 郭寶珠往前一步再轉身 */
+{const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name==='郭寶珠');if(a){const o=a.obj,ry=o.rotation.y,x0=o.position.x,z0=o.position.z,x=x0+Math.sin(ry)*0.45,z=z0+Math.cos(ry)*0.45;
+  if(!obAt(x,z,0.25)){o.position.set(x,groundY(x,z),z);}o.rotation.y=ry+Math.PI;
+  actors.forEach(c=>{if(c.anim!=='peck')return;const p=c.obj.position;if(Math.hypot(p.x-x0,p.z-z0)>1.2)return;const dx=p.x-o.position.x,dz=p.z-o.position.z,d=Math.hypot(dx,dz);if(d<0.45){const k=0.5/(d||0.01);p.x=o.position.x+(d?dx:1)*k;p.z=o.position.z+(d?dz:0)*k;p.y=groundY(p.x,p.z);}});}}
 /* 張文德右轉 90 度、往東一個人身 */
 {const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name==='張文德');if(a){const o=a.obj;o.rotation.y-=Math.PI/2;const x=o.position.x+0.55,z=o.position.z;if(!obAt(x,z,0.3))o.position.set(x,groundY(x,z),z);}}
 /* 林全興和吳秀琴拉開距離 */
@@ -2435,7 +2443,8 @@ $('zk-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;ZK.tab=
 $('zk-list').onclick=e=>{const b=e.target.closest('button.zk-item');if(!b)return;const it=ZK.list[+b.dataset.i];if(!it)return;
   if(MOBILE)zkOpen(false);if(controls.autoRotate){controls.autoRotate=false;toggle($('tg-rotate'),false);}
   if(it.place){selectPlace(it.place.key);flyTo(it.place.x,it.place.z);return;}
-  let o=it.obj;if(o&&!(o.visible&&shownAll(o))){const alt=CLICKABLE.map(h=>h.userData.person).find(q=>q&&q.userData.info&&zkKey(q.userData.info)===it.key&&q.visible&&shownAll(q));if(alt)o=alt;}
+  let o=it.obj;if(it.cat==='animal'){const all=[...new Set(CLICKABLE.map(h=>h.userData.person).filter(q=>q&&q.userData.info&&zkKey(q.userData.info)===it.key&&q.visible&&shownAll(q)))];if(all.length)o=all[Math.floor(Math.random()*all.length)];}
+  if(o&&!(o.visible&&shownAll(o))){const alt=CLICKABLE.map(h=>h.userData.person).find(q=>q&&q.userData.info&&zkKey(q.userData.info)===it.key&&q.visible&&shownAll(q));if(alt)o=alt;}
   if(o&&o.visible&&shownAll(o)){selectPerson(o);focusOn(o,true);}
   else{selectedPerson=null;ring.visible=false;const d=it.info;$('info').hidden=false;toast('角色趕路中，請稍等',2600);$('info-photo').hidden=true;
     if(d.title){$('info-chip').textContent=d.chip;$('info-chip').dataset.kind=d.kind;$('info-title').textContent=d.title;$('info-tag').textContent=d.tag;$('info-body').textContent=d.body+(it.cat==='famous'?'（目前不在場上，過一陣子會再出現。）':'');}
