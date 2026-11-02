@@ -387,7 +387,7 @@ let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:false,alpha:true});}
 catch(e){document.body.insertAdjacentHTML('beforeend','<div class="err">這個瀏覽器無法啟用 WebGL，請換用支援 3D 的瀏覽器開啟。</div>');throw e;}
 const MOBILE=matchMedia('(pointer: coarse)').matches||innerWidth<760;
-const PR=Math.min(window.devicePixelRatio||1,2),SS=PR<1.5?2:1;
+const PR=Math.min(window.devicePixelRatio||1,MOBILE?2.5:2),SS=PR<1.5?2:1;
 renderer.setPixelRatio(PR);renderer.setClearColor(0x000000,0);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
