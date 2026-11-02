@@ -1139,7 +1139,7 @@ function hold(p,kind,col){if(kind!=='tucked'&&kind!=='papers')p.userData.held=tr
   const a=(geo,c,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const m=mesh(geo,c,{x,y,z,rx,ry,rz});h.add(m);return m;};
   switch(kind){
     case 'hoe':a(PG.stick,0x8a6a4a,0,0,0.38,Math.PI/2,0,0).scale.y=0.95;a(PG.blade,0x8d8d96,0,-0.07,0.84,0.2);break;
-    case 'axe':a(PG.stick,0x8a6a4a,0,0,0.16,Math.PI/2,0,0).scale.y=0.35;a(new THREE.BoxGeometry(0.03,0.1,0.08),0x8d8d96,0,-0.03,0.32,0);break;
+    case 'axe':a(PG.stick,0x8a6a4a,0,0,0.16,Math.PI/2,0,0).scale.y=0.35;a(new THREE.BoxGeometry(0.03,0.2,0.16),0x8d8d96,0,-0.06,0.33,0);break;
     case 'rifle':a(PG.stick,0x3a3036,0,0.02,0.32,Math.PI/2,0,0).scale.y=0.78;a(new THREE.BoxGeometry(0.05,0.08,0.22),0x6b4a34,0,-0.02,0.02,0);break;
     case 'sickle':a(PG.stick,0x8a6a4a,0,0,0.08,Math.PI/2,0,0).scale.y=0.18;a(PG.sickle,0xa8a8b2,0,0.02,0.24,0,Math.PI/2,0);break;
     case 'sheaf':a(PG.sheaf,0xe2c771,-0.07,0.02,0.04,0,0,0);break;
@@ -1165,6 +1165,7 @@ function hold(p,kind,col){if(kind!=='tucked'&&kind!=='papers')p.userData.held=tr
     case 'stick':a(PG.stick,0x8a6a4a,0,0.045,0.089,1.1).scale.y=0.8;break;
     case 'board':a(PG.board,0xe8dcc0,0.05,-0.1,0.07,-0.4);break;
     case 'beater':a(PG.stick,0x8a6a4a,0,0,0.2,Math.PI/2).scale.y=0.4;break;
+    case 'pickaxe':a(PG.stick,0x8a6a4a,0,0,0.38,Math.PI/2,0,0).scale.y=0.95;a(new THREE.BoxGeometry(0.04,0.24,0.05),0x8d8d96,0,0,0.84);a(new THREE.ConeGeometry(0.026,0.08,4),0x8d8d96,0,0.16,0.84);a(new THREE.ConeGeometry(0.026,0.08,4),0x8d8d96,0,-0.16,0.84,Math.PI);break;
   }
   return h;
 }
@@ -1580,7 +1581,7 @@ const NPCS=[
  {at:'KJ',st:'twF',o:{top:0x8aa0a8},anim:'pick',sieve:true,sieveTurn:Math.PI/2,pos:[56.6,-57.2],nm:'李珠玉',age:44,job:'曬魚乾的漁婦',bio:'蹲在家門前的空地上翻整竹篩裡的魚乾。魚剖開、抹鹽後攤在竹篩上曬，曬好的魚乾可以放很久。'},
  {at:'KJ',st:'twM',o:{top:0x3f63a6},anim:'chat',pos:[SELLER.x,SELLER.z],ry:SELLER.ry,fishBasket:true,nm:'陳魚頭',age:50,job:'魚販',bio:'在金山庄廣場收購漁獲的魚販。魚路挑夫一到，他就挑好魚、算好價錢裝進擔子，讓挑夫連夜翻山送去士林市場。'},
  {at:'SC',st:'farmer',o:{top:0x6f8fb3,old:true},hold:'cane',walk:1.2,sp:0.25,nm:'吳老丁',age:68,job:'老農',bio:'種了一輩子田的老農，現在把田交給兒子，每天還是要去田邊巡一巡才安心。'},
- {at:'YB',st:'coolie',o:{top:0x8a7a5a},hold:'beater',anim:'hoe',prop:stonePile,nm:'周石松',age:43,job:'石匠',bio:'在唭哩岸山腳開採唭哩岸石的石匠。這種石材堅硬耐用，臺北許多建築的牆腳都用它砌成。'},
+ {at:'YB',st:'coolie',o:{top:0x8a7a5a},hold:'pickaxe',anim:'hoe',prop:stonePile,nm:'周石松',age:43,job:'石匠',bio:'在唭哩岸山腳開採唭哩岸石的石匠。這種石材堅硬耐用，臺北許多建築的牆腳都用它砌成。'},
  {at:'YB',st:'coolie',back:0x9a8f7a,walk:1.3,noUmb:true,nm:'周土生',age:22,job:'搬石工',bio:'周石松的兒子，把切好的石塊背到路邊，等牛車載去北投驛。'},
  {at:'SH',st:'twM',o:{top:0x5c7392},pole:0xc9a066,walk:1.6,anim:'carry',nm:'阿春伯',age:62,job:'賣菜郎',bio:'挑著自家種的菜，從石牌走到北投、士林叫賣，一路和熟人打招呼。'},
 ];
@@ -1698,7 +1699,7 @@ function ridgeRoute(P){const out=[[P[0][0],P[0][1],true]];for(let i=0;i<P.length
   [50,42,4,'farmer','hoe',{top:0x8a7a5a},I('黃阿筍',44,'採筍人','清晨上山挖竹筍的山農，要趁筍尖還沒冒出土就挖起來才嫩。挖好的筍子一早就挑到士林市場賣。'),'basket'],
   [23,23,2,'farmer','pick',{top:0x6f8fb3},I('張文德',51,'茶農','經營這片小茶園的茶農，一邊巡視茶樹一邊指揮採茶的婦人，傍晚要把茶菁送去茶寮炒製。'),'back'],
   [61,18,2,'farmer','sickle',{top:0x5c7392},I('林全興',36,'茶農','在茶園修剪茶樹枝的茶農，剪下的枝葉堆在田邊，曬乾後可以當柴燒。'),'sickle'],
-  [56,8,4,'farmer','chop',{top:0x8a7a5a,hat:'kasa'},I('洪木村',49,'樵夫','在五指山一帶砍柴的樵夫，砍下的相思樹會燒成木炭，雜木就綁成一捆捆挑下山賣。'),'axe'],
+  [56,8,4,'farmer','chop',{top:0x8a7a5a,hat:'headband'},I('洪木村',49,'樵夫','在五指山一帶砍柴的樵夫，砍下的相思樹會燒成木炭，雜木就綁成一捆捆挑下山賣。'),'axe'],
   [43,-40,2,'coolie','hoe',{top:0x8a7a5a},I('邱石安',40,'修路工','受庄役場雇用，修補魚路古道上被雨水沖壞的石階，好讓挑夫走得平穩一點。'),'hoe'],
   [18.4,-49.1,1.2,'tech','photo',{hat:'helmet',hatC:0xe8dcb4},I('石川 正夫',33,'山林課技手','臺灣總督府殖產局的技手，架著測量儀在山上測繪地形，為國立公園的規劃做準備。'),'tripod']];
   wk.forEach(([cx,cz,r,st,an,o,info,prop])=>{const sp=mtSpot(cx,cz,r,40);if(!sp)return;const p=person(st,o);
@@ -1710,7 +1711,7 @@ function ridgeRoute(P){const out=[[P[0][0],P[0][1],true]];for(let i=0;i<P.length
     let ry0=rng()*6.28;if(an==='chop'){for(let k=0;k<60;k++){const a=rng()*6.283,d=rng()*6,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;let mx=-1e9,mn=1e9;for(const [ox,oz] of[[0,0],[1.2,0],[-0.6,0],[0,0.6],[0,-0.6],[1.2,0.5],[1.2,-0.5]]){const g=G(x+ox,z+oz);mx=Math.max(mx,g);mn=Math.min(mn,g);}
       if(mx-mn<0.25&&free(x,z,1.2)&&!nearLines(x,z,0.6)){sp[0]=x;sp[1]=z;claim(x,z,1.4);break;}}ry0=Math.PI/2;}
     addActor(p,sp[0],sp[1],ry0,an,info);
-    if(an==='chop'){const tr=new THREE.Group();tr.add(mesh(new THREE.CylinderGeometry(0.1,0.14,1.0,7),0x8f6342,{y:0.5}));tr.add(mesh(lumpy,0x5a9a58,{y:1.3,sx:0.8,sy:0.75,sz:0.8}));
+    if(an==='chop'){const tr=new THREE.Group();tr.add(mesh(new THREE.CylinderGeometry(0.1,0.14,1.6,7),0x333c17,{y:0.8}));tr.add(mesh(lumpy,0x5a9a58,{y:2.02,sx:1.15,sy:1.05,sz:1.15}));
       tr.userData.pass=1;place(tr,sp[0]+Math.sin(ry0)*0.78,sp[1]+Math.cos(ry0)*0.78,0);p.userData.keep=true;for(let i=0;i<4;i++)place(mesh(new THREE.CylinderGeometry(0.05,0.05,0.45,6),0x9a7a5a,{y:0.05,rz:Math.PI/2}),sp[0]-0.6+i*0.02,sp[1]-0.4+i*0.11,0.3*i);}
     if(info.name==='邱石安'){let b=null;for(let i=0;i<TRAIL.length-1;i++)for(let k=0;k<=10;k++){const x=TRAIL[i][0]+(TRAIL[i+1][0]-TRAIL[i][0])*k/10,z=TRAIL[i][1]+(TRAIL[i+1][1]-TRAIL[i][1])*k/10,d=Math.hypot(x-sp[0],z-sp[1]);if(!b||d<b.d)b={d,x,z};}p.rotation.y=Math.atan2(b.x-sp[0],b.z-sp[1]);p.userData.keep=true;}
     if(info.name==='黃阿筍'){const L=[];for(let i=0;i<6;i++){const a=ry0-0.75+i*0.3,d=1.3+(i%3)*0.35,x=sp[0]+Math.sin(a)*d,z=sp[1]+Math.cos(a)*d;L.push({x,z,h:G(x,z),s:0.85+rng()*0.3,tx:(rng()-0.5)*0.25,ry:rng()*6.28,tz:(rng()-0.5)*0.25});}
@@ -2190,6 +2191,12 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
     const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
     for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
     if(!hit&&obAt(pos.x,pos.z,0.25))hit=true;if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
+/* 張文德右轉 90 度、往東一個人身 */
+{const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name==='張文德');if(a){const o=a.obj;o.rotation.y-=Math.PI/2;const x=o.position.x+0.55,z=o.position.z;if(!obAt(x,z,0.3))o.position.set(x,groundY(x,z),z);}}
+/* 林全興和吳秀琴拉開距離 */
+{const fa=n=>actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name===n);const a=fa('林全興'),b=fa('吳秀琴');if(a&&b){const o=a.obj,q=b.obj;let dx=o.position.x-q.position.x,dz=o.position.z-q.position.z,d=Math.hypot(dx,dz);
+  if(d<1.8){if(d<0.01){dx=1;dz=0;d=1;}let best=null;for(let k=0;k<24;k++){const an=Math.atan2(dx,dz)+(k%2?1:-1)*Math.floor((k+1)/2)*0.26;for(const r of[1.9,2.2,2.6]){const x=q.position.x+Math.sin(an)*r,z=q.position.z+Math.cos(an)*r;if(!obAt(x,z,0.4)&&!nearLines(x,z,0.5)&&H(x,z)>SEA+0.2){best=[x,z];break;}}if(best)break;}
+   if(best)o.position.set(best[0],groundY(best[0],best[1]),best[1]);}}}
 /* 曾炎山往右前方移到田中間 */
 {const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name==='曾炎山');if(a){const o=a.obj,ry=o.rotation.y,fx=Math.sin(ry),fz=Math.cos(ry),rx=-Math.cos(ry),rz=Math.sin(ry);let best=null;
   const fc=(px,pz)=>MASK_L.full(Math.floor(px/2.5),Math.floor(pz/2.5));
