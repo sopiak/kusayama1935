@@ -1242,7 +1242,7 @@ function pose(p,a,t,ph,moving=true){
     case 'stand':Hd.rotation.y=0.35*Math.sin(t*0.3+ph);A[0].rotation.z=-0.08;A[1].rotation.z=0.08;break;
     default:Hd.rotation.y=0.4*Math.sin(t*0.5+ph);I.position.y=0.24+0.01*Math.sin(t*2+ph);
   }
-  if(u.umb&&u.umb.visible){const k=u.umbArm||0,sg=k?-1:1;if(u.aideUmb){A[k].rotation.set(-2.35,0,-0.3*sg);u.umb.rotation.set(2.35,0,0.3*sg);}else{A[k].rotation.set(-1.25,0,-0.25*sg);u.umb.rotation.set(1.25,0,0.25*sg);}}
+  if(u.umb&&u.umb.visible){const k=u.umbArm||0,sg=k?-1:1;if(u.aideUmb){A[k].rotation.set(-1.9,0,-0.5*sg);u.umb.rotation.order='ZYX';u.umb.rotation.set(1.9,0,0.5*sg);}else{A[k].rotation.set(-1.25,0,-0.25*sg);u.umb.rotation.set(1.25,0,0.25*sg);}}
   if(u.hug){A[0].rotation.set(-1.05,0,0.5);A[1].rotation.set(-1.05,0,-0.5);}
   if(u.parasolG){if(a==='wave'){A[0].rotation.x=A[1].rotation.x;A[0].rotation.z=-0.2;}A[1].rotation.set(-1.15,0,0.3);u.parasolG.rotation.set(1.15,0,-0.3);u.parasolG.position.z=-0.04;}
 }
@@ -2070,7 +2070,7 @@ CAMEOS.forEach(c=>{if(['林獻堂','蔣渭水','井手薰','鄧雨賢','杜聰�
 CAMEOS.forEach(c=>{c.p=person(c.style,c.opts);if(c.hold)hold(c.p,c.hold,c.holdC);c.p.userData.info=c.info;CLICKABLE.push(c.p.userData.hit);c.p.userData.hit.userData.person=c.p;
   c.p.visible=false;folk.add(c.p);c.P=makePathPts(c.path);c.aideP=[];c.phase='wait';c.wait=4+Math.random()*41;
   for(let k=0;k<(c.aides||0);k++){const a=c.aideStyle?person(c.aideStyle,{top:0x5c7392}):person('police',{top:0xf3f1ea,hatC:0x2a2d3a});a.visible=false;folk.add(a);c.aideP.push(a);
-    const ai=(c.aideInfo&&c.aideInfo[k])||I(['松井 武','佐野 一郎'][k%2],[36,29][k%2],'總督府警衛',['負責總督出巡警衛的巡查部長，腰佩長刀，一路注意四周的動靜，參拜時站在總督身後兩步遠。','剛調到總督府不久的年輕巡查，第一次擔任總督的隨行警衛，緊張得連帽子都戴得特別端正。'][k%2]);if(k===0&&c.aideUmb){a.userData.bigUmb=true;const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.48,sy:0.96}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.97,sx:1.45,sz:1.45}));u.visible=false;a.userData.arms[0].add(u);a.userData.aideUmb=true;a.userData.umb=u;umbrellas.push(u);}register(a,ai);}
+    const ai=(c.aideInfo&&c.aideInfo[k])||I(['松井 武','佐野 一郎'][k%2],[36,29][k%2],'總督府警衛',['負責總督出巡警衛的巡查部長，腰佩長刀，一路注意四周的動靜，參拜時站在總督身後兩步遠。','剛調到總督府不久的年輕巡查，第一次擔任總督的隨行警衛，緊張得連帽子都戴得特別端正。'][k%2]);if(k===0&&c.aideUmb){a.userData.bigUmb=true;const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.48,sy:0.96}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.96,sx:1.45,sz:1.45}));u.visible=false;a.userData.arms[0].add(u);a.userData.aideUmb=true;a.userData.umb=u;umbrellas.push(u);}register(a,ai);}
   if(c.umb){const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.76}));u.visible=false;c.p.userData.arms[0].add(u);c.p.userData.umb=u;umbrellas.push(u);}
   if(c.easel){const e=easelM();e.visible=false;folk.add(e);c.propObj=e;}
   if(c.tripod){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.22,0.16,0.18),0x2a2530,{y:0.82}));e.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.08,8),0x55505c,{y:0.82,z:0.12,rx:Math.PI/2}));
