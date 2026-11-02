@@ -297,7 +297,7 @@ const ROADS=[
   [[1,5],[8,4],[14,1],[17,-1],[21.6,-1]],
   [[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10]],
   [[-21.5,69],[-26,61],[-31,53],[-37.4,47.4],[-43.2,42.5],[-45.6,41.2]],
-  [[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,82.2]],
+  [[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-14.6,82.2]],
   [[-19.4,74.8],[-18.6,78],[-17,83.8],[-15.1,85]],
   [[-45.6,41.2],[-46.6,37]],
   [[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.29,93.0]],
@@ -510,7 +510,7 @@ WALL.tw_w=winOnly(WALL.tw,x=>{x.fillStyle='#d27d58';x.fillRect(98,108,60,116);x.
 WALL.stone_w=winOnly(WALL.stone,x=>{x.fillStyle='#bdb19b';x.fillRect(100,116,56,140);for(let i=0;i<10;i++){x.fillStyle=['#c9bea8','#ada28c','#b8ab92'][i%3];x.fillRect(102+(i%3)*18,122+Math.floor(i/3)*30,16,12);}
   x.fillStyle='#3d2f2a';x.fillRect(110,122,36,30);});
 WALL.temple_w=winOnly(WALL.temple,x=>{x.fillStyle='#c4402f';x.fillRect(76,86,104,128);x.fillStyle='#3d2f2a';x.fillRect(106,112,44,40);for(let i=1;i<5;i++)jl(x,106+i*8.8,112,106+i*8.8,152,3,'#e2b04a');});
-var SHRINE_FIX=[],TEA_GREET=null;var TEMPLE_SL=null,BATH_OBJ=null,FERRY=null,TEMPLE_GD=null,GD_STALL=null;const REED_CLEAR=[];const atLocal0=(o,lx,lz)=>{const v=new THREE.Vector3(lx,0,lz);o.updateMatrixWorld(true);o.localToWorld(v);return[v.x,v.z];};const ONSEN_H=[];
+var SHRINE_FIX=[],TEA_GREET=null,ZHANG_MV=null,HUANG_MV=null,DOG_PATH_BLK=null;const DOG_MV={};var TEMPLE_SL=null,BATH_OBJ=null,FERRY=null,TEMPLE_GD=null,GD_STALL=null;const REED_CLEAR=[];const atLocal0=(o,lx,lz)=>{const v=new THREE.Vector3(lx,0,lz);o.updateMatrixWorld(true);o.localToWorld(v);return[v.x,v.z];};const ONSEN_H=[];
 function roofTex(base,line,hi,style='tile'){
   return canvasTex((x,w,h)=>{x.fillStyle=base;x.fillRect(0,0,w,h);
     if(style==='tile'){for(let u=0;u<w;u+=16){jl(x,u,0,u,h,3,line,0.8);jl(x,u+5,0,u+5,h,1.4,hi,0.6);}
@@ -643,14 +643,16 @@ function ribbon(way,width,edge,center,lift=0.12){
   const m=new THREE.Mesh(g,new THREE.MeshToonMaterial({vertexColors:true,gradientMap:grad,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2}));m.receiveShadow=true;scene.add(m);RIBBONS.push(m);return m;
 }
 RIVERS.forEach(r=>ribbon(r.pts,r.w,'#c4ebf3',r.w>1?'#5fb0d8':'#78c3e2',0.1));
-const ROAD_RIB0=RIBBONS.length;ROADS.forEach(r=>ribbon(r,0.32,'#d9c08a','#f2e0b2',0.14));
+const ROAD_RIB0=RIBBONS.length;/* 參道路面只鋪到石燈籠前（人物路線不變） */
+const ROADS_DRAW=ROADS.map((r,i)=>i===5?[...r.slice(0,-1),...ROADS[6].slice(0,-1).reverse()]:r).filter((r,i)=>i!==6);
+ROADS_DRAW.forEach(r=>ribbon(r,0.32,'#d9c08a','#f2e0b2',0.14));
 /* 道路端點補一塊圓形路面，路口不會留缺角 */
 {const ce=C('#d9c08a'),cc=C('#f2e0b2'),seen=new Set();const cap=(x0,z0)=>{const k=Math.round(x0*10)+','+Math.round(z0*10);if(seen.has(k))return;seen.add(k);
   const P=[],Cc=[],I=[],NA=14,RR=[0,0.17,0.35];RR.forEach((r,ri)=>{for(let a=0;a<(ri?NA:1);a++){const x=Math.min(X0+W,Math.max(X0,x0+Math.cos(a/NA*6.283)*r)),z=Math.min(Z0+D,Math.max(Z0,z0+Math.sin(a/NA*6.283)*r));P.push(x,Gmesh(x,z)+0.135,z);const c=cc.clone().lerp(ce,r/0.35);Cc.push(c.r,c.g,c.b);}});
   for(let a=0;a<NA;a++){const b=(a+1)%NA;I.push(0,1+b,1+a);I.push(1+a,1+b,1+NA+a);I.push(1+b,1+NA+b,1+NA+a);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(Cc,3));g.setIndex(I);g.computeVertexNormals();
   const m=new THREE.Mesh(g,new THREE.MeshToonMaterial({vertexColors:true,gradientMap:grad,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2}));m.receiveShadow=true;scene.add(m);RIBBONS.push(m);};
-  ROADS.forEach(r=>{cap(...r[0]);cap(...r[r.length-1]);});}const ROAD_RIB1=RIBBONS.length;
+  ROADS_DRAW.forEach(r=>{cap(...r[0]);cap(...r[r.length-1]);});}const ROAD_RIB1=RIBBONS.length;
 ribbon(TRAIL,0.26,'#d9c08a','#f2e0b2',0.14);
 {const j=new THREE.Mesh(new THREE.CircleGeometry(0.36,16),new THREE.MeshToonMaterial({color:0xe6d49e,gradientMap:grad,polygonOffset:true,polygonOffsetFactor:-3}));j.rotation.x=-Math.PI/2;j.position.set(21.6,G(21.6,-1)+0.15,-1);j.receiveShadow=true;scene.add(j);RIBBONS.push(j);}
 ribbon(RAIL_MAIN,0.5,'#9d917f','#c2b6a2',0.18);ribbon(RAIL_SPUR,0.45,'#9d917f','#c2b6a2',0.18);
@@ -1035,7 +1037,7 @@ function cat(col=0xe0a050,o={}){const g=new THREE.Group();coatMarks(g,0.075,0.17
   g.userData={legs,tail,head,animal:true};return g;}
 const PET_BODY={dog:'臺灣農村和街庄常見的土狗，立耳、短毛、尾巴向上捲，看家很盡責，陌生人一靠近就叫個不停，主人下田時也會跟前跟後。',
   cat:'在街屋屋簷和米倉之間來去自如的貓。白天在門口曬太陽，晚上抓老鼠，店家和農家都很歡迎牠。'};
-const PET_BIO={"dog:阿黃": "最愛跑在牛車前面帶路，到了士林街口一定先停下來等主人，從來沒走丟過。", "dog:小黑": "每天在草山的上坡路來回巡邏，看到挑夫就搖著尾巴跟一段，好像在幫忙押貨。", "dog:來福": "曬穀的時候專門負責趕麻雀，一隻也不放過，主人說牠比稻草人還管用。", "dog:旺來": "一聽到遠處有牛車鈴聲就豎起耳朵，總是第一個衝到路口迎接回家的人。", "dog:阿花": "身上的花斑像潑了墨，喜歡趴在灶腳門口，等阿嬤煮飯時偷偷丟一塊番薯給牠。", "dog:虎仔": "虎斑毛色看起來很兇，其實最怕雞，被母雞一追就躲到稻草堆後面。", "dog:阿福": "年紀最大的看門狗，白天幾乎都在睡覺，但半夜只要有一點聲響，叫聲全庄都聽得到。", "dog:小白": "白毛最容易弄髒，每次下田回來都變成泥巴色，被主人拎去溪邊洗澡時一臉委屈。", "dog:黑皮": "喜歡在曬穀場上打滾，常被主人罵把穀子弄得亂七八糟，但一下就又忘了。", "dog:阿財": "名字取「財」是希望家裡有財運，牠倒是很盡責，每天早上都會叼回一隻拖鞋。", "dog:ポチ": "日本人家庭養的狗，聽得懂「おすわり」和臺灣話的「坐落來」，在街上很受孩子歡迎。", "dog:阿虎": "北投庄最有名的看門狗，聞到溫泉的硫磺味就打噴嚏，所以從來不靠近地獄谷。", "dog:旺旺": "在眾樂園前等著泡完湯的客人，誰手上拿著饅頭，牠就跟誰走。", "dog:小黃": "沒有主人的流浪狗，晚上就睡在明治橋的燈柱下，橋邊的攤販都會留點剩飯給牠。", "dog:阿土": "竹子湖霧大的時候，牠會沿著田埂一路叫，帶著迷路的人走回聚落。", "dog:黑仔": "三芝的海風很大，牠總是蹲在石牆背風的那一側，眼睛卻一直盯著來往的路人。", "dog:阿勇": "鼻子特別靈，能在草叢裡找到山羌留下的蹤跡，主人說打獵一半的功勞是牠的。", "cat:タマ": "市場收攤前一定會出現，坐在魚販攤子旁邊一動也不動，直到有人丟一尾小魚給牠。", "cat:ミケ": "溫泉旅館的招財貓，客人一來就躺在玄關的木地板上，讓大家摸個夠。", "cat:咪咪": "最喜歡地獄谷旁邊溫溫的石頭，冬天整個下午都窩在上面，被蒸氣燻得暖呼呼。", "cat:阿虎": "在臺北街屋的屋頂上跳來跳去，從這條街走到那條街都不用下地。", "cat:小花": "漁船一靠港就第一個跑到碼頭，漁夫們都說牠比魚販還早知道今天的漁獲。"};
+const PET_BIO={"dog:阿黃": "最愛跑在牛車前面帶路，到了士林街口一定先停下來等主人，從來沒走丟過。", "dog:小黑": "每天從士林街沿著山路走到大嶺牧場，再掉頭走回來，一路上走走停停、搖著尾巴；遇到挑魚的挑夫，就跟在後面送一段，好像在幫忙押貨。", "dog:來福": "曬穀的時候專門負責趕麻雀，一隻也不放過，主人說牠比稻草人還管用。", "dog:旺來": "一聽到遠處有牛車鈴聲就豎起耳朵，總是第一個衝到路口迎接回家的人。", "dog:阿花": "身上的花斑像潑了墨，喜歡趴在灶腳門口，等阿嬤煮飯時偷偷丟一塊番薯給牠。", "dog:虎仔": "虎斑毛色看起來很兇，其實最怕雞，被母雞一追就躲到稻草堆後面。", "dog:阿福": "年紀最大的看門狗，白天幾乎都在睡覺，但半夜只要有一點聲響，叫聲全庄都聽得到。", "dog:小白": "白毛最容易弄髒，每次下田回來都變成泥巴色，被主人拎去溪邊洗澡時一臉委屈。", "dog:黑皮": "喜歡在曬穀場上打滾，常被主人罵把穀子弄得亂七八糟，但一下就又忘了。", "dog:阿財": "名字取「財」是希望家裡有財運，牠倒是很盡責，每天早上都會叼回一隻拖鞋。", "dog:ポチ": "日本人家庭養的狗，聽得懂「おすわり」和臺灣話的「坐落來」，在街上很受孩子歡迎。", "dog:阿虎": "北投庄最有名的看門狗，聞到溫泉的硫磺味就打噴嚏，所以從來不靠近地獄谷。", "dog:旺旺": "在眾樂園前等著泡完湯的客人，誰手上拿著饅頭，牠就跟誰走。", "dog:小黃": "沒有主人的流浪狗，晚上就睡在明治橋的燈柱下，橋邊的攤販都會留點剩飯給牠。", "dog:阿土": "竹子湖霧大的時候，牠會沿著田埂一路叫，帶著迷路的人走回聚落。", "dog:黑仔": "三芝的海風很大，牠總是蹲在石牆背風的那一側，眼睛卻一直盯著來往的路人。", "dog:阿勇": "鼻子特別靈，能在草叢裡找到山羌留下的蹤跡，主人說打獵一半的功勞是牠的。", "cat:タマ": "市場收攤前一定會出現，坐在魚販攤子旁邊一動也不動，直到有人丟一尾小魚給牠。", "cat:ミケ": "溫泉旅館的招財貓，客人一來就躺在玄關的木地板上，讓大家摸個夠。", "cat:咪咪": "最喜歡地獄谷旁邊溫溫的石頭，冬天整個下午都窩在上面，被蒸氣燻得暖呼呼。", "cat:阿虎": "在臺北街屋的屋頂上跳來跳去，從這條街走到那條街都不用下地。", "cat:小花": "漁船一靠港就第一個跑到碼頭，漁夫們都說牠比魚販還早知道今天的漁獲。"};
 const petInfo=(k,name,where,coat)=>({chip:'動物',kind:'animal',title:name,tag:(k==='dog'?'臺灣土狗':'貓')+(coat?'・'+coat:''),body:(where?where+'。':'')+(PET_BIO[k+':'+name]||PET_BODY[k])});
 const COAT={yellow:[{c:0xd9a85a},'黃毛'],tan:[{c:0xc9a066},'土黃毛'],brown:[{c:0x9a6a42},'棕毛'],black:[{c:0x2f2a33},'黑毛'],white:[{c:0xf2efe6},'白毛'],spot:[{c:0xf2efe6,spots:[0x2f2a33,0x2f2a33,0x6b4a34]},'黑白花斑'],brindle:[{c:0x9a6a42,stripe:0x3d2c22},'虎斑'],whitebrown:[{c:0xf2efe6,spots:[0xb07a4a,0xb07a4a]},'白底棕斑']};
 const CCOAT={orangeTabby:[0xe0a050,{stripe:0xb0652a},'橘虎斑'],calico:[0xf2efe6,{spots:[0xe0a050,0x2f2a33,0xe0a050,0x2f2a33]},'三花'],white:[0xf2efe6,{},'白貓'],gray:[0x9a8a7a,{stripe:0x6b5e52},'灰虎斑'],black:[0x2f2a33,{},'黑貓'],patch:[0xf2efe6,{spots:[0xe0a050,0xe0a050,0x9a8a7a]},'白底橘斑']};
@@ -1240,7 +1242,7 @@ function pose(p,a,t,ph,moving=true){
     case 'stand':Hd.rotation.y=0.35*Math.sin(t*0.3+ph);A[0].rotation.z=-0.08;A[1].rotation.z=0.08;break;
     default:Hd.rotation.y=0.4*Math.sin(t*0.5+ph);I.position.y=0.24+0.01*Math.sin(t*2+ph);
   }
-  if(u.umb&&u.umb.visible){const k=u.umbArm||0,sg=k?-1:1;A[k].rotation.set(-1.25,0,-0.25*sg);u.umb.rotation.set(1.25,0,0.25*sg);}
+  if(u.umb&&u.umb.visible){const k=u.umbArm||0,sg=k?-1:1;if(u.aideUmb){A[k].rotation.set(-2.35,0,-0.3*sg);u.umb.rotation.set(2.35,0,0.3*sg);}else{A[k].rotation.set(-1.25,0,-0.25*sg);u.umb.rotation.set(1.25,0,0.25*sg);}}
   if(u.hug){A[0].rotation.set(-1.05,0,0.5);A[1].rotation.set(-1.05,0,-0.5);}
   if(u.parasolG){if(a==='wave'){A[0].rotation.x=A[1].rotation.x;A[0].rotation.z=-0.2;}A[1].rotation.set(-1.15,0,0.3);u.parasolG.rotation.set(1.15,0,-0.3);u.parasolG.position.z=-0.04;}
 }
@@ -1421,11 +1423,11 @@ const FIELDS=[];{const inf=MASK_L.info;for(let cz=inf.y;cz<inf.y+inf.w;cz++)for(
   if(cz*2.5>30&&MASK_L.full(cx,cz)&&MASK_L.full(cx+1,cz)&&MASK_L.full(cx,cz+1)&&MASK_L.full(cx+1,cz+1)){const x=cx*2.5,z=cz*2.5;if(!nearLines(x+2.5,z+2.5,1.2)&&free(x+2.5,z+2.5,1.6))FIELDS.push([x,z]);}}
 function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.floor(rng()*FIELDS.length),1)[0];claim(f[0]+2.5,f[1]+2.5,2.5);return f;}
 { // 水牛犁田
-  [0,1,2].map(()=>{let f=takeField();for(let k=0;k<12&&f&&inBoardXZ(f[0]+2.5,f[1]+2.5)<10;k++)f=takeField();return f?[[f[0]+0.8,f[1]+2.5],[f[0]+4.2,f[1]+2.5]]:null;}).filter(Boolean).forEach((pts,i)=>{
+  const PLOW=[];[0,1,2].map(i=>{let f=takeField();for(let k=0;k<24&&f&&(inBoardXZ(f[0]+2.5,f[1]+2.5)<10||PLOW.some(q=>Math.hypot(q[0]-f[0],q[1]-f[1])<12));k++)f=takeField();if(f)PLOW.push(f);return f?[[f[0]+0.8,f[1]+2.5+[-0.4,0.15,0.6][i]],[f[0]+4.2,f[1]+2.5+[-0.4,0.15,0.6][i]]]:null;}).filter(Boolean).forEach((pts,i)=>{
     const g=new THREE.Group();const b=bovine('buffalo');g.add(b);const p=person('farmer',{top:[0x8aa0a8,0x6f8fb3,0x5c7392,0x9bb2bf][i]});hold(p,'stick');p.position.z=-1.3;g.add(p);
     g.add(mesh(new THREE.BoxGeometry(0.05,0.05,0.9),0x8a6a4a,{y:0.35,z:-0.65,rx:0.2}));g.add(mesh(new THREE.BoxGeometry(0.3,0.1,0.06),0x8d8d96,{y:0.1,z:-1.0}));
     const e=egret();e.position.set(0.6,0,-1.8);g.add(e);
-    addMover(g,pts,{speed:0.3,walkers:[[p,'herd'],[b,'animal']]},I(['周財源','鄭清標','劉金水'][i],[48,36,29][i],'犁田的農夫',['牽著自家的水牛犁田。水牛是農家最重要的財產，農閒時要送上大嶺寄養，農忙時再牽回來。','剛學會自己駛牛犁田，牛走得太快，他在後面跌跌撞撞地跟著，黃頭鷺倒是跟得很開心。','年紀最輕的犁田手，邊犁田邊吹口哨，說水牛聽到口哨聲會走得比較穩。'][i]));
+    addMover(g,pts,{speed:[0.27,0.31,0.34][i],start:[0.12,0.58,0.86][i],pause:[1.5,2.6,1.1][i],walkers:[[p,'herd'],[b,'animal']]},I(['周財源','鄭清標','劉金水'][i],[48,36,29][i],'犁田的農夫',['牽著自家的水牛犁田。水牛是農家最重要的財產，農閒時要送上大嶺寄養，農忙時再牽回來。','剛學會自己駛牛犁田，牛走得太快，他在後面跌跌撞撞地跟著，黃頭鷺倒是跟得很開心。','年紀最輕的犁田手，邊犁田邊吹口哨，說水牛聽到口哨聲會走得比較穩。'][i]));
   });
 }
 { // 牛車
@@ -1433,8 +1435,8 @@ function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.fl
     cart.add(mesh(new THREE.BoxGeometry(0.9,0.25,1),0x9a6b46,{y:0.55}));cart.add(mesh(new THREE.BoxGeometry(0.8,0.4,0.9),0xe6cf6a,{y:0.85}));
     for(const s of[-1,1])cart.add(mesh(new THREE.TorusGeometry(0.38,0.06,6,16),0x6b4a34,{x:0.5*s,y:0.4,ry:Math.PI/2}));
     const p=person('farmer',{top:0x6f8fb3});hold(p,'stick');p.position.set(0.7,0,0.2);g.add(p);return[g,p,b];};
-  const [g1,p1,b1]=mk();const mvZ=addMover(g1,offsetPath(ROADS[4],0.35),{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張福壽',50,'牛車伕','用牛車把稻穀從田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));mvZ.noSpur=true;
-  const [g2,p2,b2]=mk();addMover(g2,offsetPath(ROADS[3].slice(0,3),0.35),{speed:0.35,start:0.6,walkers:[[p2,'herd'],[b2,'animal']]},I('黃樹根',42,'牛車伕','載著一車稻草往士林街去，稻草可以賣給人家當燃料或鋪牛舍。'));
+  const [g1,p1,b1]=mk();const mvZ=ZHANG_MV=addMover(g1,offsetPath(ROADS[4],0.35),{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張福壽',50,'牛車伕','用牛車把稻穀從田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));mvZ.noSpur=true;
+  const [g2,p2,b2]=mk();HUANG_MV=addMover(g2,offsetPath(ROADS[3].slice(0,3),0.35),{speed:0.35,start:0.6,walkers:[[p2,'herd'],[b2,'animal']]},I('黃樹根',42,'牛車伕','載著一車稻草往士林街去，稻草可以賣給人家當燃料或鋪牛舍。'));
 }
 { // 養鴨人家
   const h=person('farmer',{hat:'kasa',top:0x5c7392});hold(h,'longpole');
@@ -1475,13 +1477,13 @@ function bankAt(pts,w,px,pz,off,side=1){let best=null;
 /* ---------- 臺灣神社、臺北 ---------- */
 {
   const priest=person('priest');hold(priest,'broom');addActor(priest,-13.6,80.6,2.8,'sweep',I('佐々木 清',47,'神職','在臺灣神社奉職的神職人員，每天清晨打掃參道和社殿前的砂地。'));
-  const sando=[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.1]];
+  const sando=[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-14.6,84.75],[-14.6,83.1]];
   {const g=new THREE.Group();const a1=person('suit'),a2=person('kimono');a1.position.x=-0.36;a2.position.x=0.36;a1.userData.umbArm=1;a1.userData.bigUmb=true;a2.userData.hasParasol=true;g.add(a1,a2);register(a1,I('鈴木 一郎',38,'參拜客','帶著家人從臺北市搭車來參拜的公司職員，和太太一起走上參道、一起參拜，再一起回去。'));
    const mvS=addMover(g,sando,{speed:0.4,start:0,pause:8,walkers:[[a2,'walk'],[a1,'walk']]},I('鈴木 千代',33,'參拜客','鈴木一郎的太太，穿著外出用的和服，和丈夫並肩走上參道，一同參拜。'));
    g.userData.couple=[a1,a2];mvS.shrine=true;mvS.size=2;}
   [['twM','陳萬益',50,'參拜客','大稻埕商行的老闆，應同業組合之邀一起來神社參拜。'],['student','小林 實',16,'中學校學生','學校安排的團體參拜，參拜完就解散，打算順路去圓山動物園。']].forEach(([st,n,a,j,b],i)=>{
     const p=person(st);const mq=addMover(p,offsetPath(sando,i%2?0.25:-0.25),{speed:0.4,start:0.3+i*0.25,pause:8},I(n,a,j,b));mq.shrine=true;});
-  const bw=person('kimono',{top:0x7aa6c9,robe:0x7aa6c9,obi:0xf2d27a});const mvT=addMover(bw,offsetPath([...ROADS[8].slice(0,-1),[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.1]],0.12),{speed:0.4,start:0.05,pause:8,walkers:[[bw,'walk']]},I('高橋 ふさ',58,'參拜客','每個月一號一定從城裡走來神社參拜，祈求在內地的兒子平安，拜完再沿著原路走回家。'));mvT.shrine=true;
+  const bw=person('kimono',{top:0x7aa6c9,robe:0x7aa6c9,obi:0xf2d27a});const mvT=addMover(bw,offsetPath([...ROADS[8].slice(0,-1),[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-14.6,84.75],[-14.6,83.1]],0.12),{speed:0.4,start:0.05,pause:8,walkers:[[bw,'walk']]},I('高橋 ふさ',58,'參拜客','每個月一號一定從城裡走來神社參拜，祈求在內地的兒子平安，拜完再沿著原路走回家。'));mvT.shrine=true;
   const ph=person('suit',{hat:'fedora',hatC:0x2f2a33});addActor(ph,-12.5,91.1,-2.4,'photo',I('葉清泉',41,'寫真師','在臺北市開寫真館的攝影師，假日在明治橋邊替遊客拍紀念照，三腳架上的箱型相機要蓋上黑布才能對焦。'));
   const cam=new THREE.Group();for(let s=0;s<3;s++)cam.add(mesh(PG.stick,0x6b4a34,{y:0.4,sy:0.8,rx:0.25*Math.cos(s*2.1),rz:0.25*Math.sin(s*2.1)}));cam.add(mesh(new THREE.BoxGeometry(0.28,0.25,0.3),0x2f2a33,{y:0.85}));cam.add(mesh(new THREE.CylinderGeometry(0.06,0.06,0.12,8),0x5a5a66,{y:0.85,z:0.2,rx:Math.PI/2}));
   place(cam,-13.0,90.6,-2.4);
@@ -1513,7 +1515,9 @@ for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;
 
 /* 狗 */
 const dogs=[];
-[[ROADS[4],0.1,'阿黃','跟著主人往返士林與北投','yellow'],[ROADS[0],0.5,'小黑','在北投往草山的路上閒晃','black']].forEach(([r,st,n,w,ck])=>{const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',n,w,COAT[ck][1]),0.35,0.25);addMover(d,offsetPath(r,0.5),{speed:0.7,start:st,walkers:[[d,'animal']],pause:2.5});});
+[[ROADS[4],0.1,'阿黃','跟著主人往返士林與北投','yellow'],[[...ROADS[3],[1,5],...ROADS[2].slice(1)],0.5,'小黑','在士林和大嶺牧場之間的路上來回','black']].forEach(([r,st,n,w,ck])=>{const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',n,w,COAT[ck][1]),0.35,0.25);DOG_MV[n]=addMover(d,offsetPath(r,0.5),{speed:0.7,start:st,walkers:[[d,'animal']],pause:n==='小黑'?10:2.5});});
+  DOG_PATH_BLK=[...ROADS[3],[1,5],...ROADS[2].slice(1)];
+  DOG_MV['阿黃'].custom=true;
 farms.slice(0,8).forEach((f,i)=>{const ck=['tan','brown','spot','brindle','yellow','white','black','tan'][i];const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',['來福','旺來','阿花','虎仔','阿福','小白','黑皮','阿財'][i],'守著三合院的曬穀場',COAT[ck][1]),0.35,0.2);addActor(d,f.x+0.6,f.z+0.9,rng()*6,'dogrest');});
 
 /* 從地圖西側走進來的旅人（走出邊界會淡出，隨機一段時間後再走回來） */
@@ -1545,14 +1549,17 @@ function booth(x,z){const g=new THREE.Group();g.add(mesh(new THREE.BoxGeometry(1
   g.add(mesh(roofGeo(1.2,0.35,0.6,0.1),0xe0892f,{y:0.9}));place(g,x,z-0.7,0);}
 var PENDING_VENTS=[];
 function charSpot(){const wc=NPCS.find(q=>q.nm==='簡樹德');let best=null;
-  for(let k=0;k<700;k++){const x=24+(rng()-0.5)*16,z=7+(rng()-0.5)*14;if(inBoardXZ(x,z)<4||H(x,z)<SEA+1||nearLines(x,z,1.0)||!free(x,z,1.4)||Math.hypot(x-29,z+1)<9)continue;
+  /* 大崙頭山與紗帽山之間、比較空曠的山坡 */
+  for(let k=0;k<700;k++){const t=0.3+rng()*0.4,o=(rng()-0.5)*12,x=-1.6+(28.6+1.6)*t+o*0.81,z=16.5+(58.7-16.5)*t-o*0.58;if(inBoardXZ(x,z)<4||H(x,z)<SEA+1.2||nearLines(x,z,1.8)||!free(x,z,2.4)||inTown(x,z,2))continue;
     if(wc&&wc._sp&&Math.hypot(x-wc._sp[0],z-wc._sp[1])<4.2)continue;let mn=1e9,mx=-1e9;for(const [ox,oz] of[[0,0],[0.85,0],[1.4,0],[-0.6,0],[0.4,0.6],[0.4,-0.6],[-1.2,-0.3]]){const g=G(x+ox,z+oz);mn=Math.min(mn,g);mx=Math.max(mx,g);}
     const sc=mx-mn;if(!best||sc<best.sc)best={sc,x,z};}
   if(best){claim(best.x,best.z,1.2);return[best.x,best.z];}return spotNear('MT');}
 function kiln(x,z){const g=new THREE.Group();g.add(mesh(new THREE.SphereGeometry(0.6,14,8,0,Math.PI*2,0,Math.PI/2),0x8a6a4a,{sy:0.8}));
   g.add(mesh(new THREE.BoxGeometry(0.26,0.26,0.1),0x2f2a33,{y:0.12,z:0.56}));g.add(mesh(new THREE.CylinderGeometry(0.07,0.09,0.35,8),0x6b5a46,{y:0.55,x:0.15}));
-  for(let i=0;i<5;i++)g.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.5,6),0x7a5a3a,{x:-0.85,y:0.05+i*0.1,z:-0.25+(i%2)*0.1,rz:Math.PI/2}));
-  const kx=x+0.85,kz=z;place(g,kx,kz,0);claim(kx,kz,0.8);PENDING_VENTS.push([kx+0.15,kz,0.5,5,0.14,0.75]);}
+  const kx=x+0.85,kz=z;let gk=-1e9;for(let a=0;a<6.283;a+=0.8)gk=Math.max(gk,G(kx+Math.cos(a)*0.35,kz+Math.sin(a)*0.35));gk=Math.max(gk-0.04,G(kx,kz));
+  {const lx=-0.05,lz0=-0.95;let gl=-1e9;for(const ox of[-0.25,0,0.25])for(const oz of[-0.12,0,0.12])gl=Math.max(gl,G(kx+lx+ox,kz+lz0+oz));const R=0.05,LOG=[[-0.1,0],[0,0],[0.1,0],[-0.05,1],[0.05,1],[0,2]];
+   LOG.forEach(([dz,row])=>g.add(mesh(new THREE.CylinderGeometry(R,R,0.5,6),0x7a5a3a,{x:lx,y:gl-gk+R-0.01+row*R*1.73,z:lz0+dz,rz:Math.PI/2})));}
+  place(g,kx,kz,0);g.position.y=gk;g.userData.keepY=true;claim(kx,kz,0.8);PENDING_VENTS.push([kx+0.15,kz,0.5,5,0.14,0.75]);}
 function anvil(x,z){place(mesh(new THREE.BoxGeometry(0.3,0.25,0.18),0x4a4652,{y:0.13}),x+0.45,z,0);}
 function stonePile(x,z){const g=new THREE.Group();for(let i=0;i<4;i++)g.add(mesh(new THREE.BoxGeometry(0.3,0.18,0.22),0x9a8f7a,{x:(i%2)*0.32-0.16,y:0.09+Math.floor(i/2)*0.18}));place(g,x+0.6,z,0.3);}
 const atLocal=(o,lx,lz)=>{const v=new THREE.Vector3(lx,0,lz);o.updateMatrixWorld(true);o.localToWorld(v);return[v.x,v.z];};
@@ -2020,11 +2027,11 @@ function updateShrineQueue(dt){const E=[];
   movers.forEach(m=>{if(!m.shrine)return;m.qhold=false;const atEnd=m.s>=m.P.L-0.02&&m.wait>0&&m.dir<0;const coming=m.dir>0&&m.s>m.P.L-7;if(atEnd||coming)E.push({m,atEnd,d:atEnd?0:m.P.L-m.s,size:m.size||1});});
   CAMEOS.forEach(c=>{if(!c.shrine)return;c.qhold=false;[c.p,...c.aideP].forEach(q=>{if(q.userData.umb)q.userData.umb.userData.fold=c.phase==='act';});const atEnd=c.phase==='act';const coming=c.phase==='in'&&c.s>c.P.L-7;if(atEnd||coming)E.push({c,atEnd,d:atEnd?0:c.P.L-c.s,size:1});});
   E.sort((a,b)=>(b.atEnd-a.atEnd)||(a.d-b.d));let used=0,k=0;
-  for(const e of E){if(used+e.size<=2&&(e.atEnd||k===0)){used+=e.size;continue;}k++;const stop=0.9*k+0.3;if(e.d<=stop+0.02){if(e.m){e.m.qhold=true;}else e.c.qhold=true;}}}
+  for(const e of E){if(used===0&&k===0){used+=e.size;continue;}k++;const stop=0.9*k+0.3;if(e.d<=stop+0.02){if(e.m){e.m.qhold=true;}else e.c.qhold=true;}}}
 
 /* -------------------- 名人入場 -------------------- */
 const CAMEOS=[
-  {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,shrine:true,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-14.6,83.2]],act:'bow',actT:7,speed:0.5,
+  {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,shrine:true,path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-14.6,84.75],[-14.6,83.2]],act:'bow',actT:7,speed:0.5,
    info:{chip:'名人',kind:'person',title:'中川健藏',tag:'第 16 任臺灣總督（任期 1932–1936）',body:'內務官僚出身的文官總督，昭和 7 年就任。任內推動地方自治制度改革，昭和 10 年（1935）舉辦「始政四十周年記念臺灣博覽會」，並實施臺灣第一次州、市、街庄協議會員選舉。這天他帶著隨員，從臺北經明治橋前往臺灣神社參拜。'}},
   {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a4f45,bottom:0x5a4f45},hold:'brush',easel:true,path:[[-95,31.8],[-89.5,32.6],[-84.6,36.2],[-82,39.2],[-80.4,42],[-77.3,44.2],[-77.4,47.2],[-78.9,48.4]],act:'paint',actT:300,clearReeds:true,speed:0.55,
    info:{chip:'名人',kind:'person',title:'陳澄波',tag:'油畫家（1895–1947）',body:'嘉義出身的油畫家，東京美術學校畢業，昭和元年以〈嘉義街外〉入選帝展，是第一位入選帝展的臺灣畫家。1930 年代他常到淡水寫生，這天他從淡水沿著鐵道南側走來，在關渡宮東邊的河岸空地支起畫架，一畫就是好一陣子。'}},
@@ -2038,23 +2045,23 @@ const CAMEOS=[
 CAMEOS.push(
   {style:'suit',opts:{hat:'fedora',hatC:0x3d3446,top:0x3d3a46,bottom:0x3d3a46},hold:'doc',path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[4,92.8],[-2,92.6],[-8,92.7],[-11.5,92.8],[-13.8,92.6],[-14.3,92.1]],act:'idle',actT:40,speed:0.5,
    info:{chip:'名人',kind:'person',title:'井手薰',tag:'建築家・總督府營繕課長（1879–1944）',body:'長年主持臺灣總督府營繕課，參與總督府廳舍等官廳建築，晚年力倡適合臺灣氣候的建築風格。他領導的營繕課設計的臺北公會堂正在興建中，預定明年（1936）落成。他拿著圖板，正在城北的街上勘查。'}},
-  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4]],act:'write',actT:12,speed:0.9,
+  {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x5a5f6e,bottom:0x5a5f6e},path:[[22.4,99],[22.5,96.2],[21.4,94.6],[18,94.3],[12,93.2],[0,92.6],[-10,92.6],[-12.6,93.2],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4]],act:'write',actT:12,speed:0.9,
    info:{chip:'名人',kind:'person',title:'鄧雨賢',tag:'作曲家（1906–1944）',body:'客家籍的作曲家，任職古倫美亞唱片，寫下〈望春風〉（1933）、〈雨夜花〉（1934）、〈月夜愁〉等膾炙人口的臺語流行歌。他從臺北城東南邊沿著基隆河南岸往西走，過明治橋（戰後改名中山橋）再一路往北，經士林、草山走到冷水坑，在溫泉邊的本子上記下腦中浮現的旋律。'}},
   {style:'qipao',opts:{},hold:'parasol',holdC:0xf2d27a,path:[[-95,28.5],[-84,33],[-77,35.8],[-70,36.2],[-62,36.0],[-55,35.4],[-50.5,37.2],[-46.6,37],[-47.3,35.3],[-48.1,33.6],[-47.0,32.1],[-45.7,30.8],[-44.0,29.3],[-42.8,28.35],[-40.3,27.55],[-37.6,27.4],[-38.8,29.5]],act:'wave',actT:8,speed:0.8,
    info:{chip:'名人',kind:'person',title:'純純（劉清香）',tag:'流行歌手（1914–1943）',body:'古倫美亞唱片的當紅歌手，原唱〈望春風〉、〈月夜愁〉等歌曲，被視為臺語流行歌的第一代歌后。她從淡水方向沿著河岸路走到北投，撐著陽傘逛溫泉街，和認出她的歌迷揮手。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.55,
+  {style:'suit',opts:{hat:'fedora',hatC:0x2f2a33,top:0x2f3346,bottom:0x2f3346},hold:'cane',path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8]],act:'chat',actT:8,speed:0.55,
    info:{chip:'名人',kind:'person',title:'杜聰明',tag:'醫學家（1893–1986）',body:'大正 11 年（1922）取得京都帝國大學醫學博士，是第一位獲得博士學位的臺灣人。任臺北帝國大學醫學部教授，研究蛇毒與鴉片癮的矯治。他從臺北過明治橋，往士林街去拜訪朋友。'}},
-  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.8,
+  {style:'changpao',opts:{robe:0x4a3f33,top:0x4a3f33},path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[0,18.6],[3.6,18.8]],act:'chat',actT:10,speed:0.8,
    info:{chip:'名人',kind:'person',title:'陳天來',tag:'茶商（1872–1939）',body:'大稻埕錦記茶行的老闆，經營烏龍茶、包種茶外銷，是臺北首屈一指的茶商，還出資興建了戲院「第一劇場」。他從臺北出發，經士林沿著草山道路上山，親自看看今年的茶園。'}},
-  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[-3.4,11.6]],act:'chat',actT:25,enter:true,speed:0.95,
+  {style:'changpao',opts:{robe:0x2f2a33,top:0x2f2a33},aides:1,aideStyle:'twM',path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[-3.4,11.6]],act:'chat',actT:25,enter:true,speed:0.95,
    info:{chip:'名人',kind:'person',title:'辜顯榮',tag:'商人・貴族院議員（1866–1937）',body:'鹿港出身的商人，經營製糖、鹽業與土地開發，是日本時代臺灣最有影響力的商人之一，昭和 9 年（1934）成為第一位獲敕選為貴族院議員的臺灣人。他帶著隨從從臺北過明治橋，一路步行上草山，走進眾樂園泡湯，過一陣子才神清氣爽地從門口出來，循原路回去。'},aideInfo:[I('王順德',34,'辜家的隨從','跟著辜顯榮多年的隨從，手裡提著主人的換洗衣物和毛巾，主人一停下來他就趕緊遞上扇子。')]},
-  {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.55,
+  {style:'changpao',opts:{robe:0x3d4f73,top:0x3d4f73},hold:'cane',path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16.8,69.5]],act:'chat',actT:10,speed:0.55,
    info:{chip:'名人',kind:'person',title:'林獻堂',tag:'霧峰林家・社會運動領袖（1881–1956）',body:'臺中霧峰林家的領袖，長年領導「臺灣議會設置請願運動」，也是臺灣文化協會的重要支持者，被稱為臺灣議會之父。他到士林拜訪老友，在街上和人聊了起來。'}},
-  {style:'twM',opts:{top:0x6b5a46,bottom:0x3d3446},hold:'board',path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-21.5,69],[-26,61],[-31,53],[-35,50]],act:'write',actT:10,speed:0.6,
+  {style:'twM',opts:{top:0x6b5a46,bottom:0x3d3446},hold:'board',path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-21.5,69],[-26,61],[-31,53],[-35,50]],act:'write',actT:10,speed:0.6,
    info:{chip:'名人',kind:'person',title:'楊逵',tag:'作家（1906–1985）',body:'臺南新化出身的作家，昭和 9 年（1934）以〈送報伕〉入選東京《文學評論》徵文，是第一位登上日本中央文壇的臺灣作家。他走在鄉間小路上，邊走邊構思描寫農民的新小說。'}},
   {style:'suit',opts:{hat:'boater',hatC:0xf0e2b6,top:0x6b5a46,bottom:0x4a4458},hold:'brush',easel:true,path:[[-36,100],[-35,96],[-35.5,92],[-35.6,88],[-36.2,86.5],[-37.6,83.5]],act:'paint',actT:60,speed:0.45,
    info:{chip:'名人',kind:'person',title:'郭雪湖',tag:'膠彩畫家（1908–2012）',body:'大稻埕長大的畫家，和陳進、林玉山同在第一回臺展入選，被稱為「臺展三少年」。昭和 5 年（1930）以描繪大稻埕霞海城隍廟前熱鬧街景的〈南街殷賑〉入選臺展。他在淡水河邊支起畫架寫生。'}},
-  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11.4,100],[-12,96],[-13.5,92.5],[-15,89],[-15.1,85],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4],[17.6,-1.6]],act:'photo',actT:10,speed:0.9,
+  {style:'suit',opts:{hat:'fedora',hatC:0x5a4a3a,top:0x5a5048,bottom:0x5a5048},tripod:true,path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-17,83.8],[-18.6,78],[-19.4,74.8],[-19,70],[-16,63],[-12,55],[-9,45],[-7,35],[-6,25],[-5,17],[-4,10],[1,5],[8,4],[14,1],[16.6,-0.4],[17.6,-1.6]],act:'photo',actT:10,speed:0.9,
    info:{chip:'名人',kind:'person',title:'鄧南光',tag:'攝影家（1907–1971）',body:'新竹北埔出身，在日本法政大學求學時迷上攝影，昭和 10 年（1935）回臺在臺北開設「南光寫真機店」，用萊卡相機記錄臺灣的街頭與庶民生活。他從臺北出發，扛著三腳架經士林、草山一路往北走到冷水坑，拍攝山間的溫泉與芒草原。'}},
   {style:'athlete',opts:{},path:offsetPath(MAIN_PATH,0.45),act:null,actT:0,speed:2.2,run:true,
    info:{chip:'名人',kind:'person',title:'張星賢',tag:'田徑選手（1910–1989）',body:'臺中出身的田徑選手，早稻田大學在學期間入選日本代表隊，參加昭和 7 年（1932）洛杉磯奧運的四百公尺跨欄等項目，是第一位參加奧運的臺灣人。他正從臺北出發，沿著淡水線的鐵道旁一路往淡水方向練跑。'}},
@@ -2063,7 +2070,7 @@ CAMEOS.forEach(c=>{if(['林獻堂','蔣渭水','井手薰','鄧雨賢','杜聰�
 CAMEOS.forEach(c=>{c.p=person(c.style,c.opts);if(c.hold)hold(c.p,c.hold,c.holdC);c.p.userData.info=c.info;CLICKABLE.push(c.p.userData.hit);c.p.userData.hit.userData.person=c.p;
   c.p.visible=false;folk.add(c.p);c.P=makePathPts(c.path);c.aideP=[];c.phase='wait';c.wait=4+Math.random()*41;
   for(let k=0;k<(c.aides||0);k++){const a=c.aideStyle?person(c.aideStyle,{top:0x5c7392}):person('police',{top:0xf3f1ea,hatC:0x2a2d3a});a.visible=false;folk.add(a);c.aideP.push(a);
-    const ai=(c.aideInfo&&c.aideInfo[k])||I(['松井 武','佐野 一郎'][k%2],[36,29][k%2],'總督府警衛',['負責總督出巡警衛的巡查部長，腰佩長刀，一路注意四周的動靜，參拜時站在總督身後兩步遠。','剛調到總督府不久的年輕巡查，第一次擔任總督的隨行警衛，緊張得連帽子都戴得特別端正。'][k%2]);if(k===0&&c.aideUmb){a.userData.bigUmb=true;const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.55,sy:1.15}));u.add(mesh(PG.parasol,0x2f2a33,{y:1.16,sx:1.45,sz:1.45}));u.visible=false;a.userData.arms[0].add(u);a.userData.umb=u;umbrellas.push(u);}register(a,ai);}
+    const ai=(c.aideInfo&&c.aideInfo[k])||I(['松井 武','佐野 一郎'][k%2],[36,29][k%2],'總督府警衛',['負責總督出巡警衛的巡查部長，腰佩長刀，一路注意四周的動靜，參拜時站在總督身後兩步遠。','剛調到總督府不久的年輕巡查，第一次擔任總督的隨行警衛，緊張得連帽子都戴得特別端正。'][k%2]);if(k===0&&c.aideUmb){a.userData.bigUmb=true;const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.48,sy:0.96}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.97,sx:1.45,sz:1.45}));u.visible=false;a.userData.arms[0].add(u);a.userData.aideUmb=true;a.userData.umb=u;umbrellas.push(u);}register(a,ai);}
   if(c.umb){const u=new THREE.Group();u.position.set(0,-0.3,0);u.add(mesh(PG.stick,0x6b4a34,{y:0.35,sy:0.75}));u.add(mesh(PG.parasol,0x2f2a33,{y:0.76}));u.visible=false;c.p.userData.arms[0].add(u);c.p.userData.umb=u;umbrellas.push(u);}
   if(c.easel){const e=easelM();e.visible=false;folk.add(e);c.propObj=e;}
   if(c.tripod){const e=new THREE.Group();e.add(mesh(new THREE.BoxGeometry(0.22,0.16,0.18),0x2a2530,{y:0.82}));e.add(mesh(new THREE.CylinderGeometry(0.05,0.05,0.08,8),0x55505c,{y:0.82,z:0.12,rx:Math.PI/2}));
@@ -2082,10 +2089,12 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
   if(c.phase==='gone'){c.fadeOut=(c.fadeOut??1)-dt;a=Math.max(0,c.fadeOut);}
   let ent=1;if(c.enter&&c.phase==='act'){const el=c.actT-c.timer;ent=Math.max(0,1-el/1.2,1-c.timer/1.2);a*=ent;}
   setAlpha(c.p,a);
+  if(c.phase==='act'&&c.shrine){c.p.rotation.y=Math.atan2(-14.6-c.p.position.x,79.4-c.p.position.z);c.aideP.forEach(ap=>{ap.rotation.y=Math.atan2(-14.6-ap.position.x,79.4-ap.position.z);});}
   if(c.phase==='act')pose(c.p,c.act,t,0,false);else pose(c.p,c.run?'run':(c.hold==='cane'?'stroll':'walk'),t,0,moving);
-  c.aideP.forEach((ap,k)=>{const s2=Math.max(0,c.s-dir*(0.9+k*0.8));const [ax,az,adx,adz]=pathAt(c.P,s2);
+  c.aideP.forEach((ap,k)=>{const s2=Math.max(0,c.s-dir*(c.aideP.length>1?0.95:(0.9+k*0.8)));const [ax,az,adx,adz]=pathAt(c.P,s2);
     if(k===0&&ap.userData.umb&&ap.userData.umb.visible){const ry=c.p.rotation.y,fx=Math.sin(ry),fz=Math.cos(ry),px=c.p.position.x+Math.cos(ry)*0.72-fx*0.25,pz=c.p.position.z-Math.sin(ry)*0.72-fz*0.25;ap.position.set(px,groundY(px,pz),pz);ap.rotation.y=ry;}
     else{ap.position.set(ax+(k?0.45:-0.45),groundY(ax+(k?0.45:-0.45),az),az);ap.rotation.y=Math.atan2(adx*dir,adz*dir);}
+    if(c.phase==='act'&&c.shrine)ap.rotation.y=Math.atan2(-14.6-ap.position.x,79.4-ap.position.z);
     setAlpha(ap,sstep(-0.8,1.6,inBoard(ax,az))*(c.phase==='gone'?a:1)*ent);pose(ap,c.phase==='act'?'stand':'walk',t,k+1,c.phase!=='act');});
   if(c.propObj){const show=c.phase==='act';c.propObj.visible=show;if(show){const d=c.propD||0.7;c.propObj.position.set(x+Math.sin(c.p.rotation.y)*d,G(x,z),z+Math.cos(c.p.rotation.y)*d);c.propObj.rotation.y=c.p.rotation.y+Math.PI;}}
   if(c.phase==='gone'&&a<=0){c.p.visible=false;c.aideP.forEach(ap=>ap.visible=false);if(selectedPerson===c.p)deselect();c.phase='wait';c.wait=20+Math.random()*25;}
@@ -2139,7 +2148,7 @@ placeBags();
       geo.computeVertexNormals();const nm=new THREE.Mesh(geo,y.material);nm.receiveShadow=true;scene.add(nm);y.parent.remove(y);});});}
 
 /* 小型擺設（鳥居、告示牌、岩石、溫泉池等）在斜坡上不懸空：往下沉到最低的地面 */
-{const bb=new THREE.Box3();OCCLUDERS.forEach(o=>{if(o.isInstancedMesh)return;let has=false;o.traverse(m=>{if(m.userData&&(m.userData.block||m.userData.yard))has=true;});if(has)return;
+{const bb=new THREE.Box3();OCCLUDERS.forEach(o=>{if(o.isInstancedMesh||o.userData.keepY)return;let has=false;o.traverse(m=>{if(m.userData&&(m.userData.block||m.userData.yard))has=true;});if(has)return;
   o.updateMatrixWorld(true);bb.setFromObject(o);if(bb.isEmpty())return;let gmin=1e9;
   for(const u of[0,0.25,0.5,0.75,1])for(const w of[0,0.25,0.5,0.75,1])gmin=Math.min(gmin,G(bb.min.x+(bb.max.x-bb.min.x)*u,bb.min.z+(bb.max.z-bb.min.z)*w));
   const gap=bb.min.y-gmin;if(gap>0.04&&gap<2.5){if(o.userData.rock){o.position.y-=gap*0.6;o.scale.y*=1.5;}else o.position.y-=gap+0.02;o.updateMatrixWorld(true);}});}
@@ -2545,6 +2554,51 @@ function boar(scale=1,striped=false){const g=new THREE.Group(),c=striped?0x9a735
   const legs=[];const LG=new THREE.CylinderGeometry(0.03,0.025,0.14,4).translate(0,-0.07,0);for(const z of[-0.14,0.14])for(const x of[-0.08,0.08])legs.push(legPivot(g,x,0.15,z,LG,d));
   const tail=new THREE.Group();tail.position.set(0,0.32,-0.29);tail.add(mesh(new THREE.CylinderGeometry(0.008,0.012,0.1,4).translate(0,-0.05,0),d,{rx:0.4}));g.add(tail);
   g.scale.setScalar(scale);g.userData={legs,tail,head,animal:true};return g;}
+/* 阿黃帶路、小黑跟挑夫 */
+const CART_HOLD=new Set(),CART_T=new Map();const DOGS={yel:{s:null,st:'lead',v:0,gate:false},blk:{st:'path',tgt:null,cd:new Map(),t:0}};
+function wagTail(o,t,on){const u=o.userData;if(u.tail)u.tail.rotation.y=on?0.7*Math.sin(t*14):0;}
+function updateDogs(dt,t,mot){
+  /* 兩台牛車相遇：先到的先走，後到的等對方走開 */
+  {const A=ZHANG_MV,B=HUANG_MV;CART_HOLD.clear();if(A&&B){const pa=A.obj.position,pb=B.obj.position,vx=pb.x-pa.x,vz=pb.z-pa.z,d=Math.hypot(vx,vz);
+    if(d<2.8){const apA=(A._dx*vx+A._dz*vz)/(d||1)>0.2,apB=(B._dx*-vx+B._dz*-vz)/(d||1)>0.2;if(!CART_T.has(A))CART_T.set(A,t);if(!CART_T.has(B))CART_T.set(B,t+(A.wait>0||apB?0:0.001));
+      if(apA&&apB){CART_HOLD.add(CART_T.get(A)<=CART_T.get(B)?B:A);}else if(apA)CART_HOLD.add(A);else if(apB)CART_HOLD.add(B);}
+    else{CART_T.delete(A);CART_T.delete(B);}}
+    [A,B].forEach(m=>{if(m)m.cartHold=CART_HOLD.has(m);});}
+  {const mv=DOG_MV['阿黃'],M=ZHANG_MV,D=DOGS.yel;if(mv&&M){const o=mv.obj,P=M.P;if(D.s===null){D.s=Math.min(P.L,M.s+M.dir*2.2);D.v=0;D.dir=M.dir;}
+    const mMoving=M.wait<=0&&!M.hold&&!M.qhold&&!M.trainHold&&!M.cartHold;
+    if(D.dir!==M.dir){D.dir=M.dir;D.st='turn';}
+    const dir=D.dir,ahead=(D.s-M.s)*dir,vd=M.speed*1.3;let want=0,wag=false,faceM=false;
+    if(D.st==='turn'){if(ahead<1.9)want=vd;else{D.st='greet';D.gt=0;}}
+    if(D.st==='greet'){faceM=true;wag=true;D.gt+=dt;if(M.wait<=0&&D.gt>1.6){D.st='lead';D.gate=true;}}
+    else if(D.st!=='turn'){const atEnd=(dir>0&&D.s>=P.L-0.02)||(dir<0&&D.s<=0.02);
+      if(atEnd||!mMoving&&!D.gate){faceM=true;wag=true;}
+      else if(D.st==='wait'){faceM=true;wag=true;if(ahead<1.9)D.st='lead';}
+      else{if(ahead>3.2&&!D.gate)D.st='wait';else want=vd;}}
+    if(D.gate&&ahead>=2.8)D.gate=false;
+    if(faceM)want=0;D.v+=(want-D.v)*Math.min(1,dt*2.2);if(D.v<0.005)D.v=0;
+    const ns=Math.max(0,Math.min(P.L,D.s+dir*D.v*dt*mot));{const [nx,nz]=pathAt(P,ns),[cx,cz]=pathAt(P,D.s);if(!(onRail(nx,nz)&&!onRail(cx,cz)&&trainNear(nx,nz,7)))D.s=ns;else D.v=0;}
+    M.hold=!!D.gate||D.st==='turn'||D.st==='greet';
+    const [x,z,dx,dz]=pathAt(P,D.s);const l=Math.hypot(dx,dz)||1,ox=x-dz/l*0.55,oz=z+dx/l*0.55;o.position.set(ox,groundY(ox,oz),oz);
+    const tr=faceM?Math.atan2(M.obj.position.x-ox,M.obj.position.z-oz):Math.atan2(dx*dir,dz*dir);let dr=tr-o.rotation.y;dr=Math.atan2(Math.sin(dr),Math.cos(dr));o.rotation.y+=Math.sign(dr)*Math.min(Math.abs(dr),4*dt);
+    {const ib=inBoard(ox,oz);setAlpha(o,sstep(-0.8,1.6,ib));}
+    animalPose(o,t*1.4,mv.ph,D.v>0.02,'animal');wagTail(o,t,wag);}}
+  {const mv=DOG_MV['小黑'],D=DOGS.blk;if(mv){const o=mv.obj,por=movers.filter(m=>m.greet&&m.obj.visible);D.cd.forEach((v,k)=>{if(v-dt<=0)D.cd.delete(k);else D.cd.set(k,v-dt);});D.v=D.v||0;
+    const dist=m=>Math.hypot(m.obj.position.x-o.position.x,m.obj.position.z-o.position.z);
+    const oncoming=m=>{const dx=o.position.x-m.obj.position.x,dz=o.position.z-m.obj.position.z,d=Math.hypot(dx,dz)||1;return((m._dx||0)*dx+(m._dz||0)*dz)/d>0.4;};
+    const onPath=m=>polyDist(m.obj.position.x,m.obj.position.z,DOG_PATH_BLK)<3;
+    const turnTo=(tr,rate)=>{let dr=tr-o.rotation.y;dr=Math.atan2(Math.sin(dr),Math.cos(dr));o.rotation.y+=Math.sign(dr)*Math.min(Math.abs(dr),rate*dt);};
+    if(D.st==='path'||D.st==='follow'){const c=por.find(m=>m!==D.tgt&&!D.cd.has(m)&&onPath(m)&&dist(m)<(D.st==='path'?2.4:1.8));
+      if(c){if(D.st==='follow'&&Math.random()>=0.2){D.cd.set(c,15);}else if(oncoming(c)){if(D.tgt)D.cd.set(D.tgt,25);D.st='yield';D.tgt=c;mv.custom=true;}else{if(D.tgt)D.cd.set(D.tgt,25);D.st='follow';D.tgt=c;mv.custom=true;}}}
+    if(D.st==='yield'){const T=D.tgt.obj.position;const passed=!oncoming(D.tgt)&&dist(D.tgt)>0.9;if(!D.tgt.obj.visible||!onPath(D.tgt)){D.st='return';D.tgt=null;}else if(passed){D.st='follow';}
+      else{D.v=Math.max(0,D.v-dt*2);turnTo(Math.atan2(T.x-o.position.x,T.z-o.position.z),3);o.position.y=groundY(o.position.x,o.position.z);animalPose(o,t,mv.ph,false,'animal');wagTail(o,t,true);}}
+    if(D.st==='follow'){if(!D.tgt.obj.visible||!onPath(D.tgt)){D.cd.set(D.tgt,30);D.st='return';D.tgt=null;}}
+    if(D.st==='follow'){const T=D.tgt.obj.position,fx=D.tgt._dx||0,fz=D.tgt._dz||0;const gx=T.x-fx*1.0+fz*0.3,gz=T.z-fz*1.0-fx*0.3;const dx=gx-o.position.x,dz=gz-o.position.z,d=Math.hypot(dx,dz);
+      if(D.mv===undefined)D.mv=false;if(d>0.45)D.mv=true;else if(d<0.12)D.mv=false;const want=D.mv?Math.min(1.2,0.4+d*0.9):0;D.v+=(want-D.v)*Math.min(1,dt*2.5);
+      if(D.v>0.01&&d>0.01){const st=Math.min(d,D.v*dt*mot);o.position.x+=dx/d*st;o.position.z+=dz/d*st;turnTo(Math.atan2(dx,dz),3.5);}else turnTo(Math.atan2(T.x-o.position.x,T.z-o.position.z),2.5);
+      o.position.y=groundY(o.position.x,o.position.z);animalPose(o,t*1.5,mv.ph,D.v>0.05,'animal');wagTail(o,t,true);}
+    else if(D.st==='return'){let b=null;for(let q=0;q<=mv.P.L;q+=0.3){const [px,pz]=pathAt(mv.P,q);const d=Math.hypot(px-o.position.x,pz-o.position.z);if(!b||d<b.d)b={d,q,px,pz};}
+      if(b.d<0.08){mv.s=b.q;mv.custom=false;D.st='path';D.v=0;wagTail(o,t,false);}else{const dx=b.px-o.position.x,dz=b.pz-o.position.z;D.v+=(0.8-D.v)*Math.min(1,dt*2);const st=Math.min(b.d,D.v*dt*mot);o.position.x+=dx/b.d*st;o.position.z+=dz/b.d*st;o.position.y=groundY(o.position.x,o.position.z);turnTo(Math.atan2(dx,dz),3.5);animalPose(o,t*1.4,mv.ph,true,'animal');}}
+    if(D.st==='path'){D.t-=dt;if(mv.wait>0){wagTail(o,t,true);}else{wagTail(o,t,false);if(D.t<=0){D.t=12+Math.random()*18;if(D.started){mv.wait=2+Math.random()*2.5;}D.started=true;}}}}}}
 function animalPose(o,t,ph,moving,anim){const u=o.userData;
   if(u.legs){u.legs.forEach((l,i)=>{l.rotation.x=moving?Math.sin(t*6+ph+(i%2?Math.PI:0)+(i>1?Math.PI/2:0))*0.4:0;});}
   if(u.tail)u.tail.rotation.x=anim==='dogrest'?0:0.3*Math.sin(t*(u.legs&&u.legs.length===4&&!moving?2:5)+ph);
@@ -2564,18 +2618,19 @@ function tick(){
       m.position.set(lo.position.x+Math.sin(ry)*0.75+Math.sin(t+k*9)*0.15,lo.position.y+1.2+k*1.8,lo.position.z+Math.cos(ry)*0.75);m.scale.setScalar(0.2+k*0.6);
       m.visible=al>0.01;m.material.opacity=al*(tr.moving?0.85:0.3)*(1-k);});});
   updateMoverRules(dt,t);updateShrineQueue(dt);updateFerry(dt*mot,t);TRAIN_PTS=trains.flatMap(tr=>{const R=tr.spur?(tr.moving?5:1.5):99;return tr.parts.filter(p=>p.visible).map(p=>({x:p.position.x,z:p.position.z,r:R,spur:!!tr.spur}));});
-  for(const mv of movers){
+  updateDogs(dt,t,mot);
+  for(const mv of movers){if(mv.custom)continue;
     if(!mv.water&&mv.wait<=0&&!mv.hold&&!mv.qhold&&TRAIN_PTS.length){const LA=mv.look||(mv.walkers.some(w=>w[1]==='animal')?1.9:(mv.followers?0.9:0.5));const ns=Math.min(mv.P.L,Math.max(0,mv.s+mv.dir*LA));const [nx,nz]=pathAt(mv.P,ns),[cx,cz]=pathAt(mv.P,mv.s);if(onRail(nx,nz)&&!onRail(cx,cz)&&trainNear(nx,nz,7,mv.noSpur)){mv.trainHold=true;}else mv.trainHold=false;}else mv.trainHold=false;
-    if(mv.wait>0)mv.wait-=dt;else if(mv.hold||mv.qhold||mv.trainHold){}else{mv.s+=mv.dir*mv.speed*dt*mot;
+    if(mv.wait>0)mv.wait-=dt;else if(mv.hold||mv.qhold||mv.trainHold||mv.cartHold){}else{mv.s+=mv.dir*mv.speed*dt*mot;
       if(mv.s>mv.P.L){if(mv.loop)mv.s-=mv.P.L;else{mv.s=mv.P.L;mv.dir=-1;const [ex,ez]=pathAt(mv.P,mv.P.L);mv.wait=inBoard(ex,ez)<0?4+Math.random()*16:(mv.pauseEnd??mv.pause);
         if(mv.pauseEnd){for(const o of movers)if(o!==mv&&o.pauseEnd&&o.dir<0&&o.s>=o.P.L-0.01&&o.wait>0){o.wait=Math.min(o.wait,1.8);o.greetT=1.8;mv.greetT=1.8;}}}}
       if(mv.s<0){mv.s=0;mv.dir=1;const [ex,ez]=pathAt(mv.P,0);mv.wait=inBoard(ex,ez)<0?4+Math.random()*16:mv.pause;}}
     let [x,z,dx,dz]=pathAt(mv.P,mv.s);{const l=Math.hypot(dx,dz)||1;mv._dx=dx*mv.dir/l;mv._dz=dz*mv.dir/l;if(mv.lat){x+=mv._dz*mv.lat;z-=mv._dx*mv.lat;}}
     const y=mv.water?G(x,z)+0.25+Math.sin(t*1.4+mv.ph)*0.05:groundY(x,z)+mv.lift;
     mv.obj.position.set(x,y,z);{const ib=inBoard(x,z);if(ib<2||mv.faded){const a=sstep(-0.8,1.6,ib);setAlpha(mv.obj,a);mv.faded=a<0.999;}}let ry=Math.atan2(dx*mv.dir,dz*mv.dir);if(mv.backward)ry+=Math.PI;mv.obj.rotation.y=ry;
-    const worship=mv.shrine&&mv.dir<0&&mv.wait>0&&mv.s>=mv.P.L-0.02;if(worship)mv.obj.rotation.y+=Math.PI;
+    const worship=mv.shrine&&mv.dir<0&&mv.wait>0&&mv.s>=mv.P.L-0.02;if(worship)mv.obj.rotation.y=Math.atan2(-14.6-x,79.4-z);
     if(mv.shrine)mv.walkers.forEach(([w])=>{if(w.userData.umb)w.userData.umb.userData.fold=worship;});
-    const moving=mv.wait<=0&&!mv.hold&&!mv.qhold;
+    const moving=mv.wait<=0&&!mv.hold&&!mv.qhold&&!mv.trainHold&&!mv.cartHold;
     const endA=mv.endAnims&&mv.wait>0?(mv.s<0.05?mv.endAnims[0]:(mv.s>mv.P.L-0.05?mv.endAnims[1]:null)):null;
     mv.walkers.forEach(([w,a])=>{if(a==='animal')animalPose(w,t,mv.ph,moving,a);else pose(w,worship?'bow':(endA||a),t,mv.ph,moving);});
     if(mv.greetT>0){mv.greetT-=dt;const w=mv.walkers[0][0];if(w.userData.arms){w.userData.arms[0].rotation.set(-2.5+0.3*Math.sin(t*9),0,-0.25);w.userData.head.rotation.x=0.2*Math.max(0,Math.sin(t*3));}
@@ -2622,7 +2677,11 @@ function tick(){
       if(R.mode==='rest'){R.rest-=dt;animalPose(o,t,w.ph,false,'pet');if(R.rest<=0){const [x,z]=P(Hc,R.u);const fx=Math.sin(o.rotation.y),fz=Math.cos(o.rotation.y);const nb=R.HS.map((h,j)=>{if(j===R.i)return null;const ua=Math.hypot(h.A[0]-x,h.A[1]-z),ub=Math.hypot(h.B[0]-x,h.B[1]-z),u=ua<ub?0:1,p=u?h.B:h.A,d=Math.min(ua,ub);return{j,d,u,f:d>0.01?((p[0]-x)*fx+(p[1]-z)*fz)/d:0};}).filter(q=>q&&q.d<2.8&&q.f>-0.2);
           const ahead=nb.filter(q=>q.f>0.5).sort((a,b)=>a.d-b.d),side=nb.filter(q=>q.f<=0.5).sort((a,b)=>a.d-b.d);const pick=ahead[0]||side[0];
           if(pick&&Math.random()<0.6){const q=pick;R.jump={from:[x,o.position.y,z],j:q.j,u:q.u};R.mode='jump';R.t=0;}else{R.mode='walk';R.dir=R.u>0.5?-1:1;}}}
-      else if(R.mode==='walk'){const L=Math.hypot(Hc.B[0]-Hc.A[0],Hc.B[1]-Hc.A[1])||1;R.u+=R.dir*0.3*dt*mot/L;if(R.u>=1||R.u<=0){R.u=Math.max(0,Math.min(1,R.u));R.mode='rest';R.rest=1.5+Math.random()*3;}
+      else if(R.mode==='walk'){const L=Math.hypot(Hc.B[0]-Hc.A[0],Hc.B[1]-Hc.A[1])||1;const u0=R.u;R.u+=R.dir*0.3*dt*mot/L;R.dec=R.dec||{};
+        {const ux=(Hc.B[0]-Hc.A[0])/L,uz=(Hc.B[1]-Hc.A[1])/L;for(let j=0;j<R.HS.length&&R.mode==='walk';j++){if(j===R.i||R.dec[j])continue;const h=R.HS[j],hx=h.B[0]-h.A[0],hz=h.B[1]-h.A[1],hl=Math.hypot(hx,hz)||1;if(Math.abs((hx*ux+hz*uz)/hl)>0.4)continue;
+          for(const [p,pu] of[[h.A,0],[h.B,1]]){const up=((p[0]-Hc.A[0])*ux+(p[1]-Hc.A[1])*uz)/L;if((up-u0)*(up-R.u)<=0&&up>0&&up<1){const qx=Hc.A[0]+ux*up*L,qz=Hc.A[1]+uz*up*L;if(Math.hypot(p[0]-qx,p[1]-qz)<2.8){R.dec[j]=true;if(Math.random()<0.4){R.u=up;const [x,z]=P(Hc,R.u);R.jump={from:[x,Hc.y,z],j,u:pu};R.mode='jump';R.t=0;R.dec={};}break;}}}}}
+        if(R.mode==='jump'){continue;}
+        if(R.u>=1||R.u<=0){R.u=Math.max(0,Math.min(1,R.u));R.mode='rest';R.rest=1.5+Math.random()*3;R.dec={};}
         const [x,z]=P(Hc,R.u);o.position.set(x,Hc.y,z);o.rotation.y=Math.atan2((Hc.B[0]-Hc.A[0])*R.dir,(Hc.B[1]-Hc.A[1])*R.dir);animalPose(o,t*1.4,w.ph,true,'pet');}
       else if(R.mode==='jump'){R.t+=dt*mot/0.75;const J=R.jump,H2=R.HS[J.j],[tx,tz]=P(H2,J.u),e=Math.min(1,R.t);const x=J.from[0]+(tx-J.from[0])*e,z=J.from[2]+(tz-J.from[2])*e,y=J.from[1]+(H2.y-J.from[1])*e+Math.sin(Math.PI*e)*0.55;
         o.position.set(x,y,z);o.rotation.y=Math.atan2(tx-J.from[0],tz-J.from[2]);animalPose(o,t,w.ph,false,'pet');{const U=o.userData,k=Math.min(1,Math.sin(Math.PI*e)*1.7);if(U.legs&&U.legs.length>=4){U.legs[0].rotation.x=U.legs[1].rotation.x=1.15*k;U.legs[2].rotation.x=U.legs[3].rotation.x=-1.2*k;}if(U.tail)U.tail.rotation.x=-1.05*k;}if(e>=1){R.i=J.j;R.u=J.u;R.mode='walk';R.dir=J.u>0.5?-1:1;const U=o.userData;if(U.legs)U.legs.forEach(l=>l.rotation.x=0);if(U.tail)U.tail.rotation.x=0;}}
