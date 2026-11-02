@@ -156,7 +156,7 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 /* 開場：標題逐字浮現，蓋上「昭和十年」朱印 */
 #intro{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#f6f8f4 0%,#e3ece8 55%,#cfdfdd 100%);transition:opacity 1.4s ease,visibility 1.4s;color:var(--ink,#3d3446)}
 #intro.hide{opacity:0;visibility:hidden;pointer-events:none}
-#intro .ttl{position:relative;display:block;padding:0 .2em}
+#intro .ttl{position:relative;display:block;padding:0 .2em;top:-9vh}
 #intro h1{margin:0;font:700 clamp(44px,12vw,80px)/1.1 var(--font-display,serif);letter-spacing:.14em;white-space:nowrap}
 #intro h1 span{display:inline-block;opacity:0;transform:translateY(10px) scale(.92);will-change:opacity,transform;animation:ch .8s ease forwards}
 #intro h1 span:nth-child(1){animation-delay:.5s}#intro h1 span:nth-child(2){animation-delay:.85s}#intro h1 span:nth-child(3){animation-delay:1.2s}#intro h1 span:nth-child(4){animation-delay:1.55s}#intro h1 span:nth-child(5){animation-delay:1.9s}
@@ -1474,7 +1474,7 @@ function takeField(){if(!FIELDS.length)return null;const f=FIELDS.splice(Math.fl
     cart.add(mesh(new THREE.BoxGeometry(0.9,0.25,1),0x9a6b46,{y:0.55}));cart.add(mesh(new THREE.BoxGeometry(0.8,0.4,0.9),0xe6cf6a,{y:0.85}));
     for(const s of[-1,1])cart.add(mesh(new THREE.TorusGeometry(0.38,0.06,6,16),0x6b4a34,{x:0.5*s,y:0.4,ry:Math.PI/2}));
     const p=person('farmer',{top:0x6f8fb3});hold(p,'stick');p.position.set(0.7,0,0.2);g.add(p);return[g,p,b];};
-  const [g1,p1,b1]=mk();const mvZ=ZHANG_MV=addMover(g1,offsetPath(ROADS[4],0.35),{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張福壽',50,'牛車伕','用牛車把稻穀從田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));mvZ.noSpur=true;
+  const [g1,p1,b1]=mk();const mvZ=ZHANG_MV=addMover(g1,[...offsetPath([[-21.5,69],[-26,61],[-31,53],[-34.1,50.4]],0.35),[-36.6,50.5],[-39.4,50.35],[-41.9,49.95],[-43.2,49.4]],{speed:0.4,start:0.2,walkers:[[p1,'herd'],[b1,'animal']]},I('張福壽',50,'牛車伕','用牛車把稻穀從北投庄外的田裡載到士林的碾米間，回程順路幫人載柴。牛車慢，一趟要大半天。'));mvZ.noSpur=true;
   const [g2,p2,b2]=mk();HUANG_MV=addMover(g2,offsetPath(ROADS[3].slice(0,3),0.35),{speed:0.35,start:0.6,walkers:[[p2,'herd'],[b2,'animal']]},I('黃樹根',42,'牛車伕','載著一車稻草往士林街去，稻草可以賣給人家當燃料或鋪牛舍。'));
 }
 { // 養鴨人家
@@ -1554,7 +1554,7 @@ for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;
 
 /* 狗 */
 const dogs=[];
-[[ROADS[4],0.1,'阿黃','跟著主人往返士林與北投','yellow'],[[...ROADS[3],[1,5],...ROADS[2].slice(1)],0.5,'小黑','在士林和大嶺牧場之間的路上來回','black']].forEach(([r,st,n,w,ck])=>{const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',n,w,COAT[ck][1]),0.35,0.25);DOG_MV[n]=addMover(d,offsetPath(r,0.5),{speed:0.7,start:st,walkers:[[d,'animal']],pause:n==='小黑'?10:2.5});});
+[[ROADS[4],0.1,'阿黃','跟著主人往返士林與北投庄外的稻田','yellow'],[[...ROADS[3],[1,5],...ROADS[2].slice(1)],0.5,'小黑','在士林和大嶺牧場之間的路上來回','black']].forEach(([r,st,n,w,ck])=>{const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',n,w,COAT[ck][1]),0.35,0.25);DOG_MV[n]=addMover(d,offsetPath(r,0.5),{speed:0.7,start:st,walkers:[[d,'animal']],pause:n==='小黑'?10:2.5});});
   DOG_PATH_BLK=[...ROADS[3],[1,5],...ROADS[2].slice(1)];
   DOG_MV['阿黃'].custom=true;
 farms.slice(0,8).forEach((f,i)=>{const ck=['tan','brown','spot','brindle','yellow','white','black','tan'][i];const d=dog(COAT[ck][0]);addHit(d,petInfo('dog',['來福','旺來','阿花','虎仔','阿福','小白','黑皮','阿財'][i],'守著三合院的曬穀場',COAT[ck][1]),0.35,0.2);addActor(d,f.x+0.6,f.z+0.9,rng()*6,'dogrest');});
