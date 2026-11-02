@@ -395,7 +395,7 @@ stage.appendChild(renderer.domElement);
 let rt=null;
 function makeRT(w,h){
   if(rt){rt.depthTexture.dispose();rt.dispose();}
-  rt=new THREE.WebGLRenderTarget(w,h);rt.texture.colorSpace=THREE.SRGBColorSpace;
+  rt=new THREE.WebGLRenderTarget(w,h,{samples:(SS>1||!renderer.capabilities.isWebGL2)?0:4});rt.texture.colorSpace=THREE.SRGBColorSpace;
   rt.depthTexture=new THREE.DepthTexture(w,h);rt.depthTexture.type=THREE.UnsignedIntType;
   postMat.uniforms.tColor.value=rt.texture;postMat.uniforms.tDepth.value=rt.depthTexture;postMat.uniforms.res.value.set(w,h);
 }
