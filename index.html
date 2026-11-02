@@ -1051,7 +1051,7 @@ function bovine(kind='buffalo'){
     head.add(mesh(kind==='buffalo'?HORN_B[s>0?1:0]:HORN_T[s>0?1:0],kind==='buffalo'?0x5e5248:0xe6dac2));}
   const legs=[];for(const x of[-0.26,0.26])for(const z of[-0.13,0.13])legs.push(legPivot(g,x,0.36,z,BOVLEG,c));
   const tail=new THREE.Group();tail.position.set(-0.52,0.62,0);tail.add(mesh(new THREE.CylinderGeometry(0.015,0.015,0.36,4).translate(0,-0.18,0),c));tail.add(mesh(new THREE.SphereGeometry(0.04,6,5),0x2a252e,{y:-0.36}));g.add(tail);
-  g.scale.setScalar(1.25);const w=new THREE.Group();g.rotation.y=-Math.PI/2;w.add(g);w.userData={legs,head,tail,animal:true};addHit(w,kind==='buffalo'?INFO.buffalo:INFO.tajima,0.7,0.6,0.9);return w;
+  g.scale.setScalar(1.25);const w=new THREE.Group();g.rotation.y=-Math.PI/2;w.add(g);w.userData={legs,head,tail,animal:true,legAxis:'z'};addHit(w,kind==='buffalo'?INFO.buffalo:INFO.tajima,0.7,0.6,0.9);return w;
 }
 function egret(){const g=new THREE.Group();g.add(mesh(new THREE.SphereGeometry(0.1,8,6),0xffffff,{y:0.3,sz:1.8}));
   const nk=new THREE.Group();nk.position.set(0,0.34,0.13);g.add(nk);nk.add(mesh(new THREE.CylinderGeometry(0.025,0.03,0.2,5),0xffffff,{y:0.1,rx:0.3}));
@@ -2647,7 +2647,7 @@ function updateDogs(dt,t,mot){
       if(b.d<0.08){mv.s=b.q;mv.custom=false;D.st='path';D.v=0;wagTail(o,t,false);}else{const dx=b.px-o.position.x,dz=b.pz-o.position.z;D.v+=(0.8-D.v)*Math.min(1,dt*2);const st=Math.min(b.d,D.v*dt*mot);o.position.x+=dx/b.d*st;o.position.z+=dz/b.d*st;o.position.y=groundY(o.position.x,o.position.z);turnTo(Math.atan2(dx,dz),3.5);animalPose(o,t*1.4,mv.ph,true,'animal');}}
     if(D.st==='path'){D.t-=dt;if(mv.wait>0){wagTail(o,t,true);}else{wagTail(o,t,false);if(D.t<=0){D.t=12+Math.random()*18;if(D.started){mv.wait=2+Math.random()*2.5;}D.started=true;}}}}}}
 function animalPose(o,t,ph,moving,anim){const u=o.userData;
-  if(u.legs){u.legs.forEach((l,i)=>{l.rotation.x=moving?Math.sin(t*6+ph+(i%2?Math.PI:0)+(i>1?Math.PI/2:0))*0.4:0;});}
+  if(u.legs){const ax=u.legAxis||'x';u.legs.forEach((l,i)=>{l.rotation[ax]=moving?Math.sin(t*6+ph+(i%2?Math.PI:0)+(i>1?Math.PI/2:0))*(ax==='z'?0.32:0.4):0;});}
   if(u.tail)u.tail.rotation.x=anim==='dogrest'?0:0.3*Math.sin(t*(u.legs&&u.legs.length===4&&!moving?2:5)+ph);
   if(u.head&&!moving&&anim!=='dogrest')u.head.rotation.z=-0.15+0.15*Math.sin(t*0.5+ph);
 }
