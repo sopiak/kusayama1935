@@ -152,9 +152,32 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 }
 @media (max-width:440px){.title-card .n{display:none}}
 @media (prefers-reduced-motion:reduce){.toolbar button,.toast,.zk-bar i{transition:none}}
+
+/* 開場：標題逐字浮現，蓋上「昭和十年」朱印 */
+#intro{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#f6f8f4 0%,#e3ece8 55%,#cfdfdd 100%);transition:opacity 1.4s ease,visibility 1.4s;color:var(--ink,#3d3446)}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+#intro .ttl{position:relative;display:block;padding:0 .2em}
+#intro h1{margin:0;font:700 clamp(44px,12vw,80px)/1.1 var(--font-display,serif);letter-spacing:.14em;white-space:nowrap}
+#intro h1 span{display:inline-block;opacity:0;transform:translateY(10px) scale(.92);will-change:opacity,transform;animation:ch .8s ease forwards}
+#intro h1 span:nth-child(1){animation-delay:.5s}#intro h1 span:nth-child(2){animation-delay:.85s}#intro h1 span:nth-child(3){animation-delay:1.2s}#intro h1 span:nth-child(4){animation-delay:1.55s}#intro h1 span:nth-child(5){animation-delay:1.9s}
+#intro .seal{position:absolute;right:-78px;bottom:-62px;width:70px;height:70px;box-sizing:border-box;padding:9px 8px;border-radius:8px;background:#c8402f;color:#fbf1e6;display:flex;flex-direction:row;justify-content:center;align-items:center;gap:3px;
+  font:700 19px/1 var(--font-display,serif);box-shadow:inset 0 0 0 3px #c8402f,inset 0 0 0 5px #fbf1e6;transform:rotate(-7deg) scale(2.4);opacity:0;will-change:opacity,transform;animation:stamp .85s 2.6s cubic-bezier(.3,1.35,.5,1) forwards}
+#intro .seal span{writing-mode:vertical-rl;line-height:1.05;letter-spacing:.08em}
+#intro .seal::after{content:"";position:absolute;inset:-12px;border-radius:16px;background:radial-gradient(circle,rgba(200,64,47,.3),rgba(200,64,47,0) 70%);opacity:0;animation:ink 1.2s 3.15s ease-out forwards}
+#intro .fog{position:absolute;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.85) 0%,rgba(255,255,255,.5) 40%,rgba(255,255,255,0) 70%);filter:blur(6px);pointer-events:none}
+#intro .f3{width:70vmax;height:30vmax;left:0;top:60%;opacity:.8;animation:drift 14s ease-in-out infinite alternate}
+#intro .f4{width:60vmax;height:26vmax;right:0;top:2%;opacity:.7;animation:drift 17s ease-in-out infinite alternate-reverse}
+@keyframes ch{to{opacity:1;transform:none}}
+@keyframes stamp{0%{opacity:0;transform:rotate(-7deg) scale(2.4)}60%{opacity:1}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
+@keyframes ink{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes drift{from{transform:translateX(-6vmax)}to{transform:translateX(6vmax)}}
+@media (prefers-reduced-motion:reduce){#intro *{animation:none!important}#intro h1 span,#intro .seal{opacity:1;transform:none}#intro .seal{transform:rotate(-7deg)}}
+@media (max-width:480px){#intro .ttl{text-align:center;margin-right:28px}#intro .seal{right:-44px;bottom:-50px;width:52px;height:52px;font-size:14px;padding:5px 4px;gap:2px}}
 </style>
 </head>
 <body>
+<div id="intro" role="status" aria-label="草山見聞帖 載入中"><div class="fog f3"></div><div class="fog f4"></div><div class="ttl"><h1><span>草</span><span>山</span><span>見</span><span>聞</span><span>帖</span></h1><div class="seal" aria-hidden="true"><span>十年</span><span>昭和</span></div></div></div>
+<script>window.__introT0=performance.now();</script>
 <div id="night-sky" aria-hidden="true"><div class="moon"></div></div>
 <div id="stage" aria-label="昭和時期草山、北投、士林一帶的手繪風3D地景模型"></div>
 
@@ -194,6 +217,9 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+/* 建置 3D 世界時分段讓出主執行緒，開場標題動畫才不會卡住 */
+const YIELD=()=>new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));
+await YIELD();
 
 /* ==================================================================
    地形：山峰位置取自實際經緯度（0.001°≈1 單位≈100 m），高度依實際海拔，
@@ -430,7 +456,7 @@ function keepCamAboveGround(){const c=camera.position,n=camera.near;camera.updat
   for(const sx of[-1,0,1])for(const sy of[-1,0,1]){const px=c.x+_cf.x*n+_cr.x*hw*sx+_cu.x*hh*sy,py=c.y+_cf.y*n+_cr.y*hw*sx+_cu.y*hh*sy,pz=c.z+_cf.z*n+_cr.z*hw*sx+_cu.z*hh*sy;probe(px,py,pz);}
   if(c.y<need){c.y=need;camera.updateMatrixWorld();}
   if(controls.target.y<G(controls.target.x,controls.target.z)+0.2)controls.target.y=G(controls.target.x,controls.target.z)+0.2;}
-controls.autoRotate=!reduceMotion;controls.autoRotateSpeed=0.3;
+controls.autoRotate=!reduceMotion;controls.autoRotateSpeed=MOBILE?0.38:0.3;
 
 const hemi=new THREE.HemisphereLight(0xfff6e2,0x86a98e,1.1);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff0d2,2.0);
@@ -529,6 +555,7 @@ function texMat(kind,key,repeat){const k=kind+key+(repeat||'');if(texCache.has(k
   let t=kind==='wall'?WALL[key]:ROOFT[key];if(repeat){t=t.clone();t.needsUpdate=true;t.repeat.set(repeat[0],repeat[1]);}
   const m=new THREE.MeshToonMaterial({map:t,gradientMap:grad});texCache.set(k,m);return m;}
 
+await YIELD();
 /* -------------------- 地形網格（含田埂、茶園的著色器） -------------------- */
 const X0=-90,Z0=-76,W=160,D=172,SEG=0.5;
 const nx=Math.round(W/SEG),nz=Math.round(D/SEG);
@@ -624,6 +651,7 @@ function skirt(pts){
 }
 
 {const lk=new THREE.Mesh(new THREE.CircleGeometry(0.85,24),toon(0x8fcbd8));lk.rotation.x=-Math.PI/2;lk.position.set(-45,H(-45,-7.6)+0.06,-7.6);scene.add(lk);}
+await YIELD();
 /* -------------------- 河、路、鐵道 -------------------- */
 function trace(way,step=0.5){
   const out=[];for(let i=0;i<way.length-1;i++){const [ax,az]=way[i],[bx,bz]=way[i+1];const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/step));for(let k=0;k<n;k++){const t=k/n;out.push([lerp(ax,bx,t),lerp(az,bz,t)]);}}
@@ -716,6 +744,7 @@ function pathAt(P,s){for(const g of P.segs)if(s<=g.s0+g.l){const t=(s-g.s0)/(g.l
 const rippleMesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,0.02,0.07),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.8}),ripples.length);
 rippleMesh.castShadow=false;scene.add(rippleMesh);
 
+await YIELD();
 /* -------------------- 建築 -------------------- */
 function roofGeo(w,h,d,over){const s=new THREE.Shape();s.moveTo(-w/2-over,0);s.lineTo(w/2+over,0);s.lineTo(0,h);s.closePath();
   const g=new THREE.ExtrudeGeometry(s,{depth:d+over*2,bevelEnabled:false});g.translate(0,0,-(d/2+over));return g;}
@@ -818,6 +847,7 @@ function fillTown(cx,cz,r,n){
    place(st,-46.74,41.47,-2.925);claim(-46.74,41.47,1.4);}
   fillTown(-50,42.5,3.8,9);
 }
+await YIELD();
 /* 士林街 */
 place(house({w:2.4,d:1.1,h:0.85,wall:'wood',roof:'red',rh:0.6,over:0.3}),-21.8,72.8,1.5);claim(-21.8,72.8,1.5);
 {const t=house({w:1.8,d:1.3,h:0.8,wall:'temple',roof:'orange',rh:0.55,eaves:true,ridgeW:true,frontDoor:true});TEMPLE_SL=place(t,-23.5,69.0,0.3);claim(-23.5,69.0,1.3);}
@@ -851,6 +881,7 @@ place(mesh(new THREE.BoxGeometry(0.35,1.2,0.35),0xe2ddd2,{y:0.6}),-13.8,61.2);cl
   place(sh,-14.6,79.4,0);claim(-14.6,79.4,3.4);
   {const tr=torii(1.6);tr.scale.y=1.6;tr.userData.pass=1;place(tr,-14.6,83.3,0);SHRINE_FIX.push([tr,0.88]);}
   for(const s of[-1,1]){const sl=place(mesh(new THREE.BoxGeometry(0.2,0.8,0.2),0xd6d0c2,{y:0.4}),-14.6+s*0.88,84.05);SHRINE_FIX.push([sl,0.1,0.4]);sl.add(mesh(new THREE.BoxGeometry(0.16,0.14,0.16),LAMP_MAT,{y:0.5}));glowAnchor(sl,0,0.5,0,0.9,true);}}
+await YIELD();
 /* 臺北市 */
 const TP_KEEP=[[-9.9,91.9,1.5],[-12.6,90.9,1.6]];
 for(let i=0;i<220;i++){const x=-37+rng()*105,z=87+rng()*9;if(nearEdge(x,z)||!inTaipei(x,z)||nearLines(x,z,1.0)||!free(x,z,0.85))continue;if(TP_KEEP.some(([a,b,r])=>Math.hypot(x-a,z-b)<r))continue;claim(x,z,0.85);place(townHouse(rng()),x,z,Math.round(rng()*2)*Math.PI/2,liftTo(x,z));}
@@ -865,6 +896,7 @@ RCK('c1');
 /* 關渡宮 */
 {const g=new THREE.Group();g.add(house({w:2.2,d:1.4,h:0.8,wall:'temple',roof:'orange',rh:0.6,eaves:true,ridgeW:true,frontDoor:true}));
   const f=house({w:1.6,d:0.9,h:0.6,wall:'temple',roof:'orange',rh:0.5,eaves:true,ridgeW:true,frontDoor:true});f.position.z=1.2;g.add(f);TEMPLE_GD=place(g,-77.6,45.4,-1.48);claim(-77.6,45.4,2.2);{const fr=atLocal0(g,0,3.2);claim(fr[0],fr[1],1.4);REED_CLEAR.push([fr[0],fr[1],2.6],[-77.6,45.4,3.2]);}}
+await YIELD();
 /* 金山庄、三芝庄、燈塔 */
 {const cx=60,cz=-58.5;claim(cx,cz,1.8);let placed=0;
   for(let i=0;i<600&&placed<7;i++){const a=rng()*6.283,d=2.3+rng()*1.3,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;if(nearEdge(x,z)||nearLines(x,z,1.15)||!free(x,z,1.15)||H(x,z)<SEA+0.2||polyDist(x,z,[[58,-56],[60.3,-58.9]])<1.9||polyDist(x,z,TRAIL)<1.9)continue;
@@ -878,6 +910,7 @@ RCK('c1');
   {const bm=new THREE.Group();bm.position.y=2.9;const bmat=new THREE.MeshBasicMaterial({color:0xfff2c0,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
    for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.ConeGeometry(1.2,14,16,1,true),bmat);c.rotation.z=s*Math.PI/2;c.position.x=-s*7.2;bm.add(c);}g.add(bm);NIGHT.beams.push({g:bm,m:bmat});}g.add(mesh(new THREE.ConeGeometry(0.4,0.4,8),0xc94a3a,{y:3.3}));
   const hh=house({w:1.4,d:1,h:0.6,wall:'jp',roof:'kawara2',rh:0.4});hh.position.x=1.4;g.add(hh);place(g,-62,-67.5,0.3);claim(-62,-67.5,1.5);}
+await YIELD();
 /* 草山 */
 place(house({w:2.8,d:1.4,h:0.85,wall:'jp',roof:'kawara2',rh:0.7,over:0.22,noren:0x3f63a6}),-5,9.6,0.25);claim(-5,9.6,1.8);
 place(house({w:2.2,d:1.6,h:0.95,wall:'jp',roof:'brown',hip:true,rh:0.75,over:0.2}),0.6,4.4,-0.4);claim(0.6,4.4,1.6);
@@ -904,6 +937,7 @@ place(house({w:1.3,d:0.9,h:0.6,wall:'jp',roof:'kawara',rh:0.45}),23.3,-17,-0.5);
 /* 大屯山頂小屋已移除 */
 place(mesh(new THREE.BoxGeometry(0.3,0.5,0.3),0xe8e4dc),8.5,-5.7,0,0.2);
 
+await YIELD();
 /* 平原農家 */
 const farms=[];
 for(let i=0;i<1400&&farms.length<64;i++){const x=X0+3+rng()*(W-6),z=30+rng()*64,h=H(x,z);
@@ -912,6 +946,7 @@ for(let i=0;i<1400&&farms.length<64;i++){const x=X0+3+rng()*(W-6),z=30+rng()*64,
 for(let i=0;i<300&&farms.length<56;i++){const x=X0+3+rng()*(W-6),z=-64+rng()*12,h=H(x,z),m=h/VS;
   if(m<20||m>300||inTown(x,z,2)||nearLines(x,z,1.2)||!free(x,z,2.2))continue;claim(x,z,2.2);farms.push({x,z,r:rng()*Math.PI*2});}
 farms.forEach(f=>{const o=sanheyuan(0.95),ly=liftTo(f.x,f.z,1.2);if(Math.hypot(f.x+13.2,f.z-85.1)<1.8)return;/* 神社鳥居前那間三合院移除 */place(o,f.x,f.z,f.r,ly);});
+await YIELD();
 /* 稻草堆：只放在已收割（著色器判定）的田格 */
 const stacks=[];
 for(let cz=Math.floor(16/2.5);cz<Math.floor(96/2.5);cz++)for(let cx=Math.floor(X0/2.5);cx<Math.floor(70/2.5);cx++){
@@ -919,6 +954,7 @@ for(let cz=Math.floor(16/2.5);cz<Math.floor(96/2.5);cz++)for(let cx=Math.floor(X
   for(let k=0;k<2;k++)stacks.push({x:x+(rng()-0.5)*1.4,z:z+(rng()-0.5)*1.4});}
 instanced(new THREE.ConeGeometry(0.28,0.55,8),toon(0xe2c771),stacks,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+0.27,p.z);});
 
+await YIELD();
 /* -------------------- 植生 -------------------- */
 function treeOK(x,z,h){
   const m=h/VS;if(h<1.0||m>960)return false;
@@ -970,6 +1006,7 @@ instanced(new THREE.SphereGeometry(0.32,8,6),toon(0x4f8f4c),tea,(t,o)=>{o.positi
   REED_IM=instanced(new THREE.ConeGeometry(0.12,0.6,4),toon(0xa7be6b),reeds,(p,o)=>{o.position.set(p.x,G(p.x,p.z)+0.28*(p.s||1),p.z);o.scale.setScalar(p.s||1);});
 }
 
+await YIELD();
 /* -------------------- 動物 -------------------- */
 const folk=new THREE.Group();scene.add(folk);
 function legPivot(parent,x,y,z,geo,col){const p=new THREE.Group();p.position.set(x,y,z);p.add(mesh(geo,col));parent.add(p);return p;}
@@ -1049,6 +1086,7 @@ function dog(o={}){const g=new THREE.Group();const c=o.c||0xc9a066;coatMarks(g,0
   const tail=new THREE.Group();tail.position.set(0,0.3,-0.2);tail.add(mesh(new THREE.CylinderGeometry(0.015,0.02,0.16,4).translate(0,0.08,0),c,{rx:-0.6}));g.add(tail);
   g.userData={legs,tail,head,animal:true};return g;}
 
+await YIELD();
 /* -------------------- 人物 -------------------- */
 const PG={
   leg:new THREE.CylinderGeometry(0.055,0.05,0.22,6).translate(0,-0.11,0),shin:new THREE.CylinderGeometry(0.048,0.046,0.1,6).translate(0,-0.17,0),
@@ -1355,6 +1393,7 @@ const cows=[];
   [['小林 義一',15,'中學校學生','山岳部的社員，背包裡裝著飯糰和水壺，最期待在山頂吹風吃便當。'],['陳文雄',15,'中學校學生','士林出身的臺灣學生，數學成績全班第一。他第一次爬大屯山，一路拿著筆記本畫地形。'],['田中 次郎',14,'中學校學生','體力最好的一個，一直想超到老師前面去。'],['林朝宗',14,'中學校學生','走得最慢，常停下來看路邊的蝴蝶和芒草。']].forEach((d,i)=>{
     const s=person('student');hold(s,'cane');s.userData.hasParasol=true;HIKE_MV.push(addMover(s,hike,{speed:0.3,start:0.25-i*0.03},I(...d)));});
 }
+await YIELD();
 /* ---------- 平原農事 ---------- */
 const SANZHI_BIO=['三芝庄的山坡田，水全靠山泉一格一格往下引。他今天在修田埂，免得下大雨時被沖垮。','剛從小基隆的市場賣完菜回來，順手到田裡割一把番薯葉回去餵豬。',
   '家裡世代在三芝種田，最近聽說庄役場要推廣蓬萊米，正在考慮明年要不要改種。','趁著好天氣在田邊割草，割下來的草曬乾後可以當牛的飼料，也能鋪在豬舍裡。',
@@ -1540,6 +1579,7 @@ movers.forEach(m=>m.walkers.forEach(([p,a],k)=>{
   addMover(a,offsetPath(ROADS[8],-0.2),{speed:0.45,start:0.15},I('王進財',34,'行商','從臺北城內往北走，到圓山、士林一帶的商店收帳。'));
   const b=person('twF',{top:0xd9a0a8});hold(b,'basket');addMover(b,offsetPath(ROADS[8],0.22),{speed:0.38,start:0.7},I('林素蘭',29,'上街買菜的婦人','提著竹籃從家裡走去市場，回程順路帶一包餅給孩子。'));
   const c=person('twM',{top:0x5c7392});shoulderPole(c,0xd9b56a);addMover(c,offsetPath(ROADS[8],0.05),{speed:0.4,start:0.42,walkers:[[c,'carry']]},I('陳發祥',46,'挑貨郎','挑著雜貨沿街叫賣，從城內一路走到明治橋頭。'));}
+await YIELD();
 /* ---------- 各行各業（追加） ---------- */
 const SPOTS={SL:[-19.5,70,5.8],BT:[-50.5,43.2,4.8],ON:[-39,25,3.2],KS:[-4,9,3],TP:[-2,93.4,3.2],ZZ:[-9.5,-10,3],QT:[29,-1,5],KJ:[60,-58.5,3],SC:[-45,-56,2.5],KD:[-79,41,2.5],YB:[-27,41,2.5],MT:[24,6,4],SH:[-30,50,3]};
 function spotNear(key){const [cx,cz,r]=SPOTS[key];for(let k=0;k<80;k++){const a=rng()*6.283,d=Math.sqrt(rng())*r,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;
@@ -2029,6 +2069,7 @@ function updateShrineQueue(dt){const E=[];
   E.sort((a,b)=>(b.atEnd-a.atEnd)||(a.d-b.d));let used=0,k=0;
   for(const e of E){if(used===0&&k===0){used+=e.size;continue;}k++;const stop=0.9*k+0.3;if(e.d<=stop+0.02){if(e.m){e.m.qhold=true;}else e.c.qhold=true;}}}
 
+await YIELD();
 /* -------------------- 名人入場 -------------------- */
 const CAMEOS=[
   {style:'suit',opts:{hat:'fedora',hatC:0x1e1a22,top:0x1e1a22,bottom:0x2a2530},aides:2,shrine:true,path:[[-11.4,100],[-12,96],[-13.9,93.0],[-14.57,91.9],[-15.04,88.73],[-15.45,86.0],[-15.2,85.2],[-14.6,84.75],[-14.6,83.2]],act:'bow',actT:7,speed:0.5,
@@ -2101,6 +2142,7 @@ function cameoUpdate(dt,t,mot){CAMEOS.forEach(c=>{
 });}
 
 placeBags();
+await YIELD();
 /* -------------------- 建築整地：房子底下的地面整平成一塊，房子坐在平地上，不再懸空或埋進坡裡 -------------------- */
 {const v=new THREE.Vector3(),ws=new THREE.Vector3(),wx=new THREE.Vector3();const flats=[];
   OCCLUDERS.forEach(obj=>{if(obj.isInstancedMesh)return;obj.updateMatrixWorld(true);const bl=[],yd=[];
@@ -2153,6 +2195,7 @@ placeBags();
   for(const u of[0,0.25,0.5,0.75,1])for(const w of[0,0.25,0.5,0.75,1])gmin=Math.min(gmin,G(bb.min.x+(bb.max.x-bb.min.x)*u,bb.min.z+(bb.max.z-bb.min.z)*w));
   const gap=bb.min.y-gmin;if(gap>0.04&&gap<2.5){if(o.userData.rock){o.position.y-=gap*0.6;o.scale.y*=1.5;}else o.position.y-=gap+0.02;o.updateMatrixWorld(true);}});}
 
+await YIELD();
 /* -------------------- 行人避開建築與鐵軌 -------------------- */
 const OBST=[],OB_GRID=new Map(),OBC=3;
 {const bb=new THREE.Box3(),c=new THREE.Vector3(),sz=new THREE.Vector3();
@@ -2312,6 +2355,7 @@ function eagleUpdate(e,dt,t){e.timer-=dt;if(e.timer<=0){e.mode=1-e.mode;e.timer=
   along(ROADS[8],2,60,3.6,0.6,lamp);                      // 臺北城北的街燈
 }
 
+await YIELD();
 /* -------------------- 地名牌 -------------------- */
 const PLACES=[
   {key:'zhuzihu',name:'竹子湖',glyph:'田',kind:'place',x:-9.5,z:-9.8,dy:3.2,chip:'地景',title:'竹子湖・蓬萊米原種田',tag:'大正 12 年（1923）設原種田',
@@ -2420,6 +2464,7 @@ function updateLabelVis(dt){lblT-=dt;const cp=camera.position;
     const n=Math.min(160,Math.ceil(L/0.7));for(let i=2;i<n;i++){const f=i/n;if(f*L>140)break;const x=a.x+dx*f,y=a.y+0.4+dy*f,z=a.z+dz*f;if(y<G(x,z)){ok=false;break;}}sp.userData.vis=ok?1:0;});}
   sprites.forEach(sp=>{const tgt=sp.userData.vis??1,m=sp.material;m.opacity+=(tgt-m.opacity)*Math.min(1,dt*5);sp.visible=m.opacity>0.03;});}
 
+await YIELD();
 /* -------------------- 說明卡 -------------------- */
 const $=id=>document.getElementById(id);
 let selectedPerson=null;
@@ -2443,6 +2488,7 @@ function flyTo(x,z,dist=55){const to=new THREE.Vector3(x,G(x,z)+1,z);const off=c
 const toggle=(b,on)=>b.setAttribute('aria-pressed',on?'true':'false');
 $('tg-labels').onclick=e=>{labelGroup.visible=!labelGroup.visible;toggle(e.currentTarget,labelGroup.visible);if(!labelGroup.visible&&!selectedPerson)deselect();};
 $('tg-rotate').onclick=e=>{controls.autoRotate=!controls.autoRotate;toggle(e.currentTarget,controls.autoRotate);};toggle($('tg-rotate'),controls.autoRotate);
+await YIELD();
 /* -------------------- 見聞帖（圖鑑）：點過的人物、動物、名人、名所都會記下來 -------------------- */
 const ZK_CATS=[['famous','名人'],['people','人物'],['animal','動物'],['place','名所']];
 const ZK={list:null,byKey:new Map(),found:new Set(),fresh:new Set(),tab:'famous'};
@@ -2532,6 +2578,7 @@ function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSiz
   const rw=Math.max(4,Math.floor(w*PR*SS)),rh=Math.max(4,Math.floor(h*PR*SS));if(rt.width!==rw||rt.height!==rh)makeRT(rw,rh);}
 addEventListener('resize',resize);resize();
 
+await YIELD();
 /* -------------------- 動畫 -------------------- */
 const clock=new THREE.Clock();
 const ease=t=>t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
@@ -2698,9 +2745,10 @@ function tick(){
     const k=Math.min(1,dt*3.5),ddx=(tv.x-controls.target.x)*k,ddy=(ty-controls.target.y)*k,ddz=(tv.z-controls.target.z)*k;
     controls.target.x+=ddx;controls.target.y+=ddy;controls.target.z+=ddz;camera.position.x+=ddx;camera.position.y+=ddy;camera.position.z+=ddz;}
   if(fly){fly.t=Math.min(1,fly.t+dt/1.1);const e=ease(fly.t);controls.target.lerpVectors(fly.fromT,fly.toT,e);camera.position.lerpVectors(fly.fromP,fly.toP,e);if(fly.t>=1)fly=null;}
-  controls.update();keepCamAboveGround();
+  controls.update(dt);keepCamAboveGround();
   updateWeather(dt,t);if(DAY.on)updateDayNight(dt,t);else applySky();updateLabelVis(dt);
   renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCam);
+  if(!window.__introDone){window.__introDone=true;const el=document.getElementById('intro');if(el){const wait=Math.max(300,5000-(performance.now()-(window.__introT0||0)));setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.remove(),1000);},wait);}}
   requestAnimationFrame(tick);
 }
 const fontsReady=Promise.race([Promise.all([document.fonts.load('900 46px "Zen Maru Gothic"','竹子湖草山'),document.fonts.load('700 32px "Kaisei Decol"','山湯')]),new Promise(r=>setTimeout(r,2500))]).catch(()=>{});
