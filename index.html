@@ -421,6 +421,15 @@ controls.target.copy(HOME.target);controls.enableDamping=true;controls.dampingFa
 controls.screenSpacePanning=false;controls.panSpeed=MOBILE?1.6:1;controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
 controls.minDistance=8;controls.maxDistance=290;controls.maxPolarAngle=1.38;
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* 鏡頭不鑽進地底：鏡頭本身和近裁切面的四角都要在地形之上 */
+const _cf=new THREE.Vector3(),_cr=new THREE.Vector3(),_cu=new THREE.Vector3();
+function keepCamAboveGround(){const c=camera.position,n=camera.near;camera.updateMatrixWorld();camera.getWorldDirection(_cf);_cr.setFromMatrixColumn(camera.matrixWorld,0);_cu.setFromMatrixColumn(camera.matrixWorld,1);
+  const hh=n*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)),hw=hh*camera.aspect;let need=-1e9;
+  const probe=(x,y,z)=>{const g=G(x,z);need=Math.max(need,g+0.25-(y-c.y));};
+  probe(c.x,c.y,c.z);for(const r of[0.6,1.2])for(let a=0;a<6.283;a+=0.785)probe(c.x+Math.cos(a)*r*n,c.y,c.z+Math.sin(a)*r*n);
+  for(const sx of[-1,0,1])for(const sy of[-1,0,1]){const px=c.x+_cf.x*n+_cr.x*hw*sx+_cu.x*hh*sy,py=c.y+_cf.y*n+_cr.y*hw*sx+_cu.y*hh*sy,pz=c.z+_cf.z*n+_cr.z*hw*sx+_cu.z*hh*sy;probe(px,py,pz);}
+  if(c.y<need){c.y=need;camera.updateMatrixWorld();}
+  if(controls.target.y<G(controls.target.x,controls.target.z)+0.2)controls.target.y=G(controls.target.x,controls.target.z)+0.2;}
 controls.autoRotate=!reduceMotion;controls.autoRotateSpeed=0.3;
 
 const hemi=new THREE.HemisphereLight(0xfff6e2,0x86a98e,1.1);scene.add(hemi);
@@ -1494,8 +1503,8 @@ const bobbers=[];
 {const p=person('twOld',{top:0x5a4a3a});addActor(p,61.5,-62.5,2.4,'mend',I('林秀綢',60,'補網婦','林成福的母親，坐在海邊的石頭上補漁網，手上的梭子一刻也沒停過。'));}
 {const g=boatM(0xe9d7b0);const p=person('coolie');p.position.set(0,0.2,0.55);g.add(p);
   addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],0.4),{speed:0.45,water:true,start:0.2,walkers:[[p,'stand']]},I('張進財',50,'帆船船夫','駕著載米的帆船在淡水河上往來，從大稻埕順流而下到淡水，再載回鹽和雜貨。'));}
-[[0xe2d5b8,0.9,0.55,0.25],[0xf6efe0,-0.8,0.38,0.7]].forEach(([sc,off,sp,st])=>{const g=boatM(sc);const p=person(off>0?'fisher':'coolie',{top:off>0?0x5c7392:0xd9cfb4});p.position.set(0,0.2,0.55);g.add(p);
-  addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],off),{speed:sp,water:true,start:st,walkers:[[p,'stand']],pause:3},off>0?I('李水波',39,'河上漁夫','駕著小帆船在淡水河上捕魚，退潮時在關渡一帶撒網，漲潮再順流回大稻埕賣魚。'):I('陳興旺',45,'運貨船夫','用帆船載著大稻埕的茶葉和布疋往淡水港，回程載的是從對岸運來的雜貨。'));});
+[[0xe2d5b8,0.9,0.55,0.25],[0xf6efe0,-0.8,0.38,0.7]].forEach(([sc,off,sp,st])=>{const g=boatM(off>0?null:sc);const p=person(off>0?'fisher':'coolie',{top:off>0?0x5c7392:0xd9cfb4});p.position.set(0,0.2,0.55);g.add(p);
+  addMover(g,offsetPath([[-38,101],...TAM_PTS,[-95,31]],off),{speed:sp,water:true,start:st,walkers:[[p,'stand']],pause:3},off>0?I('李水波',39,'河上漁夫','撐著一艘沒有帆的小舢舨在淡水河上捕魚，退潮時在關渡一帶撒網，漲潮再順著水流划回大稻埕賣魚。'):I('陳興旺',45,'運貨船夫','用帆船載著大稻埕的茶葉和布疋往淡水港，回程載的是從對岸運來的雜貨。'));});
 /* 基隆河上的帆船已移除 */
 for(let i=0,c=0;i<400&&c<6;i++){const x=-66+rng()*48,z=-60+rng()*30,m=H(x,z)/VS;if(!isTerrace(x,z,m)||!free(x,z,0.6))continue;
   const p=person(c%2?'farmerW':'farmer');hold(p,c%2?'sickle':'hoe');addActor(p,x,z,rng()*6,c%2?'sickle':'hoe',I(['江坤山','盧春蕊','練添旺','華秀勸','江傳福','盧阿綢'][c%6],30+c*7,'三芝庄農家',SANZHI_BIO[c%SANZHI_BIO.length]));if(c%6===5){folk.remove(p);actors.splice(actors.findIndex(q=>q.obj===p),1);const hi=CLICKABLE.indexOf(p.userData.hit);if(hi>=0)CLICKABLE.splice(hi,1);}c++;}
@@ -1984,11 +1993,19 @@ function onRail(x,z){return (Math.abs(x+40)<60)&&(polyDist(x,z,RAIL_MAIN)<0.75||
 function trainNear(x,z,r,noSpur){for(const p of TRAIN_PTS){if(noSpur&&p.spur)continue;const R=Math.min(r,p.r);if(Math.abs(p.x-x)<R&&Math.abs(p.z-z)<R&&Math.hypot(p.x-x,p.z-z)<R)return true;}return false;}
 function updateMoverRules(dt,t){
   const boats=movers.filter(m=>m.water&&m.obj.visible);if(FERRY)boats.push(FERRY);
-  boats.forEach(m=>{m.hold=false;m.dodgeT=m.dodgeT||0;});
-  for(let i=0;i<boats.length;i++)for(let j=i+1;j<boats.length;j++){const a=boats[i],b=boats[j];const pa=a.obj.position,pb=b.obj.position;const vx=pb.x-pa.x,vz=pb.z-pa.z,d=Math.hypot(vx,vz);if(d>2.4||d<1e-4)continue;
-    const latA=Math.abs(a._dx*vz-a._dz*vx),latB=Math.abs(b._dx*vz-b._dz*vx);const aAhead=(a._dx*vx+a._dz*vz)/d>0.3&&(b!==FERRY||FERRY.moving||latA<0.85),bAhead=(b._dx*-vx+b._dz*-vz)/d>0.3&&(a!==FERRY||FERRY.moving||latB<0.85);
-    if(aAhead&&bAhead){if(a===FERRY||b!==FERRY&&i<j){a.hold=true;b.dodge=1;}else{b.hold=true;a.dodge=1;}}else if(aAhead)a.hold=true;else if(bAhead)b.hold=true;}
-  boats.forEach(m=>{const tg=m.dodge?0.6:0;m.lat=(m.lat||0)+(tg-(m.lat||0))*Math.min(1,dt*1.2);m.dodge=0;});
+  boats.forEach(m=>{m.hold=false;m.dodgeT=Math.max(0,(m.dodgeT||0)-dt);m._held=false;});
+  const FD=FERRY&&!FERRY.moving;
+  for(let i=0;i<boats.length;i++)for(let j=i+1;j<boats.length;j++){let a=boats[i],b=boats[j];if(a===FERRY){const q=a;a=b;b=q;}
+    const pa=a.obj.position,pb=b.obj.position;const vx=pb.x-pa.x,vz=pb.z-pa.z,d=Math.hypot(vx,vz);if(d>2.4||d<1e-4)continue;
+    const cA=a._dx*vz-a._dz*vx,cB=b._dx*-vz-b._dz*-vx;const fA=(a._dx*vx+a._dz*vz)/d,fB=(b._dx*-vx+b._dz*-vz)/d;
+    if(b===FERRY&&FD){/* 渡船靠岸停著：帆船往河心閃開，被正面擋住才停，停太久就稍微後退再繞過 */
+      if(fA>0.1){a.dodgeT=2.5;a.dodgeSide=cA<0?-1:1;if(Math.abs(cA)<0.5&&fA>0.5){a.hold=true;a._held=true;}}continue;}
+    const aAhead=fA>0.3&&Math.abs(cA)<0.75,bAhead=fB>0.3&&Math.abs(cB)<0.75;
+    if(aAhead&&bAhead){const yieldA=b===FERRY||(a!==FERRY&&i<j);if(yieldA){a.hold=true;a._held=true;b.dodgeT=2;b.dodgeSide=cB<0?-1:1;}else{b.hold=true;b._held=true;a.dodgeT=2;a.dodgeSide=cA<0?-1:1;}}
+    else if(aAhead){a.hold=true;a._held=true;a.dodgeT=Math.max(a.dodgeT,1);a.dodgeSide=cA<0?-1:1;}else if(bAhead){b.hold=true;b._held=true;b.dodgeT=Math.max(b.dodgeT,1);b.dodgeSide=cB<0?-1:1;}}
+  boats.forEach(m=>{if(m===FERRY)return;m.stuckT=m._held?(m.stuckT||0)+dt:0;
+    if(m.stuckT>2.5&&m.P){m.s=Math.max(0,Math.min(m.P.L,m.s-m.dir*m.speed*0.4*dt));m.dodgeT=2.5;if(m.stuckT>5)m.stuckT=0;}
+    const tg=m.dodgeT>0?0.85*(m.dodgeSide||1):0;m.lat=(m.lat||0)+(tg-(m.lat||0))*Math.min(1,dt*1.0);});
   const por=movers.filter(m=>m.greet);
   greetCD.forEach((v,k)=>{if(v-dt<=0)greetCD.delete(k);else greetCD.set(k,v-dt);});
   for(let i=0;i<por.length;i++)for(let j=i+1;j<por.length;j++){const a=por[i],b=por[j];if(a.wait>0||b.wait>0||a.qhold||b.qhold)continue;const pa=a.obj.position,pb=b.obj.position;
@@ -2622,7 +2639,7 @@ function tick(){
     const k=Math.min(1,dt*3.5),ddx=(tv.x-controls.target.x)*k,ddy=(ty-controls.target.y)*k,ddz=(tv.z-controls.target.z)*k;
     controls.target.x+=ddx;controls.target.y+=ddy;controls.target.z+=ddz;camera.position.x+=ddx;camera.position.y+=ddy;camera.position.z+=ddz;}
   if(fly){fly.t=Math.min(1,fly.t+dt/1.1);const e=ease(fly.t);controls.target.lerpVectors(fly.fromT,fly.toT,e);camera.position.lerpVectors(fly.fromP,fly.toP,e);if(fly.t>=1)fly=null;}
-  controls.update();
+  controls.update();keepCamAboveGround();
   updateWeather(dt,t);if(DAY.on)updateDayNight(dt,t);else applySky();updateLabelVis(dt);
   renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCam);
   requestAnimationFrame(tick);
