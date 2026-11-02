@@ -2195,6 +2195,13 @@ function groundY(x,z){const g=G(x,z)+Math.max(railLift(x,z),roadLift(x,z)),d=dec
     const gx=Math.floor(pos.x/PC),gz=Math.floor(pos.z/PC);let hit=false;
     for(let ix=gx-1;ix<=gx+1&&!hit;ix++)for(let iz=gz-1;iz<=gz+1&&!hit;iz++){const L=prot.get(ix+','+iz);if(L)for(const [x,z,r] of L)if(Math.hypot(pos.x-x,pos.z-z)<R+r){hit=true;break;}}
     if(!hit&&obAt(pos.x,pos.z,0.25))hit=true;if(hit){im.setMatrixAt(i,zero);ch=true;}}if(ch){im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere&&im.computeBoundingSphere();}});}
+/* 屋頂貓阿虎：沿著臺北街屋的屋脊走，跳到隔壁屋頂 */
+{const w=wanderers.find(q=>q.obj.userData.isCat&&q.obj.userData.info&&q.obj.userData.info.title==='阿虎');if(w){const bb=new THREE.Box3(),HS=[];
+  OCCLUDERS.forEach(o=>{if(o.isInstancedMesh||o.userData.pass)return;if(Math.hypot(o.position.x-2,o.position.z-93.5)>6.5)return;let has=false;o.traverse(m=>{if(m.userData&&m.userData.block)has=true;});if(!has)return;
+    o.updateMatrixWorld(true);let rg=null;o.traverse(m=>{if(rg||!m.isMesh||!m.geometry||m.geometry.type!=='BoxGeometry')return;const P=m.geometry.parameters;if(Math.abs(P.height-0.1)<1e-3&&(Math.abs(P.width-0.13)<1e-3||Math.abs(P.depth-0.13)<1e-3)&&m.material&&m.material.color&&m.material.color.getHex()===0x6e6878)rg=m;});if(!rg)return;
+    const P=rg.geometry.parameters,alongX=Math.abs(P.depth-0.13)<1e-3,hl=(alongX?P.width:P.depth)/2-0.18;if(hl<0.15)return;const va=new THREE.Vector3(alongX?-hl:0,0.05,alongX?0:-hl),vb=new THREE.Vector3(alongX?hl:0,0.05,alongX?0:hl);rg.localToWorld(va);rg.localToWorld(vb);
+    HS.push({A:[va.x,va.z],B:[vb.x,vb.z],y:(va.y+vb.y)/2});});
+  if(HS.length>=2){w.roof={HS,i:0,u:0,dir:1,mode:'walk',t:0,rest:1};}}}
 /* 郭寶珠往前一步再轉身 */
 {const a=actors.find(q=>q.obj.userData.info&&q.obj.userData.info.name==='郭寶珠');if(a){const o=a.obj,ry=o.rotation.y,x0=o.position.x,z0=o.position.z,x=x0+Math.sin(ry)*0.45,z=z0+Math.cos(ry)*0.45;
   if(!obAt(x,z,0.25)){o.position.set(x,groundY(x,z),z);}o.rotation.y=ry+Math.PI;
@@ -2587,13 +2594,22 @@ function tick(){
     for(const o of bobbers){if(o===b)continue;const ex=b.position.x-o.position.x,ez=b.position.z-o.position.z,ed=Math.hypot(ex,ez)||0.01;if(ed<2.2){const st=(2.2-ed)*0.6*dt;const nx=b.position.x+ex/ed*st,nz=b.position.z+ez/ed*st;if(H(nx,nz)<SEA-0.3){b.position.x=nx;b.position.z=nz;}}}
     b.position.y=SEA+0.15+Math.sin(t*1.4+i)*0.08;b.rotation.z=Math.sin(t*1.1+i)*0.05;});
   if(selectedPerson){selectedPerson.getWorldPosition(tv);const sa=selectedPerson.userData.alpha;if(!shownAll(selectedPerson)||inBoard(tv.x,tv.z)<-0.3||(sa!==undefined&&sa<0.08))deselect();}
-  if(selectedPerson){selectedPerson.getWorldPosition(tv);ring.position.set(tv.x,groundY(tv.x,tv.z)+0.08,tv.z);ring.scale.setScalar(1+0.12*Math.sin(t*4));}
+  if(selectedPerson){selectedPerson.getWorldPosition(tv);ring.position.set(tv.x,(selectedPerson.userData.isCat&&tv.y>groundY(tv.x,tv.z)+0.4?tv.y+0.03:groundY(tv.x,tv.z)+0.08),tv.z);ring.scale.setScalar(1+0.12*Math.sin(t*4));}
   cameoUpdate(dt,t,mot);
   WARY.t-=dt;if(WARY.t<=0){WARY.t=0.5;if(!WARY.people){WARY.people=[];folk.traverse(o=>{if(o.userData&&o.userData.arms&&o.userData.inner)WARY.people.push(o);});WARY.hunted=new Set(HUNTERS.map(h=>h.w));}
     const wp=new THREE.Vector3();for(const w of wanderers){if(!w.wild||WARY.hunted.has(w))continue;const q=w.obj.position;let near=null,nd=4.5;
       for(const o of WARY.people){if(!o.visible)continue;o.getWorldPosition(wp);const d=Math.hypot(wp.x-q.x,wp.z-q.z);if(d<nd){nd=d;near=[wp.x,wp.z];}}
       if(near&&!(w.boostT>0))fleeFrom(w,near[0],near[1]);}}
   for(const w of wanderers){const o=w.obj;if(w.boostT>0)w.boostT-=dt;
+    if(w.roof){const R=w.roof,Hc=R.HS[R.i],P=(h,u)=>[h.A[0]+(h.B[0]-h.A[0])*u,h.A[1]+(h.B[1]-h.A[1])*u];
+      if(R.mode==='rest'){R.rest-=dt;animalPose(o,t,w.ph,false,'pet');if(R.rest<=0){const [x,z]=P(Hc,R.u);const fx=Math.sin(o.rotation.y),fz=Math.cos(o.rotation.y);const nb=R.HS.map((h,j)=>{if(j===R.i)return null;const ua=Math.hypot(h.A[0]-x,h.A[1]-z),ub=Math.hypot(h.B[0]-x,h.B[1]-z),u=ua<ub?0:1,p=u?h.B:h.A,d=Math.min(ua,ub);return{j,d,u,f:d>0.01?((p[0]-x)*fx+(p[1]-z)*fz)/d:0};}).filter(q=>q&&q.d<2.8&&q.f>-0.2);
+          const ahead=nb.filter(q=>q.f>0.5).sort((a,b)=>a.d-b.d),side=nb.filter(q=>q.f<=0.5).sort((a,b)=>a.d-b.d);const pick=ahead[0]||side[0];
+          if(pick&&Math.random()<0.6){const q=pick;R.jump={from:[x,o.position.y,z],j:q.j,u:q.u};R.mode='jump';R.t=0;}else{R.mode='walk';R.dir=R.u>0.5?-1:1;}}}
+      else if(R.mode==='walk'){const L=Math.hypot(Hc.B[0]-Hc.A[0],Hc.B[1]-Hc.A[1])||1;R.u+=R.dir*0.3*dt*mot/L;if(R.u>=1||R.u<=0){R.u=Math.max(0,Math.min(1,R.u));R.mode='rest';R.rest=1.5+Math.random()*3;}
+        const [x,z]=P(Hc,R.u);o.position.set(x,Hc.y,z);o.rotation.y=Math.atan2((Hc.B[0]-Hc.A[0])*R.dir,(Hc.B[1]-Hc.A[1])*R.dir);animalPose(o,t*1.4,w.ph,true,'pet');}
+      else if(R.mode==='jump'){R.t+=dt*mot/0.75;const J=R.jump,H2=R.HS[J.j],[tx,tz]=P(H2,J.u),e=Math.min(1,R.t);const x=J.from[0]+(tx-J.from[0])*e,z=J.from[2]+(tz-J.from[2])*e,y=J.from[1]+(H2.y-J.from[1])*e+Math.sin(Math.PI*e)*0.55;
+        o.position.set(x,y,z);o.rotation.y=Math.atan2(tx-J.from[0],tz-J.from[2]);animalPose(o,t,w.ph,false,'pet');{const U=o.userData,k=Math.min(1,Math.sin(Math.PI*e)*1.7);if(U.legs&&U.legs.length>=4){U.legs[0].rotation.x=U.legs[1].rotation.x=1.15*k;U.legs[2].rotation.x=U.legs[3].rotation.x=-1.2*k;}if(U.tail)U.tail.rotation.x=-1.05*k;}if(e>=1){R.i=J.j;R.u=J.u;R.mode='walk';R.dir=J.u>0.5?-1:1;const U=o.userData;if(U.legs)U.legs.forEach(l=>l.rotation.x=0);if(U.tail)U.tail.rotation.x=0;}}
+      continue;}
     if(w.wait>0){w.wait-=dt;animalPose(o,t,w.ph,false,'pet');if(w.wait<=0)wanderTarget(w);}
     else if(TRAIN_PTS.length&&!onRail(o.position.x,o.position.z)&&onRail(o.position.x+(w.tx-o.position.x)*0.15,o.position.z+(w.tz-o.position.z)*0.15)&&trainNear(o.position.x,o.position.z,7)){animalPose(o,t,w.ph,false,'pet');}
     else{const dx=w.tx-o.position.x,dz=w.tz-o.position.z,d=Math.hypot(dx,dz);
