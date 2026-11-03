@@ -945,7 +945,7 @@ for(let i=0;i<1400&&farms.length<64;i++){const x=X0+3+rng()*(W-6),z=30+rng()*64,
   if(Math.hypot(x+1.6,z-16.5)<6||inTaipei(x,z))continue;claim(x,z,2.2);farms.push({x,z,r:rng()*Math.PI*2});}
 for(let i=0;i<300&&farms.length<56;i++){const x=X0+3+rng()*(W-6),z=-64+rng()*12,h=H(x,z),m=h/VS;
   if(m<20||m>300||inTown(x,z,2)||nearLines(x,z,1.2)||!free(x,z,2.2))continue;claim(x,z,2.2);farms.push({x,z,r:rng()*Math.PI*2});}
-farms.forEach(f=>{const o=sanheyuan(0.95),ly=liftTo(f.x,f.z,1.2);if(Math.hypot(f.x+13.2,f.z-85.1)<1.8)return;/* 神社鳥居前那間三合院移除 */place(o,f.x,f.z,f.r,ly);});
+/* 北投、關渡之間平原的農家太密，拿掉一半（仍保留位置以維持亂數順序） */const FARM_HIDE=new Set([26,27,28,29,31,32,33,36,41,42,43,47,50,51,55,61,62]);farms.forEach((f,i)=>{if(FARM_HIDE.has(i))return;const o=sanheyuan(0.95),ly=liftTo(f.x,f.z,1.2);if(Math.hypot(f.x+13.2,f.z-85.1)<1.8)return;/* 神社鳥居前那間三合院移除 */place(o,f.x,f.z,f.r,ly);});
 await YIELD();
 /* 稻草堆：只放在已收割（著色器判定）的田格 */
 const stacks=[];
@@ -974,7 +974,7 @@ for(let i=0;i<50;i++){const a=rng()*Math.PI*2,r=3.8+rng()*3.5,x=-4+Math.cos(a)*r
 for(let i=0;i<14;i++){const x=-8+(rng()-0.5)*5,z=77.5+(rng()-0.5)*3,h=H(x,z);if(free(x,z,0.1))pines.push({x,z,h,s:0.8});}
 for(let i=0;i<90;i++){const x=18+rng()*10,z=3+rng()*7,h=H(x,z);if(h>3&&!near(x,z,29,-1,7.8))cones.push({x,z,h,s:0.8+rng()*0.5});}
 function bambooClump(cx,cz,n=5,spread=1.2){for(let j=0;j<n;j++){const ox=(rng()-0.5)*spread,oz=(rng()-0.5)*spread,x=cx+ox,z=cz+oz,l=Math.hypot(ox,oz)||1,lean=0.08+0.22*Math.min(1,l/(spread*0.5));bamboo.push({x,z,h:H(x,z),s:0.8+rng()*0.25,tx:oz/l*lean,tz:-ox/l*lean,ry:rng()*6.28,v:Math.floor(rng()*3)});}}
-farms.forEach(f=>{if(f.z>20)bambooClump(f.x-Math.sin(f.r)*1.7,f.z-Math.cos(f.r)*1.7,8,2);blobs.push({x:f.x+Math.cos(f.r)*1.7,z:f.z-Math.sin(f.r)*1.7,h:H(f.x,f.z),s:0.85,c:'#5aa865',r:1});});
+farms.forEach((f,i)=>{const nb=bamboo.length;if(f.z>20)bambooClump(f.x-Math.sin(f.r)*1.7,f.z-Math.cos(f.r)*1.7,8,2);if(FARM_HIDE.has(i)){bamboo.length=nb;return;}blobs.push({x:f.x+Math.cos(f.r)*1.7,z:f.z-Math.sin(f.r)*1.7,h:H(f.x,f.z),s:0.85,c:'#5aa865',r:1});});
 blobs.push({x:-24.6,z:70.6,h:G(-24.6,70.6),s:1.7,c:'#4f8f4c',r:2}); // 廟埕榕樹
 for(let i=0;i<2800;i++){const x=X0+2+rng()*(W-4),z=Z0+2+rng()*(D-4),h=H(x,z),m=h/VS;if((m>930&&rng()<0.9)||(near(x,z,29,-1,7.5)&&!near(x,z,29,-1,5.6)))susuki.push({x,z,h,s:0.7+rng()*0.6});}
 for(let i=0;i<4000;i++){const [cx,cz,r]=TEA_PATCHES[i%3],x=cx+(rng()-0.5)*r*2.6,z=cz+(rng()-0.5)*r*2.6,h=H(x,z),m=h/VS;if(isTea(x,z,m)&&Math.sin(h*62.83)>0.4&&!nearLines(x,z,0.5)&&free(x,z,0.2))tea.push({x,z,h,s:0.8+rng()*0.3});}
@@ -1455,7 +1455,13 @@ RCK('c2');farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
   const ji=i%JOBS.length,jk=FARM_JC[ji]=(FARM_JC[ji]||0)+1;const info=I(name,age,job,FARM_OPEN[(FARM_JC.o=(FARM_JC.o||0)+1)%FARM_OPEN.length](where)+bio[(jk-1)%bio.length]+story);
   if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);p.userData.faceRy=0;}
   if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.5,z+Math.sin(k*1.6)*0.5,rng()*6,'peck');});}
-  if(anim==='plant'){const dx=Math.cos(a),dz=Math.sin(a);addMover(p,[[x,z],[x+dx*2.4,z+dz*2.4]],{speed:0.06,backward:true,walkers:[[p,'plant']],pause:0.5},info);}
+  if(anim==='plant'){let dx=Math.cos(a),dz=Math.sin(a);
+    /* 插秧的路線整段都要落在畫出來的稻田格裡；不在田裡就就近找一塊（不用亂數，免得名字順序變動） */
+    const onP=(px,pz)=>MASK_L.full(Math.floor(px/2.5),Math.floor(pz/2.5));
+    const segOK=(sx,sz,ux,uz)=>{for(let t=-0.4;t<=2.8;t+=0.3)for(const o of[-0.4,0,0.4]){const px=sx+ux*t-uz*o,pz=sz+uz*t+ux*o;if(!onP(px,pz)||!free(px,pz,0.45)||nearLines(px,pz,0.4))return false;}return true;};
+    if(!segOK(x,z,dx,dz)){let got=null;for(let r=0.5;r<=12&&!got;r+=0.5)for(let k=0;k<24&&!got;k++){const q=k/24*Math.PI*2,sx=x+Math.cos(q)*r,sz=z+Math.sin(q)*r;for(const[ux,uz]of[[dx,dz],[1,0],[-1,0],[0,1],[0,-1]])if(segOK(sx,sz,ux,uz)){got=[sx,sz,ux,uz];break;}}
+      if(got){[x,z,dx,dz]=got;}}
+    addMover(p,[[x,z],[x+dx*2.4,z+dz*2.4]],{speed:0.06,backward:true,walkers:[[p,'plant']],pause:0.5},info);}
   else{if(anim==='thresh')p.userData.keep=true;addActor(p,x,z,anim==='thresh'?0:a+Math.PI,anim,info);}
   if(i%4===0){const e=egret();addActor(e,x+0.8,z-0.6,rng()*6,'egret');}
 });
