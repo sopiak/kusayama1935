@@ -1401,12 +1401,14 @@ const SANZHI_BIO=['三芝庄的山坡田，水全靠山泉一格一格往下引�
 const NAMES_M=['林阿土','陳水木','張福壽','吳添福','李萬枝','劉金水','黃樹根','楊再發','周財源','鄭清標'];
 const NAMES_F=['陳罔市','李玉梅','黃秀英','張碧珠','吳梅英','劉春花','郭寶珠','許招治','楊月娥','蔡惜治'];
 const JOBS=[
-  ['hoe','farmer','翻田的農夫','收割後的田要趕快翻鬆，準備下一期作。鋤頭一下一下往下挖，汗水沿著斗笠邊緣滴下來。'],
-  ['sickle','farmerW','割稻的農婦','左手抓住一把稻莖，右手的鐮刀一拉就斷，割下來的稻束一堆一堆擺在田埂邊。'],
-  ['plant','farmer','插秧的農夫','倒退著走，一手捏秧苗，一手往泥裡插，一排一排要插得筆直，鄰居才不會笑。'],
-  ['thresh','farmer','打穀的農夫','把稻束舉過頭頂，再用力摔在打穀桶的邊緣，穀粒嘩啦啦落進桶裡。'],
-  ['feed','farmerW','餵雞的農婦','一手提著竹籃，一手撒米糠，雞群一擁而上。家裡的雞蛋是逢年過節才捨得吃的。'],
+  ['hoe','farmer','翻田的農夫',['收割後的田要趕快翻鬆，準備下一期作。鋤頭一下一下往下挖，汗水沿著斗笠邊緣滴下來。','鋤頭舉高再往下一挖，把結塊的泥土翻過來給太陽曬一曬，田才會肥。','趁著田裡還濕，一鋤一鋤把稻頭翻進土裡，爛了就是下一期的肥料。','翻一分田要大半天，他習慣從田角開始，一路倒著往田埂翻回來。','家裡沒有水牛，只好自己拿鋤頭翻田，翻到傍晚手掌都起了水泡。','邊翻土邊把雜草挑出來丟到田埂上，免得下一期作又長滿草。']],
+  ['sickle','farmerW','割稻的農婦',['左手抓住一把稻莖，右手的鐮刀一拉就斷，割下來的稻束一堆一堆擺在田埂邊。','彎著腰一路割過去，割下的稻子一把一把交疊放好，等著挑去打穀。','鐮刀前一晚才磨過，割起來又快又齊，割完一壟才直起腰喘口氣。','割稻要趁天氣好，萬一下雨稻穗泡了水就會發芽，所以一家人全下田幫忙。','頭上包著花布巾遮太陽，一手攏稻、一手揮刀，沙沙的割稻聲一刻也沒停。','邊割邊看今年的稻穗飽不飽，心裡暗暗算著繳完租穀還能剩下多少。']],
+  ['plant','farmer','插秧的農夫',['倒退著走，一手捏秧苗，一手往泥裡插，一排一排要插得筆直，鄰居才不會笑。','腰彎得低低的，秧苗四五株一叢插進泥裡，插太深長不好，插太淺又會浮起來。','腳下踩著冰涼的爛泥，一排插完往後退一步再插下一排，一整天都在倒退走。','左手抱著一捆秧苗，右手手指一夾一插，快到旁人看不清楚。','插秧前先拉一條繩子當準線，一行一行才會整齊，以後除草也方便。','秧苗是自己育的，比別人家的壯，他常說「秧好一半收」。']],
+  ['thresh','farmer','打穀的農夫',['把稻束舉過頭頂，再用力摔在打穀桶的邊緣，穀粒嘩啦啦落進桶裡。','一下一下把稻穗摔進打穀桶，桶邊圍著草蓆，免得穀粒飛出去。','打穀桶是跟鄰居合買的，今天輪到他家用，得趁天黑前把稻子打完。','摔幾下就把稻束翻個面再摔，穀粒打乾淨了，剩下的稻草還能拿來搓草繩。','砰砰的打穀聲整片田都聽得到，孩子們在旁邊撿掉落的稻穗。','打下來的穀子要先曬乾才能挑去碾米，所以他一邊打一邊抬頭看天色。']],
+  ['feed','farmerW','餵雞的農婦',['一手提著竹籃，一手撒米糠，雞群一擁而上。家裡的雞蛋是逢年過節才捨得吃的。','撒著碎米和米糠，嘴裡咕咕咕地叫，雞從竹圍裡一隻一隻跑出來。','每天早晚各餵一次雞，順便到稻草堆裡找雞蛋，找到了就小心放進籃子。','撒完米糠，再把剩下的菜葉剁碎拌一拌，母雞吃得好，蛋才下得多。','邊撒飼料邊數雞，少了一隻就得到竹圍外去找，怕被野狗叼走。','竹籃裡除了米糠還有一把番薯簽，連鴨子也搖搖擺擺跑來搶。']],
 ];
+const FARM_OPEN=[w=>`在${w}耕作的佃農家。`,w=>`家住${w}，向地主租了幾分田耕作。`,w=>`${w}的佃農，一家人靠幾分水田過日子。`,w=>`從祖父那一代就在${w}種田。`,w=>`在${w}種田，每年收成要先繳一半的租穀給地主。`,w=>`${w}的農家，田就在自家竹圍外面。`];
+const FARM_JC={};
 /* 平原農家的人物表：每個人有自己的名字和小故事 */
 const FARM_M=[
  ['林塗城','家裡三代都是佃農，今年終於攢夠錢，打算向地主多租一分地。'],
@@ -1450,7 +1452,7 @@ RCK('c2');farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
   const female=style==='farmerW';const p=person(style,{top:female?[0x9bb2bf,0xd9a0a8,0x7aa6c9][i%3]:[0x6f8fb3,0x5c7392,0x8aa0a8][i%3]});
   const age=22+Math.floor(rng()*40);const [name,story]=farmPick(female);
   const where=f.z<60?'北投、唭哩岸一帶':(f.z<80?'士林街外':'圓山附近');
-  const info=I(name,age,job,`在${where}耕作的佃農家。${bio}${story}`);
+  const ji=i%JOBS.length,jk=FARM_JC[ji]=(FARM_JC[ji]||0)+1;const info=I(name,age,job,FARM_OPEN[(FARM_JC.o=(FARM_JC.o||0)+1)%FARM_OPEN.length](where)+bio[(jk-1)%bio.length]+story);
   if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);p.userData.faceRy=0;}
   if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.5,z+Math.sin(k*1.6)*0.5,rng()*6,'peck');});}
   if(anim==='plant'){const dx=Math.cos(a),dz=Math.sin(a);addMover(p,[[x,z],[x+dx*2.4,z+dz*2.4]],{speed:0.06,backward:true,walkers:[[p,'plant']],pause:0.5},info);}
@@ -1692,7 +1694,7 @@ RCK('c5');{ // 關渡渡船、撒網漁夫、割蘆葦
   RCK('c6');const extra=[['plant','farmer','插秧的農夫'],['sickle','farmerW','割稻的農婦'],['thresh','farmer','打穀的農夫'],['hoe','farmer','翻田的農夫'],['plant','farmerW','插秧的農婦'],['sickle','farmer','割稻的農夫']];
   extra.forEach(([anim,st,job],i)=>{const fd=takeField();if(!fd)return;const x=fd[0]+1+rng()*3,z=fd[1]+1+rng()*3;const pp=person(st,{top:[0x6f8fb3,0x9bb2bf,0x5c7392,0x8aa0a8][i%4]});
     if(anim==='hoe')hold(pp,'hoe');if(anim==='sickle')hold(pp,'sickle');if(anim==='thresh')hold(pp,'sheaf');
-    const [nm,story]=farmPick(st==='farmerW');const info=I(nm,25+Math.floor(rng()*35),job,'在北投、士林平原耕作的佃農家，和鄰居換工輪流做田事。'+story);
+    const [nm,story]=farmPick(st==='farmerW');const info=I(nm,25+Math.floor(rng()*35),job,['在北投、士林平原耕作的佃農家，今天和鄰居換工，先來幫忙這塊田。','住在平原上的竹圍農家，農忙時和左鄰右舍輪流換工做田事。','北投、士林平原的佃農，自家的田忙完了，就來幫親戚的田。','在平原上租田耕作，這幾天正是最忙的時候，一家大小都下田了。','平原上的農家，和隔壁幾戶約好輪流換工，今天輪到這一家。','佃農家出身，十幾歲起就跟著大人在平原上做田事。'][i%6]+story);
     if(anim==='thresh'){const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);pp.userData.keep=true;}
     if(anim==='plant')addMover(pp,[[x,z],[x+2.2,z]],{speed:0.06,backward:true,walkers:[[pp,'plant']],pause:0.5},info);else addActor(pp,x,z,anim==='thresh'?0:rng()*6.28,anim,info);});
 }
