@@ -795,11 +795,12 @@ function signboard(lines,x,z,ry){
   const b=new THREE.Mesh(new THREE.BoxGeometry(1.9,0.67,0.08),[side,side,side,side,front,front]);b.position.y=1.45;b.castShadow=true;g.add(b);
   return place(g,x,z,ry);
 }
+let SANHE_YARD_MAT=null;
 function sanheyuan(scale=1,wall='tw',roof='tw'){
   const g=new THREE.Group();
   g.add(house({w:1.8,d:0.8,h:0.62,wall,roof,rh:0.45,ridgeW:true,frontDoor:true}));
   for(const s of[-1,1]){const b=house({w:1.1,d:0.7,h:0.52,wall,roof,rh:0.4,ridgeW:true,frontDoor:true});b.position.set(0.75*s,0,0.95);b.rotation.y=-s*Math.PI/2;g.add(b);}
-  const yard=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),toon(0xe8d9b0));yard.rotation.x=-Math.PI/2;yard.position.set(0,0.03,1);yard.userData.yard=true;g.add(yard);
+  /* 曬穀場只鋪在三棟屋子圍起來的中間，貼近地面，不切到牆基 */const ym=SANHE_YARD_MAT||(SANHE_YARD_MAT=toon(0xe8d9b0,{polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));const yard=new THREE.Mesh(new THREE.PlaneGeometry(0.74,1.04),ym);yard.rotation.x=-Math.PI/2;yard.position.set(0,0.012,0.95);yard.userData.yard=true;g.add(yard);
   g.scale.setScalar(scale);return g;
 }
 function townHouse(r){
@@ -1839,15 +1840,20 @@ const DOLPH=[];var POD_OBJ=null;
 if(false&&STRATA){const hitG=new THREE.Group();hitG.position.set(STRATA.x,STRATA.y,STRATA.z);scene.add(hitG);const hm=new THREE.Mesh(new THREE.BoxGeometry(0.4,STRATA.hh,STRATA.len),HITMAT);hitG.add(hm);hitG.userData.info=INFO.geology;hm.userData.person=hitG;CLICKABLE.push(hm);}
 {const mk=()=>{const g=new THREE.Group();const b=new THREE.Group();g.add(b);/* 圓潤的身體：前胖後細，額頭隆起、短嘴、眼睛 */
    const DB=0x7d8ea3,DL=0xdfe6ee,DF=0x6b7c90;
-   const prof=[[0.001,-0.62],[0.045,-0.56],[0.07,-0.44],[0.11,-0.28],[0.15,-0.1],[0.175,0.08],[0.18,0.22],[0.16,0.34],[0.12,0.44],[0.06,0.5],[0.001,0.52]].map(([r,y])=>new THREE.Vector2(r,y));
-   b.add(mesh(new THREE.LatheGeometry(prof,16),DB,{rx:Math.PI/2,sy:0.88}));
-   b.add(mesh(new THREE.SphereGeometry(0.145,14,10),DL,{y:-0.065,z:0.08,sx:0.95,sy:0.55,sz:2.3}));
-   b.add(mesh(new THREE.SphereGeometry(0.128,14,10),DB,{y:0.03,z:0.38,sx:1,sy:0.95,sz:1.05}));
-   b.add(mesh(new THREE.SphereGeometry(0.07,12,10),DB,{y:-0.04,z:0.52,sx:0.85,sy:0.62,sz:1.35}));b.add(mesh(new THREE.CapsuleGeometry(0.055,0.3,4,10),DB,{y:0.005,z:-0.46,rx:Math.PI/2,sx:0.75,sy:1.05}));
-   b.add(mesh(new THREE.ConeGeometry(0.085,0.2,10),DF,{y:0.235,z:-0.06,rx:-0.75,sz:0.32}));
-   for(const k of[-1,1]){b.add(mesh(new THREE.SphereGeometry(0.14,10,8),DF,{x:0.18*k,y:-0.09,z:0.16,rz:-0.6*k,ry:0.55*k,sx:0.9,sy:0.17,sz:0.55}));
-     b.add(mesh(new THREE.SphereGeometry(0.1,10,8),DF,{x:0.085*k,y:0.005,z:-0.66,ry:0.6*k,sx:1.1,sy:0.2,sz:0.5}));
-     b.add(mesh(new THREE.SphereGeometry(0.022,8,6),0x1e1a22,{x:0.122*k,y:0.035,z:0.41,sx:0.5}));}
+   const prof=[[0.001,-0.64],[0.03,-0.6],[0.05,-0.5],[0.075,-0.36],[0.108,-0.2],[0.137,-0.02],[0.15,0.13],[0.142,0.26],[0.12,0.36],[0.088,0.44],[0.05,0.5],[0.001,0.53]].map(([r,y])=>new THREE.Vector2(r,y));
+   b.add(mesh(new THREE.LatheGeometry(prof,18),DB,{rx:Math.PI/2,sx:0.84}));
+   b.add(mesh(new THREE.SphereGeometry(0.11,14,10),DL,{y:-0.06,z:0.1,sx:0.95,sy:0.5,sz:3.0}));
+   b.add(mesh(new THREE.SphereGeometry(0.105,14,10),DB,{y:0.03,z:0.37,sx:0.9,sy:0.9,sz:1.1}));
+   b.add(mesh(new THREE.LatheGeometry([[0.036,0],[0.031,0.035],[0.023,0.062],[0.014,0.08],[0.001,0.087]].map(([r,y])=>new THREE.Vector2(r,y)),12),DB,{y:-0.027,z:0.49,rx:Math.PI/2,sx:1.0,sy:1.3,sz:0.78}));
+   b.add(mesh(new THREE.CapsuleGeometry(0.044,0.3,4,10),DB,{y:0.005,z:-0.47,rx:Math.PI/2,sx:0.6,sy:1.1}));
+   {const sh=new THREE.Shape();sh.moveTo(-0.09,0);sh.quadraticCurveTo(-0.02,0.13,0.07,0.135);sh.quadraticCurveTo(0.1,0.135,0.09,0.11);sh.quadraticCurveTo(0.06,0.06,0.1,0);sh.lineTo(-0.09,0);
+     const fg=new THREE.ExtrudeGeometry(sh,{depth:0.022,bevelEnabled:true,bevelThickness:0.008,bevelSize:0.008,bevelSegments:2,curveSegments:8});fg.translate(0,0,-0.011);
+     b.add(mesh(fg,DF,{y:0.115,z:-0.03,ry:Math.PI/2}));}
+   for(const k of[-1,1]){b.add(mesh(new THREE.SphereGeometry(0.13,10,8),DF,{x:0.14*k,y:-0.085,z:0.2,rz:-0.6*k,ry:0.6*k,sx:0.85,sy:0.16,sz:0.5}));
+     b.add(mesh(new THREE.SphereGeometry(0.1,10,8),DF,{x:0.085*k,y:0.005,z:-0.67,ry:0.6*k,sx:1.1,sy:0.18,sz:0.5}));
+     b.add(mesh(new THREE.SphereGeometry(0.02,8,6),0x1e1a22,{x:0.093*k,y:0.025,z:0.42,sx:0.5}));}
+   /* 身體微微拱起，像正在躍出水面 */
+   b.children.forEach(m=>{m.updateMatrix();const gg=m.geometry.clone();gg.applyMatrix4(m.matrix);const pa=gg.attributes.position;for(let q=0;q<pa.count;q++){const z=pa.getZ(q);pa.setY(q,pa.getY(q)-0.24*z*z);}pa.needsUpdate=true;m.geometry=gg;m.position.set(0,0,0);m.rotation.set(0,0,0);m.scale.set(1,1,1);});
    g.visible=false;folk.add(g);addHit(g,INFO.dolphin,0.5,0);return g;};
   for(let i=0;i<3;i++)DOLPH.push({g:mk(),t:0,dur:1.5,on:false});
   /* 整群一起選取：點任何一隻都選到這群，這一輪跳完之前不會被取消 */
@@ -2220,8 +2226,8 @@ await YIELD();
     if(lift>0){obj.position.y+=lift;obj.updateMatrixWorld(true);}
     info.forEach(b=>{const fy=b.fy+lift;if(b.m.userData.block.upper)return;b.m.parent.getWorldScale(ws);const need=(fy-b.gmin+0.15)/ws.y;if(need<=b.m.userData.block.base)return;
       const top=b.m.position.y+b.Hh/2,bot=b.fl-need;b.m.geometry=new THREE.BoxGeometry(b.P.width,top-bot,b.P.depth);b.m.position.y=(top+bot)/2;if(b.m.userData.block.h&&!b.m.parent.userData.noWallUV)wallUV(b.m.geometry,b.m.userData.block.h,top-bot-b.m.userData.block.h);});
-    yards.forEach(y=>{y.updateMatrixWorld(true);const geo=new THREE.PlaneGeometry(1.2,1.2,8,8),pa=geo.attributes.position;
-      for(let i=0;i<pa.count;i++){wp.set(pa.getX(i),pa.getY(i),0).applyMatrix4(y.matrixWorld);pa.setXYZ(i,wp.x,G(wp.x,wp.z)+0.035,wp.z);}
+    yards.forEach(y=>{y.updateMatrixWorld(true);const YP=y.geometry.parameters,geo=new THREE.PlaneGeometry(YP.width,YP.height,6,8),pa=geo.attributes.position;
+      for(let i=0;i<pa.count;i++){wp.set(pa.getX(i),pa.getY(i),0).applyMatrix4(y.matrixWorld);pa.setXYZ(i,wp.x,Math.max(G(wp.x,wp.z),Gmesh(wp.x,wp.z))+0.012,wp.z);}/* 曬穀場貼地，只比地面高一點點 */
       geo.computeVertexNormals();const nm=new THREE.Mesh(geo,y.material);nm.receiveShadow=true;scene.add(nm);y.parent.remove(y);});});}
 
 /* 小型擺設（鳥居、告示牌、岩石、溫泉池等）在斜坡上不懸空：往下沉到最低的地面 */
