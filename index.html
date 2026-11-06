@@ -165,18 +165,23 @@ h1{margin:2px 0;font-family:var(--font-display);font-size:28px;line-height:1.1;l
 #intro .seal span{writing-mode:vertical-rl;line-height:1.05;letter-spacing:.08em}
 #intro .seal::after{content:"";position:absolute;inset:-12px;border-radius:16px;background:radial-gradient(circle,rgba(200,64,47,.3),rgba(200,64,47,0) 70%);opacity:0;animation:ink 1.2s 3.15s ease-out forwards}
 #intro .fog{position:absolute;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.85) 0%,rgba(255,255,255,.5) 40%,rgba(255,255,255,0) 70%);filter:blur(6px);pointer-events:none}
-#intro .f3{width:70vmax;height:30vmax;left:0;top:60%;opacity:.8;animation:drift 14s ease-in-out infinite alternate}
-#intro .f4{width:60vmax;height:26vmax;right:0;top:2%;opacity:.7;animation:drift 17s ease-in-out infinite alternate-reverse}
+#intro .f3{width:70vmax;height:30vmax;left:0;top:60%;opacity:.8;animation:drift 6s ease-in-out infinite alternate}
+#intro .f4{width:60vmax;height:26vmax;right:0;top:2%;opacity:.7;animation:drift 7.5s ease-in-out infinite alternate-reverse}
 @keyframes ch{to{opacity:1;transform:none}}
 @keyframes stamp{0%{opacity:0;transform:rotate(-7deg) scale(2.4)}60%{opacity:1}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
 @keyframes ink{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(1.5)}}
-@keyframes drift{from{transform:translateX(-6vmax)}to{transform:translateX(6vmax)}}
+@keyframes drift{from{transform:translateX(-14vmax)}to{transform:translateX(14vmax)}}
+#intro .dots{position:absolute;left:50%;top:calc(100% + 48px);display:flex;gap:16px;transform:translateX(-50%);opacity:0;animation:ringIn .8s 3.5s ease forwards}
+#intro .dots i{display:block;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,rgba(61,52,70,.9) 0%,rgba(61,52,70,.75) 38%,rgba(61,52,70,0) 72%);transform:scale(.55);opacity:.25;will-change:opacity,transform;animation:inkdot 1.8s ease-in-out infinite}
+#intro .dots i:nth-child(2){animation-delay:.6s}#intro .dots i:nth-child(3){animation-delay:1.2s}
+@keyframes ringIn{to{opacity:1}}
+@keyframes inkdot{0%,100%{transform:scale(.55);opacity:.22}35%{transform:scale(1.45);opacity:.85}70%{transform:scale(.9);opacity:.35}}
 @media (prefers-reduced-motion:reduce){#intro *{animation:none!important}#intro h1 span,#intro .seal{opacity:1;transform:none}#intro .seal{transform:rotate(-7deg)}}
-@media (max-width:480px){#intro .ttl{text-align:center;margin-right:28px}#intro .seal{right:-44px;bottom:-50px;width:52px;height:52px;font-size:14px;padding:5px 4px;gap:2px}}
+@media (max-width:480px){#intro .ttl{text-align:center;margin-right:28px}#intro .seal{right:-44px;bottom:-50px;width:52px;height:52px;font-size:14px;padding:5px 4px;gap:2px}#intro .dots{top:calc(100% + 64px);gap:13px}}
 </style>
 </head>
 <body>
-<div id="intro" role="status" aria-label="草山見聞帖 載入中"><div class="fog f3"></div><div class="fog f4"></div><div class="ttl"><h1><span>草</span><span>山</span><span>見</span><span>聞</span><span>帖</span></h1><div class="seal" aria-hidden="true"><span>十年</span><span>昭和</span></div></div></div>
+<div id="intro" role="status" aria-label="草山見聞帖 載入中"><div class="fog f3"></div><div class="fog f4"></div><div class="ttl"><h1><span>草</span><span>山</span><span>見</span><span>聞</span><span>帖</span></h1><div class="seal" aria-hidden="true"><span>十年</span><span>昭和</span></div><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
 <script>window.__introT0=performance.now();</script>
 <div id="night-sky" aria-hidden="true"><div class="moon"></div></div>
 <div id="stage" aria-label="昭和時期草山、北投、士林一帶的手繪風3D地景模型"></div>
@@ -220,6 +225,8 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 /* 建置 3D 世界時分段讓出主執行緒，開場標題動畫才不會卡住 */
 const YIELD=()=>new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));
 await YIELD();
+/* 標題字逐一出現的這 2.7 秒先不做重的建模，免得字的動畫被打斷、跳回半透明 */
+{const w=2750-(performance.now()-(window.__introT0||0));if(w>0)await new Promise(r=>setTimeout(r,w));}
 
 /* ==================================================================
    地形：山峰位置取自實際經緯度（0.001°≈1 單位≈100 m），高度依實際海拔，
@@ -1458,7 +1465,7 @@ RCK('c2');farms.filter(f=>f.z>20).slice(0,26).forEach((f,i)=>{
   if(H(x,z)>1.4||nearLines(x,z,0.4))return;
   const female=style==='farmerW';const p=person(style,{top:female?[0x9bb2bf,0xd9a0a8,0x7aa6c9][i%3]:[0x6f8fb3,0x5c7392,0x8aa0a8][i%3]});
   const age=22+Math.floor(rng()*40);const [name,story]=farmPick(female);
-  const where=f.z<60?'北投、唭哩岸一帶':(f.z<80?'士林街外':'圓山附近');
+  const where=f.x>28?'內湖庄基隆河北岸':f.x>-2&&f.z>=60?'劍潭、大直一帶':f.z<60?'北投、唭哩岸一帶':(f.z<80?'士林街外':'圓山附近');
   const ji=i%JOBS.length,jk=FARM_JC[ji]=(FARM_JC[ji]||0)+1;const info=I(name,age,job,FARM_OPEN[(FARM_JC.o=(FARM_JC.o||0)+1)%FARM_OPEN.length](where)+bio[(jk-1)%bio.length]+story);
   if(anim==='hoe')hold(p,'hoe');if(anim==='sickle')hold(p,'sickle');if(anim==='thresh'){hold(p,'sheaf');const tb=new THREE.Group();tb.add(mesh(new THREE.CylinderGeometry(0.55,0.42,0.42,12,1,true),toon(0x9a6b46,{side:THREE.DoubleSide}),{y:0.21}));tb.add(mesh(new THREE.CylinderGeometry(0.42,0.42,0.03,12),0x7a5034,{y:0.02}));place(tb,x,z+0.8,0);p.userData.faceRy=0;}
   if(anim==='feed'){hold(p,'basket');[0xf5f1e8,0xb5652e,0xf5f1e8,0x8a4a2a].forEach((c,k)=>{const ch=chicken(c);addActor(ch,x+Math.cos(k*1.6)*0.5,z+Math.sin(k*1.6)*0.5,rng()*6,'peck');});}
@@ -1830,10 +1837,18 @@ function updateMountainFolk(dt,t,mot){dt*=mot;
 /* 北邊海面：偶爾有海豚躍出水面，位置隨機 */
 const DOLPH=[];var POD_OBJ=null;
 if(false&&STRATA){const hitG=new THREE.Group();hitG.position.set(STRATA.x,STRATA.y,STRATA.z);scene.add(hitG);const hm=new THREE.Mesh(new THREE.BoxGeometry(0.4,STRATA.hh,STRATA.len),HITMAT);hitG.add(hm);hitG.userData.info=INFO.geology;hm.userData.person=hitG;CLICKABLE.push(hm);}
-{const mk=()=>{const g=new THREE.Group();const b=new THREE.Group();g.add(b);b.add(mesh(new THREE.CapsuleGeometry(0.18,0.7,4,10),0x7d8ea3,{rx:Math.PI/2,sy:0.9}));
-   b.add(mesh(new THREE.CapsuleGeometry(0.13,0.5,4,8),0xdfe6ee,{y:-0.06,rx:Math.PI/2,sx:0.9,sy:0.7}));b.add(mesh(new THREE.ConeGeometry(0.06,0.25,6),0x7d8ea3,{z:0.62,rx:Math.PI/2}));
-   b.add(mesh(new THREE.ConeGeometry(0.08,0.24,4),0x6b7c90,{y:0.2,z:-0.05,rx:-0.5,sz:0.3}));b.add(mesh(new THREE.BoxGeometry(0.42,0.03,0.14),0x6b7c90,{z:-0.58}));
-   for(const s of[-1,1])b.add(mesh(new THREE.SphereGeometry(0.025,6,5),0x1e1a22,{x:0.12*s,y:0.05,z:0.38}));g.visible=false;folk.add(g);addHit(g,INFO.dolphin,0.5,0);return g;};
+{const mk=()=>{const g=new THREE.Group();const b=new THREE.Group();g.add(b);/* 圓潤的身體：前胖後細，額頭隆起、短嘴、眼睛 */
+   const DB=0x7d8ea3,DL=0xdfe6ee,DF=0x6b7c90;
+   const prof=[[0.001,-0.62],[0.045,-0.56],[0.07,-0.44],[0.11,-0.28],[0.15,-0.1],[0.175,0.08],[0.18,0.22],[0.16,0.34],[0.12,0.44],[0.06,0.5],[0.001,0.52]].map(([r,y])=>new THREE.Vector2(r,y));
+   b.add(mesh(new THREE.LatheGeometry(prof,16),DB,{rx:Math.PI/2,sy:0.88}));
+   b.add(mesh(new THREE.SphereGeometry(0.145,14,10),DL,{y:-0.065,z:0.08,sx:0.95,sy:0.55,sz:2.3}));
+   b.add(mesh(new THREE.SphereGeometry(0.128,14,10),DB,{y:0.03,z:0.38,sx:1,sy:0.95,sz:1.05}));
+   b.add(mesh(new THREE.SphereGeometry(0.07,12,10),DB,{y:-0.04,z:0.52,sx:0.85,sy:0.62,sz:1.35}));b.add(mesh(new THREE.CapsuleGeometry(0.055,0.3,4,10),DB,{y:0.005,z:-0.46,rx:Math.PI/2,sx:0.75,sy:1.05}));
+   b.add(mesh(new THREE.ConeGeometry(0.085,0.2,10),DF,{y:0.235,z:-0.06,rx:-0.75,sz:0.32}));
+   for(const k of[-1,1]){b.add(mesh(new THREE.SphereGeometry(0.14,10,8),DF,{x:0.18*k,y:-0.09,z:0.16,rz:-0.6*k,ry:0.55*k,sx:0.9,sy:0.17,sz:0.55}));
+     b.add(mesh(new THREE.SphereGeometry(0.1,10,8),DF,{x:0.085*k,y:0.005,z:-0.66,ry:0.6*k,sx:1.1,sy:0.2,sz:0.5}));
+     b.add(mesh(new THREE.SphereGeometry(0.022,8,6),0x1e1a22,{x:0.122*k,y:0.035,z:0.41,sx:0.5}));}
+   g.visible=false;folk.add(g);addHit(g,INFO.dolphin,0.5,0);return g;};
   for(let i=0;i<3;i++)DOLPH.push({g:mk(),t:0,dur:1.5,on:false});
   /* 整群一起選取：點任何一隻都選到這群，這一輪跳完之前不會被取消 */
   POD_OBJ=new THREE.Group();POD_OBJ.visible=false;POD_OBJ.userData.info=INFO.dolphin;POD_OBJ.userData.noRing=false;folk.add(POD_OBJ);{const ph=new THREE.Mesh(new THREE.BoxGeometry(7,1.6,5),HITMAT);ph.position.y=0.4;POD_OBJ.add(ph);ph.userData.person=POD_OBJ;CLICKABLE.push(ph);}DOLPH.forEach(d=>{d.g.traverse(m=>{if(m.userData&&m.userData.person===d.g)m.userData.person=POD_OBJ;});});}
